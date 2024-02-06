@@ -9,6 +9,7 @@ import (
 type (
 	Config struct {
 		App
+		Server
 		PostgreSQL
 		Cache
 	}
@@ -17,12 +18,15 @@ type (
 		SaveLogsToFile bool   `env:"SAVE_LOGS_TO_FILE" env-default:"false"`
 		TimeLocation   string `env:"TIME_LOCATION" env-default:"Europe/Kyiv"`
 	}
+	Server struct {
+		Port string `env:"PORT" env-default:"8080"`
+	}
 	PostgreSQL struct {
 		Host     string `env:"POSTGRES_HOST" env-default:"localhost"`
 		Port     string `env:"POSTGRES_PORT" env-default:"5435"`
 		User     string `env:"POSTGRES_USER" env-default:"postgres"`
 		Password string `env:"POSTGRES_PASSWORD" env-default:"postgres"`
-		Database string `env:"POSTGRES_DATABASE" env-default:"api"`
+		Database string `env:"POSTGRES_DATABASE" env-default:"residential_registration"`
 	}
 	Cache struct {
 		DefaultExpiration int64 `env:"CACHE_DEFAULT_EXPIRATION" env-default:"-1"`

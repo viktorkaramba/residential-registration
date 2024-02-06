@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "residential-registration/backend/internal/app"
 
 func main() {
-	fmt.Println("Hello World!!")
+	app.Run()
 }
