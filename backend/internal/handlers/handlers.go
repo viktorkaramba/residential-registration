@@ -12,10 +12,9 @@ type Handler struct {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
-	router.GET("/", func(context *gin.Context) {
-		context.JSON(200, gin.H{
-			"message": "ping pong",
-		})
-	})
+	auth := router.Group("/auth")
+	{
+		auth.POST("/register-inhabitant/:id", h.registerInhabitant)
+	}
 	return router
 }

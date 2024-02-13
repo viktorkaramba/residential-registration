@@ -6,9 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"residential-registration/backend/config"
+	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/internal/handlers"
 	"residential-registration/backend/internal/services"
-	"residential-registration/backend/internal/storages"
 	"residential-registration/backend/pkg/database"
 	"syscall"
 	"time"
@@ -44,19 +44,24 @@ func Run() {
 
 	}
 
-	//err = sql.DB.AutoMigrate()
-	//if err != nil {
-	//}
-
-	storage := services.Storages{
-		User: storages.NewUserStorage(sql.DB),
+	err = sql.DB.AutoMigrate(
+		&entity.Token{},
+		&entity.Inhabitant{},
+		&entity.OSBB{},
+		&entity.Building{},
+		&entity.Apartment{},
+	)
+	if err != nil {
 	}
+
+	storage := services.NewStorages(sql.DB)
 	serviceOptions := services.Options{
 		Config:   conf,
-		Storages: storage,
+		Storages: *storage,
 	}
 	service := services.Services{
-		User: services.NewUserService(&serviceOptions),
+		Inhabitant: services.NewInhabitantService(&serviceOptions),
+		Token:      services.NewTokenService(&serviceOptions),
 	}
 	handler := handlers.Handler{
 		Services: service,

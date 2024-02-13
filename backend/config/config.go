@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -10,6 +11,7 @@ type (
 	Config struct {
 		App
 		Server
+		Token
 		PostgreSQL
 		Cache
 	}
@@ -20,6 +22,10 @@ type (
 	}
 	Server struct {
 		Port string `env:"PORT" env-default:"8080"`
+	}
+	Token struct {
+		TokenTLL  time.Duration `env:"TOKEN_TLL" env-default:"12h"`
+		SignInKey string        `env:"SIGNINKEY" env-default:""`
 	}
 	PostgreSQL struct {
 		Host     string `env:"POSTGRES_HOST" env-default:"localhost"`
