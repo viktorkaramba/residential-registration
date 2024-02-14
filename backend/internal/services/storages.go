@@ -34,6 +34,7 @@ type BuildingStorage interface {
 
 type OSBBStorage interface {
 	CreateOSBB(OSBB *entity.OSBB) error
+	CreateAnnouncement(announcement *entity.Announcement) error
 }
 
 type TokenStorage interface {

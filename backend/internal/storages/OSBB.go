@@ -19,3 +19,7 @@ func NewOSBBStorage(db *gorm.DB) *OSBBStorage {
 func (s *OSBBStorage) CreateOSBB(OSBB *entity.OSBB) error {
 	return s.db.Create(OSBB).Error
 }
+
+func (s *OSBBStorage) CreateAnnouncement(announcement *entity.Announcement) error {
+	return s.db.Create(announcement).Error
+}

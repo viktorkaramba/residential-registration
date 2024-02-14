@@ -24,3 +24,5 @@ type ApartmentNumber uint64
 type ApartmentArea uint64
 
 type TokenValue string
+
+type Text string

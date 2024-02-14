@@ -10,7 +10,7 @@ import (
 
 func (h *Handler) registerInhabitant(c *gin.Context) {
 
-	buildingID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	osbbID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		return
 	}
@@ -21,7 +21,7 @@ func (h *Handler) registerInhabitant(c *gin.Context) {
 
 	}
 
-	User, err := h.Services.User.AddUser(buildingID, input)
+	User, err := h.Services.User.AddUser(osbbID, input)
 	if err != nil {
 		return
 	}

@@ -22,6 +22,7 @@ type UserService interface {
 
 type OSBBService interface {
 	AddOSBB(inputOSSB entity.InputOSBB) (*entity.OSBB, error)
+	AddAnnouncement(UserID, OSBBID uint64, inputAnnouncement entity.InputAnnouncement) (*entity.Announcement, error)
 }
 
 type TokenService interface {

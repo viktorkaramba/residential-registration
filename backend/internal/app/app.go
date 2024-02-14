@@ -50,6 +50,7 @@ func Run() {
 		&entity.Token{},
 		&entity.Building{},
 		&entity.Apartment{},
+		&entity.Announcement{},
 	)
 	if err != nil {
 		return

@@ -74,12 +74,12 @@ func (h *Handler) validateJSONTags(body []byte, input interface{}) error {
 	return nil
 }
 
-func getUserId(c *gin.Context) (int, error) {
+func getUserId(c *gin.Context) (uint64, error) {
 	id, ok := c.Get(UserCtx)
 	if !ok {
 		return 0, errors.New("user id not found")
 	}
-	idInt, ok := id.(int)
+	idInt, ok := id.(uint64)
 	if !ok {
 		return 0, errors.New("user id not found")
 	}

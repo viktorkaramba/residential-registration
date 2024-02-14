@@ -1,6 +1,9 @@
 package entity
 
-import "residential-registration/backend/pkg/database"
+import (
+	"residential-registration/backend/pkg/database"
+	"time"
+)
 
 type FullName struct {
 	FirstName  string `json:"first_name" binding:"required"`
@@ -38,12 +41,23 @@ type Building struct {
 }
 
 type OSBB struct {
-	ID       uint64   `gorm:"primaryKey;autoIncrement:true"`
-	OSBBHead User     `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Building Building `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Name     Name
-	EDRPOU   EDRPOU `gorm:"index"`
-	Rent     Rent
+	ID           uint64         `gorm:"primaryKey;autoIncrement:true"`
+	OSBBHead     User           `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Building     Building       `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Announcement []Announcement `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Name         Name
+	EDRPOU       EDRPOU `gorm:"index"`
+	Rent         Rent
+	database.PostgreSQLModel
+}
+
+type Announcement struct {
+	ID        uint64 `gorm:"primaryKey;autoIncrement:true"`
+	UserID    uint64 `gorm:"index"`
+	OSBBID    uint64 `gorm:"index"`
+	Title     Text
+	Content   Text
+	CreatedAt time.Time `gorm:"index"`
 	database.PostgreSQLModel
 }
 
@@ -62,4 +76,9 @@ type InputOSBB struct {
 	EDRPOU      `json:"edrpou" binding:"required"`
 	Address     `json:"address" binding:"required"`
 	Rent        `json:"rent" binding:"required"`
+}
+
+type InputAnnouncement struct {
+	Title   Text `json:"title" binding:"required"`
+	Content Text `json:"content" binding:"required"`
 }
