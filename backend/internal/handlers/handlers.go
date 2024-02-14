@@ -12,9 +12,11 @@ type Handler struct {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
-	auth := router.Group("/auth")
+
+	osbb := router.Group("/osbb")
 	{
-		auth.POST("/register-inhabitant/:id", h.registerInhabitant)
+		osbb.POST("/", h.registerOSBB)
+		osbb.POST("/:id/inhabitant", h.registerInhabitant)
 	}
 	return router
 }

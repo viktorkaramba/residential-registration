@@ -8,22 +8,28 @@ import (
 )
 
 type Storages struct {
-	Inhabitant InhabitantStorage
-	OSBB       OSBBStorage
-	Token      TokenStorage
+	User     UserStorage
+	Building BuildingStorage
+	OSBB     OSBBStorage
+	Token    TokenStorage
 }
 
 func NewStorages(db *gorm.DB) *Storages {
 	return &Storages{
-		Inhabitant: storages.NewInhabitantStorage(db),
-		OSBB:       storages.NewOSBBStorage(db),
-		Token:      storages.NewTokenStorage(db),
+		User:     storages.NewUserStorage(db),
+		Building: storages.NewBuildingStorage(db),
+		OSBB:     storages.NewOSBBStorage(db),
+		Token:    storages.NewTokenStorage(db),
 	}
 }
 
-type InhabitantStorage interface {
-	CreateInhabitant(inhabitant *entity.Inhabitant) error
-	GetInhabitant(inhabitantID uint64) (*entity.Inhabitant, error)
+type UserStorage interface {
+	CreateUser(User *entity.User) error
+	GetUser(UserID uint64) (*entity.User, error)
+}
+
+type BuildingStorage interface {
+	GetByOSBBID(OSBBID uint64) (*entity.Building, error)
 }
 
 type OSBBStorage interface {
@@ -34,5 +40,5 @@ type TokenStorage interface {
 	CreateToken(token *entity.Token) error
 	GetByToken(token string) (*entity.Token, error)
 	Update(token *entity.Token) error
-	UpdateByInhabitant(token *entity.Token) error
+	UpdateByUser(token *entity.Token) error
 }

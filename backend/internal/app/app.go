@@ -41,17 +41,18 @@ func Run() {
 		Database: conf.PostgreSQL.Database,
 	}, database.SetLogger(sqlLogger))
 	if err != nil {
-
+		return
 	}
 
 	err = sql.DB.AutoMigrate(
-		&entity.Token{},
-		&entity.Inhabitant{},
 		&entity.OSBB{},
+		&entity.User{},
+		&entity.Token{},
 		&entity.Building{},
 		&entity.Apartment{},
 	)
 	if err != nil {
+		return
 	}
 
 	storage := services.NewStorages(sql.DB)
@@ -60,8 +61,9 @@ func Run() {
 		Storages: *storage,
 	}
 	service := services.Services{
-		Inhabitant: services.NewInhabitantService(&serviceOptions),
-		Token:      services.NewTokenService(&serviceOptions),
+		User:  services.NewUserService(&serviceOptions),
+		Token: services.NewTokenService(&serviceOptions),
+		OSBB:  services.NewOSBBService(&serviceOptions),
 	}
 	handler := handlers.Handler{
 		Services: service,

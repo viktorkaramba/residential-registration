@@ -15,24 +15,24 @@ func (h *Handler) registerInhabitant(c *gin.Context) {
 		return
 	}
 
-	var input entity.InputInhabitant
+	var input entity.InputUser
 	if err := c.BindJSON(&input); err != nil {
 		return
 
 	}
 
-	inhabitant, err := h.Services.Inhabitant.AddInhabitant(buildingID, input)
+	User, err := h.Services.User.AddUser(buildingID, input)
 	if err != nil {
 		return
 	}
 
-	token, err := h.Services.Token.GenerateToken(inhabitant.ID)
+	token, err := h.Services.Token.GenerateToken(User.ID)
 	if err != nil {
 		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id":    inhabitant.ID,
+		"id":    User.ID,
 		"token": token,
 	})
 }

@@ -11,7 +11,7 @@ import (
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	InhabitantID uint64 `json: "inhabitant_id"`
+	UserID uint64 `json: "User_id"`
 }
 
 type tokenService struct {
@@ -26,20 +26,20 @@ func NewTokenService(opts *Options) *tokenService {
 	}
 }
 
-func (s *tokenService) GenerateToken(inhabitantID uint64) (entity.TokenValue, error) {
+func (s *tokenService) GenerateToken(UserID uint64) (entity.TokenValue, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(s.config.TokenTLL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		InhabitantID: inhabitantID,
+		UserID: UserID,
 	})
 	signedToken, err := token.SignedString([]byte(s.config.SignInKey))
 	if err != nil {
 		return "", err
 	}
 	newToken := &entity.Token{Value: entity.TokenValue(signedToken),
-		Inhabitant: entity.Inhabitant{ID: inhabitantID}, Revoked: false}
+		UserID: UserID, Revoked: false}
 	err = s.businessStorage.Token.CreateToken(newToken)
 	if err != nil {
 		return "", err
@@ -67,19 +67,19 @@ func (s *tokenService) ParseToken(accessToken string) (uint64, error) {
 	if !ok {
 		return 0, errors.New("token claims are not of type *tokenClaims")
 	}
-	return claims.InhabitantID, nil
+	return claims.UserID, nil
 }
 
-func (s *tokenService) RefreshToken(inhabitantID uint64) (string, error) {
+func (s *tokenService) RefreshToken(UserID uint64) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(s.config.TokenTLL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		InhabitantID: inhabitantID,
+		UserID: UserID,
 	})
 	tokenSigned, err := token.SignedString([]byte(s.config.SignInKey))
-	err = s.businessStorage.Token.UpdateByInhabitant(&entity.Token{Inhabitant: entity.Inhabitant{ID: inhabitantID}})
+	err = s.businessStorage.Token.UpdateByUser(&entity.Token{UserID: UserID})
 	if err != nil {
 		return "", err
 	}

@@ -2,14 +2,25 @@ package entity
 
 type Password string
 
+type PhoneNumber string
+
 type Name string
 
-type EDRPOU uint8
+type UserRole string
 
-type ApartmentNumber uint8
+const (
+	UserRoleInhabitant UserRole = "inhabitant"
+	UserRoleOSBBHEad   UserRole = "osbb_head"
+)
 
-type ApartmentArea uint8
+type EDRPOU uint64
 
 type Address string
+
+type Rent float64
+
+type ApartmentNumber uint64
+
+type ApartmentArea uint64
 
 type TokenValue string

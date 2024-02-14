@@ -12,7 +12,7 @@ import (
 
 const (
 	authorizationHeader = "Authorization"
-	inhabitantCtx       = "userId"
+	UserCtx             = "userId"
 )
 
 func (h *Handler) userIdentity(c *gin.Context) {
@@ -32,7 +32,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	c.Set(inhabitantCtx, id)
+	c.Set(UserCtx, id)
 }
 
 // Function to validate JSON tags against the structure
@@ -74,8 +74,8 @@ func (h *Handler) validateJSONTags(body []byte, input interface{}) error {
 	return nil
 }
 
-func getInhabitantId(c *gin.Context) (int, error) {
-	id, ok := c.Get(inhabitantCtx)
+func getUserId(c *gin.Context) (int, error) {
+	id, ok := c.Get(UserCtx)
 	if !ok {
 		return 0, errors.New("user id not found")
 	}

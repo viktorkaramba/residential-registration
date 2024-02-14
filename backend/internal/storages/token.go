@@ -39,9 +39,9 @@ func (s *tokenStorage) Update(token *entity.Token) error {
 		Error
 }
 
-func (s *tokenStorage) UpdateByInhabitant(token *entity.Token) error {
+func (s *tokenStorage) UpdateByUser(token *entity.Token) error {
 	return s.db.
-		Where(&entity.Token{Inhabitant: token.Inhabitant}).
+		Where(&entity.Token{UserID: token.UserID}).
 		Scopes(zerofield.UpdateScopes()).
 		Updates(token).
 		Error

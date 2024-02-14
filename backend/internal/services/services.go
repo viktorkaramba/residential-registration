@@ -6,9 +6,9 @@ import (
 )
 
 type Services struct {
-	Inhabitant InhabitantService
-	OSBB       OSBBService
-	Token      TokenService
+	User  UserService
+	OSBB  OSBBService
+	Token TokenService
 }
 
 type Options struct {
@@ -16,16 +16,17 @@ type Options struct {
 	Storages Storages
 }
 
-type InhabitantService interface {
-	AddInhabitant(OSBBID uint64, inputInhabitant entity.InputInhabitant) (*entity.Inhabitant, error)
+type UserService interface {
+	AddUser(OSBBID uint64, inputUser entity.InputUser) (*entity.User, error)
 }
 
 type OSBBService interface {
+	AddOSBB(inputOSSB entity.InputOSBB) (*entity.OSBB, error)
 }
 
 type TokenService interface {
-	GenerateToken(inhabitantID uint64) (entity.TokenValue, error)
+	GenerateToken(UserID uint64) (entity.TokenValue, error)
 	GetByToken(token string) (*entity.Token, error)
 	ParseToken(token string) (uint64, error)
-	RefreshToken(inhabitantID uint64) (string, error)
+	RefreshToken(UserID uint64) (string, error)
 }
