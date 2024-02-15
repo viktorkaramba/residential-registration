@@ -3,15 +3,18 @@ package services
 import (
 	"residential-registration/backend/config"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/logging"
 )
 
 type userService struct {
+	logger          logging.Logger
 	config          *config.Config
 	businessStorage Storages
 }
 
 func NewUserService(opts *Options) *userService {
 	return &userService{
+		logger:          opts.Logger.Named("UserService"),
 		config:          opts.Config,
 		businessStorage: opts.Storages,
 	}

@@ -10,6 +10,7 @@ import (
 	"residential-registration/backend/internal/handlers"
 	"residential-registration/backend/internal/services"
 	"residential-registration/backend/pkg/database"
+	"residential-registration/backend/pkg/logging"
 	"syscall"
 	"time"
 
@@ -19,8 +20,17 @@ import (
 func Run() {
 	conf, err := config.Init()
 	if err != nil {
-		log.Fatal("failed to init config", "err", err)
+		log.Fatal("failed to init config", "errs", err)
 	}
+
+	logger := logging.New(conf.App.LogLevel, conf.App.SaveLogsToFile)
+	logger.Info("config", "config", conf)
+
+	defaultLocation, err := time.LoadLocation(conf.TimeLocation)
+	if err != nil {
+		logger.Fatal("failed to init default time location", "err", err)
+	}
+	time.Local = defaultLocation
 
 	sqlLogger := gormLogger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
@@ -61,6 +71,7 @@ func Run() {
 
 	storage := services.NewStorages(sql.DB)
 	serviceOptions := services.Options{
+		Logger:   logger,
 		Config:   conf,
 		Storages: *storage,
 	}
@@ -70,6 +81,7 @@ func Run() {
 		OSBB:  services.NewOSBBService(&serviceOptions),
 	}
 	handler := handlers.Handler{
+		Logger:   logger.Named("Handler"),
 		Services: service,
 	}
 

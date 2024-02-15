@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"residential-registration/backend/internal/services"
+	"residential-registration/backend/pkg/logging"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
+	Logger   logging.Logger
 	Services services.Services
 }
 

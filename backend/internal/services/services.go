@@ -3,6 +3,7 @@ package services
 import (
 	"residential-registration/backend/config"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/logging"
 )
 
 type Services struct {
@@ -12,6 +13,7 @@ type Services struct {
 }
 
 type Options struct {
+	Logger   logging.Logger
 	Config   *config.Config
 	Storages Storages
 }

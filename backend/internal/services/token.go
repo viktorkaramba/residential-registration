@@ -4,6 +4,7 @@ import (
 	"errors"
 	"residential-registration/backend/config"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/logging"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -15,12 +16,14 @@ type tokenClaims struct {
 }
 
 type tokenService struct {
+	logger          logging.Logger
 	config          *config.Config
 	businessStorage Storages
 }
 
 func NewTokenService(opts *Options) *tokenService {
 	return &tokenService{
+		logger:          opts.Logger.Named("TokenService"),
 		config:          opts.Config,
 		businessStorage: opts.Storages,
 	}

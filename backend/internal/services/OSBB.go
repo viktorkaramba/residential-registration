@@ -4,16 +4,19 @@ import (
 	"errors"
 	"residential-registration/backend/config"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/logging"
 	"time"
 )
 
 type osbbService struct {
+	logger          logging.Logger
 	config          *config.Config
 	businessStorage Storages
 }
 
 func NewOSBBService(opts *Options) *osbbService {
 	return &osbbService{
+		logger:          opts.Logger.Named("OSBBService"),
 		config:          opts.Config,
 		businessStorage: opts.Storages,
 	}

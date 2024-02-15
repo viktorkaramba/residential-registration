@@ -82,8 +82,8 @@ func (h *Handler) addAnnouncement(c *gin.Context) {
 
 func (h *Handler) addPoll(c *gin.Context) {
 
-	//userID, err := getUserId(c)
-	//if err != nil {
+	//userID, errs := getUserId(c)
+	//if errs != nil {
 	//	return
 	//}
 
@@ -118,8 +118,8 @@ func (h *Handler) addPoll(c *gin.Context) {
 
 func (h *Handler) addPollTest(c *gin.Context) {
 
-	//userID, err := getUserId(c)
-	//if err != nil {
+	//userID, errs := getUserId(c)
+	//if errs != nil {
 	//	return
 	//}
 
@@ -154,8 +154,8 @@ func (h *Handler) addPollTest(c *gin.Context) {
 
 func (h *Handler) addPollAnswer(c *gin.Context) {
 
-	//userID, err := getUserId(c)
-	//if err != nil {
+	//userID, errs := getUserId(c)
+	//if errs != nil {
 	//	return
 	//}
 
@@ -191,8 +191,8 @@ func (h *Handler) addPollAnswer(c *gin.Context) {
 
 func (h *Handler) addPollAnswerTest(c *gin.Context) {
 
-	//userID, err := getUserId(c)
-	//if err != nil {
+	//userID, errs := getUserId(c)
+	//if errs != nil {
 	//	return
 	//}
 
