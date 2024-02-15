@@ -16,8 +16,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	osbb := router.Group("/osbb")
 	{
 		osbb.POST("/", h.registerOSBB)
-		osbb.POST("/:id/inhabitants", h.registerInhabitant)
-		osbb.POST("/:id/announcements", h.userIdentity, h.addAnnouncement)
+		osbb.POST("/:osbbID/inhabitants", h.registerInhabitant)
+		osbb.POST("/:osbbID/announcements", h.userIdentity, h.addAnnouncement)
+		osbb.POST("/:osbbID/polls", h.addPoll)
+		osbb.POST("/:osbbID/polls-test", h.addPollTest)
+		osbb.POST("/:osbbID/polls/:pollID/answers", h.addPollAnswer)
+		osbb.POST("/:osbbID/polls/:pollID/answers-test", h.addPollAnswerTest)
 	}
 	return router
 }

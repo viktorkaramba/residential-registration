@@ -31,8 +31,12 @@ func (s *userService) AddUser(OSBBID uint64, inputUser entity.InputUser) (*entit
 			Number:     inputUser.ApartmentNumber,
 			Area:       inputUser.ApartmentArea,
 		},
-		OSBBID:   OSBBID,
-		FullName: inputUser.FullName,
+		OSBBID: OSBBID,
+		FullName: entity.FullName{
+			FirstName:  inputUser.FirstName,
+			Surname:    inputUser.Surname,
+			Patronymic: inputUser.Patronymic,
+		},
 		Password: inputUser.Password,
 		Role:     entity.UserRoleInhabitant,
 	}

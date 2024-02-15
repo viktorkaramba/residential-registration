@@ -49,7 +49,6 @@ func (h *Handler) validateJSONTags(body []byte, input interface{}) error {
 	// Iterate through the fields of the struct
 	for i := 0; i < structType.NumField(); i++ {
 		field := structType.Field(i)
-
 		// Get the JSON tag value for the field
 		tagValue := field.Tag.Get("json")
 		if _, ok := jsonMap["id"]; ok {

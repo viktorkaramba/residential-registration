@@ -61,15 +61,50 @@ type Announcement struct {
 	database.PostgreSQLModel
 }
 
+type Poll struct {
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
+	UserID uint64 `gorm:"index"`
+	OSBBID uint64 `gorm:"index"`
+
+	Question    Text
+	TestAnswer  []TestAnswer `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+	UserAnswers []Answer     `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+
+	Type       PollType
+	CreatedAt  time.Time `gorm:"index"`
+	FinishedAt time.Time `gorm:"index"`
+	database.PostgreSQLModel
+}
+
+type TestAnswer struct {
+	ID      uint64 `gorm:"primaryKey;autoIncrement:true"`
+	PollID  uint64 `gorm:"index"`
+	Content Text   `json:"content" binding:"required"`
+	database.PostgreSQLModel
+}
+
+type Answer struct {
+	ID           uint64 `gorm:"primaryKey;autoIncrement:true"`
+	PollID       uint64 `gorm:"index"`
+	UserID       uint64 `gorm:"index"`
+	TestAnswerID uint64 `gorm:"index"`
+	Content      Text
+	database.PostgreSQLModel
+}
+
 type InputUser struct {
-	FullName
+	FirstName       string `json:"first_name" binding:"required"`
+	Surname         string `json:"surname" binding:"required"`
+	Patronymic      string `json:"patronymic" binding:"required"`
 	Password        `json:"password" binding:"required"`
 	ApartmentNumber `json:"apartment_number" binding:"required"`
 	ApartmentArea   `json:"apartment_area" binding:"required"`
 }
 
 type InputOSBB struct {
-	FullName
+	FirstName   string `json:"first_name" binding:"required"`
+	Surname     string `json:"surname" binding:"required"`
+	Patronymic  string `json:"patronymic" binding:"required"`
 	Password    `json:"password" binding:"required"`
 	PhoneNumber `json:"phone_number" binding:"required"`
 	Name        `json:"name" binding:"required"`
@@ -81,4 +116,23 @@ type InputOSBB struct {
 type InputAnnouncement struct {
 	Title   Text `json:"title" binding:"required"`
 	Content Text `json:"content" binding:"required"`
+}
+
+type InputPoll struct {
+	Question   Text      `json:"question" binding:"required"`
+	FinishedAt time.Time `json:"finished_at" binding:"required"`
+}
+
+type InputPollTest struct {
+	Question   Text         `json:"question" binding:"required"`
+	TestAnswer []TestAnswer `json:"test_answer" binding:"required"`
+	FinishedAt time.Time    `json:"finished_at" binding:"required"`
+}
+
+type InputPollAnswer struct {
+	Content Text `json:"content" binding:"required"`
+}
+
+type InputPollAnswerTest struct {
+	TestAnswerID uint64 `json:"test-answer-id"  binding:"required"`
 }

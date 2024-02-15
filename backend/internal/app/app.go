@@ -51,6 +51,9 @@ func Run() {
 		&entity.Building{},
 		&entity.Apartment{},
 		&entity.Announcement{},
+		&entity.Poll{},
+		&entity.TestAnswer{},
+		&entity.Answer{},
 	)
 	if err != nil {
 		return

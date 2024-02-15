@@ -26,3 +26,10 @@ type ApartmentArea uint64
 type TokenValue string
 
 type Text string
+
+type PollType string
+
+const (
+	PollTypeOpenAnswer PollType = "open_answer"
+	PollTypeTest       PollType = "test"
+)

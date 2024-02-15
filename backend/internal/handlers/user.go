@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"io"
 	"net/http"
 	"residential-registration/backend/internal/entity"
 	"strconv"
@@ -12,6 +14,13 @@ func (h *Handler) registerInhabitant(c *gin.Context) {
 
 	osbbID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
+		return
+	}
+
+	body, _ := io.ReadAll(c.Request.Body)
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+	// Check if there are any additional fields in the JSON body
+	if err := h.validateJSONTags(body, entity.InputUser{}); err != nil {
 		return
 	}
 

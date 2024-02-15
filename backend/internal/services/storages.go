@@ -34,7 +34,11 @@ type BuildingStorage interface {
 
 type OSBBStorage interface {
 	CreateOSBB(OSBB *entity.OSBB) error
+	GetOSBB(OSBBID uint64) (*entity.OSBB, error)
 	CreateAnnouncement(announcement *entity.Announcement) error
+	CreatePoll(poll *entity.Poll) error
+	GetPoll(PollID uint64) (*entity.Poll, error)
+	CreatAnswer(answer *entity.Answer) error
 }
 
 type TokenStorage interface {
