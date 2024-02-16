@@ -17,7 +17,6 @@ type User struct {
 	FullName
 	Password    Password
 	PhoneNumber PhoneNumber
-	Token       Token  `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE"`
 	OSBBID      uint64 `gorm:"index"`
 	Role        UserRole
 	database.PostgreSQLModel
@@ -90,49 +89,4 @@ type Answer struct {
 	TestAnswerID uint64 `gorm:"index"`
 	Content      Text
 	database.PostgreSQLModel
-}
-
-type InputUser struct {
-	FirstName       string `json:"first_name" binding:"required"`
-	Surname         string `json:"surname" binding:"required"`
-	Patronymic      string `json:"patronymic" binding:"required"`
-	Password        `json:"password" binding:"required"`
-	ApartmentNumber `json:"apartment_number" binding:"required"`
-	ApartmentArea   `json:"apartment_area" binding:"required"`
-}
-
-type InputOSBB struct {
-	FirstName   string `json:"first_name" binding:"required"`
-	Surname     string `json:"surname" binding:"required"`
-	Patronymic  string `json:"patronymic" binding:"required"`
-	Password    `json:"password" binding:"required"`
-	PhoneNumber `json:"phone_number" binding:"required"`
-	Name        `json:"name" binding:"required"`
-	EDRPOU      `json:"edrpou" binding:"required"`
-	Address     `json:"address" binding:"required"`
-	Rent        `json:"rent" binding:"required"`
-}
-
-type InputAnnouncement struct {
-	Title   Text `json:"title" binding:"required"`
-	Content Text `json:"content" binding:"required"`
-}
-
-type InputPoll struct {
-	Question   Text      `json:"question" binding:"required"`
-	FinishedAt time.Time `json:"finished_at" binding:"required"`
-}
-
-type InputPollTest struct {
-	Question   Text         `json:"question" binding:"required"`
-	TestAnswer []TestAnswer `json:"test_answer" binding:"required"`
-	FinishedAt time.Time    `json:"finished_at" binding:"required"`
-}
-
-type InputPollAnswer struct {
-	Content Text `json:"content" binding:"required"`
-}
-
-type InputPollAnswerTest struct {
-	TestAnswerID uint64 `json:"test-answer-id"  binding:"required"`
 }

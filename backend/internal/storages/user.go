@@ -29,3 +29,12 @@ func (s *userStorage) GetUser(UserID uint64) (*entity.User, error) {
 	}
 	return User, err
 }
+
+func (s *userStorage) GetUserByPhoneNumber(phoneNumber entity.PhoneNumber) (*entity.User, error) {
+	User := &entity.User{}
+	err := s.db.Model(&entity.User{}).Where(entity.User{PhoneNumber: phoneNumber}).First(User).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return User, err
+}

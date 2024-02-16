@@ -12,28 +12,41 @@ import (
 )
 
 func (h *Handler) registerOSBB(c *gin.Context) {
-	var input entity.InputOSBB
+	logger := h.Logger.Named("registerOSBB").WithContext(c)
 
-	body, _ := io.ReadAll(c.Request.Body)
+	var input entity.EventOSBBPayload
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to rea-d body request", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		return
+	}
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	// Check if there are any additional fields in the JSON body
-	if err := h.validateJSONTags(body, entity.InputOSBB{}); err != nil {
+	if err := h.validateJSONTags(body, entity.EventOSBBPayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
 		return
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		fmt.Println(err)
+		logger.Error("failed to bing JSON", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bing JSON: %w", err))
 		return
 	}
 
 	osbb, err := h.Services.OSBB.AddOSBB(input)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("failed to add osbb", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add osbb: %w", err))
 		return
 	}
 
 	token, err := h.Services.Token.GenerateToken(osbb.OSBBHead.ID)
 	if err != nil {
+		logger.Error("failed to generate token", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to generate token: %w", err))
 		return
 	}
 
@@ -44,34 +57,48 @@ func (h *Handler) registerOSBB(c *gin.Context) {
 }
 
 func (h *Handler) addAnnouncement(c *gin.Context) {
+	logger := h.Logger.Named("addAnnouncement").WithContext(c)
 
-	userID, err := getUserId(c)
+	userID, err := h.getUserId(c)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
 		return
 	}
 
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
 		return
 	}
 
-	body, _ := io.ReadAll(c.Request.Body)
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		return
+	}
+
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	// Check if there are any additional fields in the JSON body
-	if err := h.validateJSONTags(body, entity.InputAnnouncement{}); err != nil {
+	if err := h.validateJSONTags(body, entity.EventAnnouncementPayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
 		return
 	}
 
-	var input entity.InputAnnouncement
+	var input entity.EventAnnouncementPayload
 	if err := c.BindJSON(&input); err != nil {
-		fmt.Println(err)
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
 		return
 	}
 
 	announcement, err := h.Services.OSBB.AddAnnouncement(userID, osbbID, input)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("failed to add announcement", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add announcement: %w", err))
 		return
 	}
 
@@ -81,33 +108,48 @@ func (h *Handler) addAnnouncement(c *gin.Context) {
 }
 
 func (h *Handler) addPoll(c *gin.Context) {
+	logger := h.Logger.Named("addPoll").WithContext(c)
 
-	//userID, errs := getUserId(c)
-	//if errs != nil {
-	//	return
-	//}
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
 
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
 		return
 	}
 
-	body, _ := io.ReadAll(c.Request.Body)
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		return
+	}
+
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	// Check if there are any additional fields in the JSON body
-	if err := h.validateJSONTags(body, entity.InputPoll{}); err != nil {
-		fmt.Println(err)
+	if err := h.validateJSONTags(body, entity.EventPollPayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
 		return
 	}
 
-	var input entity.InputPoll
+	var input entity.EventPollPayload
 	if err := c.BindJSON(&input); err != nil {
-		fmt.Println(err)
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
 		return
 	}
 
-	poll, err := h.Services.OSBB.AddPoll(1, osbbID, input)
+	poll, err := h.Services.OSBB.AddPoll(userID, osbbID, input)
 	if err != nil {
+		logger.Error("failed to add poll", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add poll: %w", err))
 		return
 	}
 
@@ -117,33 +159,48 @@ func (h *Handler) addPoll(c *gin.Context) {
 }
 
 func (h *Handler) addPollTest(c *gin.Context) {
+	logger := h.Logger.Named("addPollTest").WithContext(c)
 
-	//userID, errs := getUserId(c)
-	//if errs != nil {
-	//	return
-	//}
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
 
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
 		return
 	}
 
-	body, _ := io.ReadAll(c.Request.Body)
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		return
+	}
+
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	// Check if there are any additional fields in the JSON body
-	if err := h.validateJSONTags(body, entity.InputPollTest{}); err != nil {
-		fmt.Println(err)
+	if err := h.validateJSONTags(body, entity.EventPollTestPayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
 		return
 	}
 
-	var input entity.InputPollTest
+	var input entity.EventPollTestPayload
 	if err := c.BindJSON(&input); err != nil {
-		fmt.Println(err)
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
 		return
 	}
 
-	poll, err := h.Services.OSBB.AddPollTest(1, osbbID, input)
+	poll, err := h.Services.OSBB.AddPollTest(userID, osbbID, input)
 	if err != nil {
+		logger.Error("failed to add poll test", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add poll test: %w", err))
 		return
 	}
 
@@ -153,34 +210,48 @@ func (h *Handler) addPollTest(c *gin.Context) {
 }
 
 func (h *Handler) addPollAnswer(c *gin.Context) {
+	logger := h.Logger.Named("addPollAnswer").WithContext(c)
 
-	//userID, errs := getUserId(c)
-	//if errs != nil {
-	//	return
-	//}
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
 
 	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
 	if err != nil {
+		logger.Error("failed to parse poll id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse poll id: %w", err))
 		return
 	}
 
-	body, _ := io.ReadAll(c.Request.Body)
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		return
+	}
+
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	// Check if there are any additional fields in the JSON body
-	if err := h.validateJSONTags(body, entity.InputPollAnswer{}); err != nil {
-		fmt.Println(err)
+	if err := h.validateJSONTags(body, entity.EventPollAnswerPayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
 		return
 	}
 
-	var input entity.InputPollAnswer
+	var input entity.EventPollAnswerPayload
 	if err := c.BindJSON(&input); err != nil {
-		fmt.Println(err)
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
 		return
 	}
 
-	answer, err := h.Services.OSBB.AddPollAnswer(1, pollID, input)
+	answer, err := h.Services.OSBB.AddPollAnswer(userID, pollID, input)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("failed to add poll answer", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add poll answer: %w", err))
 		return
 	}
 
@@ -190,34 +261,48 @@ func (h *Handler) addPollAnswer(c *gin.Context) {
 }
 
 func (h *Handler) addPollAnswerTest(c *gin.Context) {
+	logger := h.Logger.Named("addPollAnswerTest").WithContext(c)
 
-	//userID, errs := getUserId(c)
-	//if errs != nil {
-	//	return
-	//}
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
 
 	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
 	if err != nil {
+		logger.Error("failed to parse poll id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse poll id: %w", err))
 		return
 	}
 
-	body, _ := io.ReadAll(c.Request.Body)
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		return
+	}
+
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 	// Check if there are any additional fields in the JSON body
-	if err := h.validateJSONTags(body, entity.InputPollAnswerTest{}); err != nil {
-		fmt.Println(err)
+	if err := h.validateJSONTags(body, entity.EventPollAnswerTestPayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
 		return
 	}
 
-	var input entity.InputPollAnswerTest
+	var input entity.EventPollAnswerTestPayload
 	if err := c.BindJSON(&input); err != nil {
-		fmt.Println(err)
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
 		return
 	}
 
-	poll, err := h.Services.OSBB.AddPollAnswerTest(1, pollID, input)
+	poll, err := h.Services.OSBB.AddPollAnswerTest(userID, pollID, input)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("failed to add poll answer test", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add poll answer test: %w", err))
 		return
 	}
 

@@ -26,6 +26,7 @@ func NewStorages(db *gorm.DB) *Storages {
 type UserStorage interface {
 	CreateUser(User *entity.User) error
 	GetUser(UserID uint64) (*entity.User, error)
+	GetUserByPhoneNumber(phoneNumber entity.PhoneNumber) (*entity.User, error)
 }
 
 type BuildingStorage interface {

@@ -76,7 +76,7 @@ func Run() {
 		Storages: *storage,
 	}
 	service := services.Services{
-		User:  services.NewUserService(&serviceOptions),
+		Auth:  services.NewAuthService(&serviceOptions),
 		Token: services.NewTokenService(&serviceOptions),
 		OSBB:  services.NewOSBBService(&serviceOptions),
 	}
