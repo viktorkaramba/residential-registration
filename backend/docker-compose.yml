@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  residential-registration:
+    container_name: residential-registration-api
+    build: ./
+    command: ./api
+    ports:
+      - "80:8080"
+    depends_on:
+      - db
+    env_file: .env
+  db:
+    restart: always
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: residential_registration
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 0961533469Vi
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5

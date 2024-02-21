@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
