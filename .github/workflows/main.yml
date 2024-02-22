@@ -14,50 +14,50 @@ env:
   ENV_FILE_PATH: "backend/.env"
 
 jobs:
-    validation:
-      if: github.event.pull_request.merged && github.event.pull_request.base.ref == 'feature/backend'
-      needs: deploy
-    build_and_push:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout main
-            uses: actions/checkout@v2
-          - name: Login to DockerHub
-            uses: docker/login-action@v2
-            with:
-              username: ${{ secrets.DOCKERHUB_USERNAME }}
-              password: ${{ secrets.DOCKERHUB_TOKEN }}
-          - name: Build and push Docker Image
-            uses: docker/build-push-action@v4
-            with:
-              context: backend/
-              push: true
-              tags: viktorsvynar/residential-refistration-api:latest
-    deploy:
-      runs-on: ubuntu-latest
-      if: github.event_name == 'push' || github.event_name == 'pull_request'
-      needs: build_and_push
-      steps:
-        uses: appleboy/ssh-action@v0.1.3
+  validation:
+    if: github.event.pull_request.merged && github.event.pull_request.base.ref == 'feature/backend'
+    needs: deploy
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v2
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSHKEY }}
-          envs: IMAGE_NAME,ENV_FILE_PATH,CONTAINER_NAME
-          script: |
-            # Login into DockerHub
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: backend/
+          push: true
+          tags: viktorsvynar/residential-refistration-api:latest
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    needs: build_and_push
+    steps:
+    uses: appleboy/ssh-action@v0.1.3
+    with:
+      host: ${{ secrets.HOST }}
+      username: ${{ secrets.USERNAME }}
+      key: ${{ secrets.SSHKEY }}
+      envs: IMAGE_NAME,ENV_FILE_PATH,CONTAINER_NAME
+      script: |
+        # Login into DockerHub
+        docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-            export POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
-            # Stop running container
-            docker stop $(echo $CONTAINER_NAME)
+        export POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+        # Stop running container
+        docker stop $(echo $CONTAINER_NAME)
   
-            # Remove old container
-            docker rm $(echo $CONTAINER_NAME)
+        # Remove old container
+        docker rm $(echo $CONTAINER_NAME)
   
-            # Run a new container from a new image
-            docker run --env-file $(echo $ENV_FILE_PATH) -d \
-            --restart always \
-            --publish 80:8080 \
-            --name $(echo $CONTAINER_NAME) \
-            $(echo $IMAGE_NAME)
+        # Run a new container from a new image
+        docker run --env-file $(echo $ENV_FILE_PATH) -d \
+        --restart always \
+        --publish 80:8080 \
+        --name $(echo $CONTAINER_NAME) \
+        $(echo $IMAGE_NAME)
