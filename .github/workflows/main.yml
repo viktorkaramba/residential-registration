@@ -13,7 +13,6 @@ on:
 env:
   IMAGE_NAME: "viktorsvynar/residential-registration-api:latest"
   CONTAINER_NAME: "residential-registration-api-prod"
-  ENV_FILE_PATH: "./backend/.env"
 
 jobs:
   build_and_push:
@@ -48,7 +47,10 @@ jobs:
             # Login into DockerHub
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
     
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             export POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+            export POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+            export SIGNINKEY=${{ secrets.SIGNINKEY }}
             # Stop running container
             docker stop $(echo $CONTAINER_NAME)
       
@@ -56,7 +58,7 @@ jobs:
             docker rm $(echo $CONTAINER_NAME)
       
             # Run a new container from a new image
-            docker run --env-file $(echo $ENV_FILE_PATH) -d \
+            docker run -e POSTGRES_PASSWORD -e POSTGRES_HOST -e POSTGRES_PORT -e  -d \
             --restart always \
             --publish 80:8080 \
             --name $(echo $CONTAINER_NAME) \
