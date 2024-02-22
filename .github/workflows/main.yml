@@ -42,20 +42,20 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           envs: IMAGE_NAME,ENV_FILE_PATH,CONTAINER_NAME
-        script: |
-          # Login into DockerHub
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-  
-          export POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
-          # Stop running container
-          docker stop $(echo $CONTAINER_NAME)
+          script: |
+            # Login into DockerHub
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
     
-          # Remove old container
-          docker rm $(echo $CONTAINER_NAME)
-    
-          # Run a new container from a new image
-          docker run --env-file $(echo $ENV_FILE_PATH) -d \
-          --restart always \
-          --publish 80:8080 \
-          --name $(echo $CONTAINER_NAME) \
-          $(echo $IMAGE_NAME)
+            export POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+            # Stop running container
+            docker stop $(echo $CONTAINER_NAME)
+      
+            # Remove old container
+            docker rm $(echo $CONTAINER_NAME)
+      
+            # Run a new container from a new image
+            docker run --env-file $(echo $ENV_FILE_PATH) -d \
+            --restart always \
+            --publish 80:8080 \
+            --name $(echo $CONTAINER_NAME) \
+            $(echo $IMAGE_NAME)
