@@ -58,7 +58,7 @@ jobs:
             docker rm $(echo $CONTAINER_NAME)
       
             # Run a new container from a new image
-            docker run -e POSTGRES_PASSWORD -e POSTGRES_HOST -e POSTGRES_PORT -e  -d \
+            docker run -e POSTGRES_PASSWORD -e POSTGRES_HOST -e POSTGRES_PORT -e SIGNINKEY -d \
             --restart always \
             --publish 80:8080 \
             --name $(echo $CONTAINER_NAME) \
