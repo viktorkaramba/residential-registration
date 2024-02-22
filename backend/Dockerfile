@@ -12,7 +12,6 @@ FROM alpine:latest
 WORKDIR /root/
 
 COPY --from=0 /backend/bin/api .
-COPY --from=0 /backend/.env .
 COPY --from=0 /backend/config config/
 
 EXPOSE 80
