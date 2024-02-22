@@ -2,15 +2,13 @@ name: CI
 
 on:
   push:
-    branches-ignore:
-      - 'feature/frontend'
     branches:
       - main
+      - '!feature/frontend'
   pull_request:
-    branches-ignore:
-      - 'feature/frontend'
     branches:
       - main
+      - '!feature/frontend'
 
 env:
   IMAGE_NAME: "viktorsvynar/residential-registration-api:latest"
