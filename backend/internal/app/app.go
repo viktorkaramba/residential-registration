@@ -64,6 +64,8 @@ func Run() {
 		&entity.Poll{},
 		&entity.TestAnswer{},
 		&entity.Answer{},
+		&entity.Payment{},
+		&entity.Purchase{},
 	)
 	if err != nil {
 		return

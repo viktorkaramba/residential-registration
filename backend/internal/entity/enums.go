@@ -33,3 +33,15 @@ const (
 	PollTypeOpenAnswer PollType = "open_answer"
 	PollTypeTest       PollType = "test"
 )
+
+type Amount float64
+
+type Appointment string
+
+type PaymentStatus string
+
+const (
+	Paid         PaymentStatus = "paid"
+	NotPaid      PaymentStatus = "not_paid"
+	InProcessing PaymentStatus = "in_processing"
+)

@@ -52,3 +52,9 @@ type EventPollAnswerPayload struct {
 type EventPollAnswerTestPayload struct {
 	TestAnswerID uint64 `json:"test-answer-id"  binding:"required"`
 }
+
+type EventPaymentPayload struct {
+	Deadline    time.Time `json:"deadline" binding:"required"`
+	Amount      `json:"amount" binding:"required"`
+	Appointment `json:"appointment" binding:"required"`
+}

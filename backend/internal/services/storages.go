@@ -40,6 +40,8 @@ type OSBBStorage interface {
 	CreatePoll(poll *entity.Poll) error
 	GetPoll(PollID uint64) (*entity.Poll, error)
 	CreatAnswer(answer *entity.Answer) error
+	CreatePayment(payment *entity.Payment) error
+	CreateUserPayment(userPayment *entity.Purchase) error
 }
 
 type TokenStorage interface {

@@ -50,3 +50,11 @@ func (s *OSBBStorage) GetPoll(PollID uint64) (*entity.Poll, error) {
 func (s *OSBBStorage) CreatAnswer(answer *entity.Answer) error {
 	return s.db.Create(answer).Error
 }
+
+func (s *OSBBStorage) CreatePayment(payment *entity.Payment) error {
+	return s.db.Create(payment).Error
+}
+
+func (s *OSBBStorage) CreateUserPayment(userPayment *entity.Purchase) error {
+	return s.db.Create(userPayment).Error
+}

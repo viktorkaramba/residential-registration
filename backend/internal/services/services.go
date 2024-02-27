@@ -31,6 +31,8 @@ type OSBBService interface {
 	AddPollTest(UserID, OSBBID uint64, inputPollTest entity.EventPollTestPayload) (*entity.Poll, error)
 	AddPollAnswer(UserID, PollID uint64, inputPollAnswer entity.EventPollAnswerPayload) (*entity.Answer, error)
 	AddPollAnswerTest(UserID, PollID uint64, inputPollAnswerTest entity.EventPollAnswerTestPayload) (*entity.Answer, error)
+	AddPayment(UserID, OSBBID uint64, inputPayment entity.EventPaymentPayload) (*entity.Payment, error)
+	AddPurchase(UserID, PaymentID uint64) (*entity.Purchase, error)
 }
 
 type TokenService interface {

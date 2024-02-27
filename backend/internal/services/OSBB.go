@@ -3,6 +3,7 @@ package services
 import (
 	"residential-registration/backend/config"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/database"
 	"residential-registration/backend/pkg/errs"
 	"residential-registration/backend/pkg/logging"
 	"time"
@@ -228,4 +229,59 @@ func (s *osbbService) AddPollAnswerTest(UserID, PollID uint64, inputPollAnswerTe
 		return nil, errs.Err(err).Code("Failed to сreate test answer").Kind(errs.Database)
 	}
 	return answer, nil
+}
+
+func (s *osbbService) AddPayment(UserID, OSBBID uint64, inputPayment entity.EventPaymentPayload) (*entity.Payment, error) {
+	logger := s.logger.Named("AddPayment").
+		With("user_id", UserID).With("osbb_id", OSBBID).With("input_payment", inputPayment)
+
+	user, err := s.businessStorage.User.GetUser(UserID)
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user.Role != entity.UserRoleOSBBHEad {
+		logger.Error("User can not create a poll answer", "error", err)
+		return nil, errs.M("user not osbb head").Code("User can not create a poll answer").Kind(errs.Private)
+	}
+	payment := &entity.Payment{
+		OSBBID:      OSBBID,
+		CreatedAt:   time.Now().UTC(),
+		Deadline:    inputPayment.Deadline,
+		Amount:      inputPayment.Amount,
+		Appointment: inputPayment.Appointment,
+	}
+	err = s.businessStorage.OSBB.CreatePayment(payment)
+	if err != nil {
+		logger.Error("failed to create payment", "error", err)
+		return nil, errs.Err(err).Code("Failed to create payment").Kind(errs.Database)
+	}
+	return payment, nil
+}
+
+func (s *osbbService) AddPurchase(UserID, PaymentID uint64) (*entity.Purchase, error) {
+	logger := s.logger.Named("AddPayment").
+		With("user_id", UserID).With("payment_id", PaymentID)
+
+	user, err := s.businessStorage.User.GetUser(UserID)
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user.Role != entity.UserRoleOSBBHEad {
+		logger.Error("User can not create a poll answer", "error", err)
+		return nil, errs.M("user not osbb head").Code("User can not create a poll answer").Kind(errs.Private)
+	}
+	userPayment := &entity.Purchase{
+		PaymentID:       PaymentID,
+		UserID:          UserID,
+		PaymentStatus:   entity.Paid,
+		PostgreSQLModel: database.PostgreSQLModel{},
+	}
+	err = s.businessStorage.OSBB.CreateUserPayment(userPayment)
+	if err != nil {
+		logger.Error("failed to create payment", "error", err)
+		return nil, errs.Err(err).Code("Failed to create payment").Kind(errs.Database)
+	}
+	return userPayment, nil
 }
