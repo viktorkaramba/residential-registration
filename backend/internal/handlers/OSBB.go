@@ -107,6 +107,33 @@ func (h *Handler) addAnnouncement(c *gin.Context) {
 	})
 }
 
+func (h *Handler) getAllAnnouncement(c *gin.Context) {
+	logger := h.Logger.Named("getAllAnnouncement").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		return
+	}
+
+	announcements, err := h.Services.OSBB.ListAnnouncements(userID, osbbID)
+	if err != nil {
+		logger.Error("failed to add announcement", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add announcement: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, announcements)
+}
+
 func (h *Handler) addPoll(c *gin.Context) {
 	logger := h.Logger.Named("addPoll").WithContext(c)
 

@@ -3,6 +3,7 @@ package storages
 import (
 	"errors"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/internal/services"
 
 	"gorm.io/gorm"
 )
@@ -32,6 +33,17 @@ func (s *OSBBStorage) GetOSBB(OSBBID uint64) (*entity.OSBB, error) {
 
 func (s *OSBBStorage) CreateAnnouncement(announcement *entity.Announcement) error {
 	return s.db.Create(announcement).Error
+}
+
+func (s *OSBBStorage) ListAnnouncements(filter services.ListAnnouncementFilter) ([]entity.Announcement, error) {
+	stmt := s.db.
+		Model(&entity.Announcement{})
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where(entity.Announcement{OSBBID: *filter.OSBBID})
+	}
+	var announcements []entity.Announcement
+	return announcements, stmt.Order("created_at DESC").Find(&announcements).Error
 }
 
 func (s *OSBBStorage) CreatePoll(poll *entity.Poll) error {

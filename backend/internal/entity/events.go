@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type EventUserPayload struct {
 	FirstName       string `json:"first_name" binding:"required"`
@@ -57,4 +60,20 @@ type EventPaymentPayload struct {
 	Deadline    time.Time `json:"deadline" binding:"required"`
 	Amount      `json:"amount" binding:"required"`
 	Appointment `json:"appointment" binding:"required"`
+}
+
+type EventUserUpdatePayload struct {
+	*ApartmentNumber `json:"apartment_number"`
+	*ApartmentArea   `json:"apartment_area"`
+	FirstName        *string `json:"first_name"`
+	Surname          *string `json:"surname"`
+	Patronymic       *string `json:"patronymic"`
+	*PhoneNumber     `json:"phone_number"`
+}
+
+func (i EventUserUpdatePayload) Validate() error {
+	if i.ApartmentNumber == nil && i.ApartmentArea == nil && i.FirstName == nil && i.Surname == nil && i.Patronymic == nil && i.PhoneNumber == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
 }
