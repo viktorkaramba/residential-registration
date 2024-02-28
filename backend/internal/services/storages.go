@@ -29,7 +29,9 @@ type OSBBStorage interface {
 	CreateAnnouncement(announcement *entity.Announcement) error
 	ListAnnouncements(filter ListAnnouncementFilter) ([]entity.Announcement, error)
 	CreatePoll(poll *entity.Poll) error
-	GetPoll(PollID uint64) (*entity.Poll, error)
+	ListPolls(filter ListPollFilter) ([]entity.Poll, error)
+	GetPoll(PollID uint64, filter ListPollFilter) (*entity.Poll, error)
+	GetPollResult(PollID uint64) (*entity.PollResult, error)
 	CreatAnswer(answer *entity.Answer) error
 	CreatePayment(payment *entity.Payment) error
 	CreateUserPayment(userPayment *entity.Purchase) error
@@ -48,4 +50,9 @@ type ListUserFilter struct {
 
 type ListAnnouncementFilter struct {
 	OSBBID *uint64
+}
+
+type ListPollFilter struct {
+	OSBBID          *uint64
+	WithTestAnswers bool
 }

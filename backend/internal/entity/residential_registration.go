@@ -71,24 +71,24 @@ type Announcement struct {
 }
 
 type Poll struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
-	UserID uint64 `gorm:"index"`
-	OSBBID uint64 `gorm:"index"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"-"`
+	UserID uint64 `gorm:"index" json:"-"`
+	OSBBID uint64 `gorm:"index" json:"-"`
 
-	Question    Text
-	TestAnswer  []TestAnswer `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE"`
-	UserAnswers []Answer     `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Question    Text         `json:"question"`
+	TestAnswers []TestAnswer `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"test_answer"`
+	UserAnswers []Answer     `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"-"`
 
-	Type PollType
+	Type PollType `json:"type"`
 
-	CreatedAt  time.Time `gorm:"index"`
-	FinishedAt time.Time `gorm:"index"`
+	CreatedAt  time.Time `gorm:"index"  json:"created_at"`
+	FinishedAt time.Time `gorm:"index" json:"finished_at"`
 	database.PostgreSQLModel
 }
 
 type TestAnswer struct {
 	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
-	PollID uint64 `gorm:"index"`
+	PollID uint64 `gorm:"index" json:"-"`
 
 	Content Text `json:"content" binding:"required"`
 
@@ -97,13 +97,27 @@ type TestAnswer struct {
 
 type Answer struct {
 	ID           uint64 `gorm:"primaryKey;autoIncrement:true"`
-	PollID       uint64 `gorm:"index"`
+	PollID       uint64 `gorm:"index" json:"-"`
 	UserID       uint64 `gorm:"index"`
 	TestAnswerID uint64 `gorm:"index"`
 
 	Content Text
 
+	CreatedAt time.Time `gorm:"index"  json:"created_at"`
+	UpdateAt  time.Time `gorm:"index" json:"updated_at"`
+
 	database.PostgreSQLModel
+}
+
+type TestAnswerCount struct {
+	Id    uint64 `json:"test_answer_id" db:"id"`
+	Count uint64 `json:"count" db:"count"`
+}
+
+type PollResult struct {
+	Answer             []Answer          `json:"answers" db:"answers"`
+	CountOfTestAnswers []TestAnswerCount `json:"count_of_test_answers"`
+	CountOfAllAnswers  uint64            `json:"count_of_answers"`
 }
 
 type Payment struct {

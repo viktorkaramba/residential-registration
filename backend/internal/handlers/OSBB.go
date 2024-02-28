@@ -126,8 +126,8 @@ func (h *Handler) getAllAnnouncement(c *gin.Context) {
 
 	announcements, err := h.Services.OSBB.ListAnnouncements(userID, osbbID)
 	if err != nil {
-		logger.Error("failed to add announcement", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add announcement: %w", err))
+		logger.Error("failed to get list announcement", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get list announcement: %w", err))
 		return
 	}
 
@@ -236,6 +236,33 @@ func (h *Handler) addPollTest(c *gin.Context) {
 	})
 }
 
+func (h *Handler) getAllPolls(c *gin.Context) {
+	logger := h.Logger.Named("getAllPolls").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		return
+	}
+
+	polls, err := h.Services.OSBB.ListPolls(userID, osbbID)
+	if err != nil {
+		logger.Error("failed to get list polls", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get list polls: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, polls)
+}
+
 func (h *Handler) addPollAnswer(c *gin.Context) {
 	logger := h.Logger.Named("addPollAnswer").WithContext(c)
 
@@ -336,6 +363,40 @@ func (h *Handler) addPollAnswerTest(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id": poll.ID,
 	})
+}
+
+func (h *Handler) getAllPollsAnswers(c *gin.Context) {
+	logger := h.Logger.Named("getAllPollsAnswer").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		return
+	}
+
+	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		return
+	}
+
+	polls, err := h.Services.OSBB.GetPollResult(userID, osbbID, pollID)
+	if err != nil {
+		logger.Error("failed to get polls result", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get polls result: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, polls)
 }
 
 func (h *Handler) addPayment(c *gin.Context) {
