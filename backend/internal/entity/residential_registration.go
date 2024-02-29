@@ -12,14 +12,14 @@ type FullName struct {
 }
 
 type User struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
-	OSBBID uint64 `gorm:"index"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"-"`
+	OSBBID uint64 `gorm:"index" json:"osbbid"`
 
-	Apartment Apartment `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE"`
-	FullName
-	Password    Password
-	PhoneNumber PhoneNumber
-	Role        UserRole
+	Apartment   Apartment `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"apartment"`
+	FullName    `json:"full_name"`
+	Password    Password    `json:"-"`
+	PhoneNumber PhoneNumber `json:"phone_number"`
+	Role        UserRole    `json:"role"`
 
 	database.PostgreSQLModel
 }

@@ -25,6 +25,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 		osbb.POST("/:osbbID/inhabitants", h.registerInhabitant)
 		osbb.GET("/:osbbID/inhabitants", h.userIdentity, h.getAllInhabitants)
+		osbb.GET("/:osbbID/inhabitants/profile", h.userIdentity, h.getInhabitantsProfile)
 		osbb.PUT("/:osbbID/inhabitants", h.userIdentity, h.updateInhabitant)
 
 		osbb.POST("/:osbbID/announcements", h.userIdentity, h.addAnnouncement)

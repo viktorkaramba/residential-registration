@@ -35,7 +35,7 @@ func (s *OSBBStorage) CreateAnnouncement(announcement *entity.Announcement) erro
 	return s.db.Create(announcement).Error
 }
 
-func (s *OSBBStorage) ListAnnouncements(filter services.ListAnnouncementFilter) ([]entity.Announcement, error) {
+func (s *OSBBStorage) ListAnnouncements(filter services.AnnouncementFilter) ([]entity.Announcement, error) {
 	stmt := s.db.
 		Model(&entity.Announcement{})
 
@@ -50,7 +50,7 @@ func (s *OSBBStorage) CreatePoll(poll *entity.Poll) error {
 	return s.db.Create(poll).Error
 }
 
-func (s *OSBBStorage) ListPolls(filter services.ListPollFilter) ([]entity.Poll, error) {
+func (s *OSBBStorage) ListPolls(filter services.PollFilter) ([]entity.Poll, error) {
 	stmt := s.db.
 		Model(&entity.Poll{})
 
@@ -64,9 +64,12 @@ func (s *OSBBStorage) ListPolls(filter services.ListPollFilter) ([]entity.Poll, 
 	return polls, stmt.Order("created_at DESC").Find(&polls).Error
 }
 
-func (s *OSBBStorage) GetPoll(PollID uint64, filter services.ListPollFilter) (*entity.Poll, error) {
+func (s *OSBBStorage) GetPoll(PollID uint64, filter services.PollFilter) (*entity.Poll, error) {
 	poll := &entity.Poll{}
 	stmt := s.db.Model(&entity.Poll{})
+	if filter.OSBBID != nil {
+		stmt = stmt.Where(entity.Poll{OSBBID: *filter.OSBBID})
+	}
 	if filter.WithTestAnswers {
 		stmt = stmt.Preload("TestAnswers")
 	}

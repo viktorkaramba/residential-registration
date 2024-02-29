@@ -90,6 +90,26 @@ func (h *Handler) getAllInhabitants(c *gin.Context) {
 	c.JSON(http.StatusOK, inhabitants)
 }
 
+func (h *Handler) getInhabitantsProfile(c *gin.Context) {
+	logger := h.Logger.Named("getInhabitantsProfile").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	inhabitant, err := h.Services.OSBB.GetInhabitant(userID)
+	if err != nil {
+		logger.Error("failed to get all inhabitants", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get all inhabitants: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, inhabitant)
+}
+
 func (h *Handler) updateInhabitant(c *gin.Context) {
 	logger := h.Logger.Named("updateInhabitant").WithContext(c)
 

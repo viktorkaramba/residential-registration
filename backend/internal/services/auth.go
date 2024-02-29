@@ -65,15 +65,16 @@ func (s *authService) Login(inputLogin entity.EventLoginPayload) (*entity.User, 
 	logger := s.logger.Named("Login").
 		With("input_login", inputLogin)
 
-	user, err := s.businessStorage.User.GetUserByPhoneNumber(inputLogin.PhoneNumber)
-
+	user, err := s.businessStorage.User.GetUser(0, UserFilter{
+		PhoneNumber: &inputLogin.PhoneNumber,
+	})
 	if err != nil {
-		logger.Error("failed to get building", "error", err)
-		return nil, errs.Err(err).Code("Failed to get building").Kind(errs.Database)
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
 	if user == nil {
 		logger.Error("user do not exist", "error", err)
-		return nil, errs.M("user not found").Code("Building do not exist").Kind(errs.NotExist)
+		return nil, errs.M("user not found").Code("User do not exist").Kind(errs.NotExist)
 	}
 
 	if user.Password != inputLogin.Password {

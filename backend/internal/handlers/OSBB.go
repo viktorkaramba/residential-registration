@@ -273,6 +273,13 @@ func (h *Handler) addPollAnswer(c *gin.Context) {
 		return
 	}
 
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		return
+	}
+
 	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse poll id", "error", err)
@@ -302,7 +309,7 @@ func (h *Handler) addPollAnswer(c *gin.Context) {
 		return
 	}
 
-	answer, err := h.Services.OSBB.AddPollAnswer(userID, pollID, input)
+	answer, err := h.Services.OSBB.AddPollAnswer(userID, pollID, osbbID, input)
 	if err != nil {
 		logger.Error("failed to add poll answer", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add poll answer: %w", err))
@@ -321,6 +328,13 @@ func (h *Handler) addPollAnswerTest(c *gin.Context) {
 	if err != nil {
 		logger.Error("failed to get user id", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
 		return
 	}
 
@@ -353,7 +367,7 @@ func (h *Handler) addPollAnswerTest(c *gin.Context) {
 		return
 	}
 
-	poll, err := h.Services.OSBB.AddPollAnswerTest(userID, pollID, input)
+	poll, err := h.Services.OSBB.AddPollAnswerTest(userID, pollID, osbbID, input)
 	if err != nil {
 		logger.Error("failed to add poll answer test", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add poll answer test: %w", err))

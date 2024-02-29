@@ -56,10 +56,14 @@ func (s *osbbService) AddOSBB(inputOSBB entity.EventOSBBPayload) (*entity.OSBB, 
 func (s *osbbService) AddAnnouncement(UserID, OSBBID uint64, inputAnnouncement entity.EventAnnouncementPayload) (*entity.Announcement, error) {
 	logger := s.logger.Named("AddAnnouncement").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("input_announcement", inputAnnouncement)
-	user, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	if user.Role != entity.UserRoleOSBBHEad {
 		logger.Error("User can not create an announcement", "error", err)
@@ -89,17 +93,21 @@ func (s *osbbService) ListAnnouncements(UserID, OSBBID uint64) ([]entity.Announc
 	logger := s.logger.Named("ListAnnouncements").
 		With("user_id", UserID).With("osbb_id", OSBBID)
 
-	_, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	osbb, err := s.businessStorage.OSBB.GetOSBB(OSBBID)
 	if osbb == nil {
 		logger.Error("osbb do not exist", "error", err)
 		return nil, errs.M("osbb not found").Code("Osbb do not exist").Kind(errs.Database)
 	}
-	announcements, err := s.businessStorage.OSBB.ListAnnouncements(ListAnnouncementFilter{OSBBID: &OSBBID})
+	announcements, err := s.businessStorage.OSBB.ListAnnouncements(AnnouncementFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get list announcements", "error", err)
 		return nil, errs.Err(err).Code("Failed to get list announcements").Kind(errs.Database)
@@ -110,10 +118,14 @@ func (s *osbbService) ListAnnouncements(UserID, OSBBID uint64) ([]entity.Announc
 func (s *osbbService) AddPoll(UserID, OSBBID uint64, inputPoll entity.EventPollPayload) (*entity.Poll, error) {
 	logger := s.logger.Named("AddPoll").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("input_poll", inputPoll)
-	user, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	if user.Role != entity.UserRoleOSBBHEad {
 		logger.Error("User can not create a poll", "error", err)
@@ -143,10 +155,14 @@ func (s *osbbService) AddPoll(UserID, OSBBID uint64, inputPoll entity.EventPollP
 func (s *osbbService) AddPollTest(UserID, OSBBID uint64, inputPollTest entity.EventPollTestPayload) (*entity.Poll, error) {
 	logger := s.logger.Named("AddPollTest").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("input_poll_test", inputPollTest)
-	user, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	if user.Role != entity.UserRoleOSBBHEad {
 		logger.Error("User can not create a poll test", "error", err)
@@ -178,17 +194,21 @@ func (s *osbbService) ListPolls(UserID, OSBBID uint64) ([]entity.Poll, error) {
 	logger := s.logger.Named("ListPolls").
 		With("user_id", UserID).With("osbb_id", OSBBID)
 
-	_, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	osbb, err := s.businessStorage.OSBB.GetOSBB(OSBBID)
 	if osbb == nil {
 		logger.Error("osbb do not exist", "error", err)
 		return nil, errs.M("osbb not found").Code("Osbb do not exist").Kind(errs.Database)
 	}
-	polls, err := s.businessStorage.OSBB.ListPolls(ListPollFilter{OSBBID: &OSBBID, WithTestAnswers: true})
+	polls, err := s.businessStorage.OSBB.ListPolls(PollFilter{OSBBID: &OSBBID, WithTestAnswers: true})
 	if err != nil {
 		logger.Error("failed to get list polls", "error", err)
 		return nil, errs.Err(err).Code("Failed to get list polls").Kind(errs.Database)
@@ -196,19 +216,20 @@ func (s *osbbService) ListPolls(UserID, OSBBID uint64) ([]entity.Poll, error) {
 	return polls, nil
 }
 
-func (s *osbbService) AddPollAnswer(UserID, PollID uint64, inputPollAnswer entity.EventPollAnswerPayload) (*entity.Answer, error) {
+func (s *osbbService) AddPollAnswer(UserID, PollID, OSBBID uint64, inputPollAnswer entity.EventPollAnswerPayload) (*entity.Answer, error) {
 	logger := s.logger.Named("AddPollAnswer").
-		With("user_id", UserID).With("poll_id", PollID).With("input_poll_answer", inputPollAnswer)
-	user, err := s.businessStorage.User.GetUser(UserID)
+		With("user_id", UserID).With("poll_id", PollID).With("osbb_id", OSBBID).
+		With("input_poll_answer", inputPollAnswer)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user.Role != entity.UserRoleOSBBHEad {
-		logger.Error("User can not create a poll answer", "error", err)
-		return nil, errs.M("user not osbb head").Code("User can not create a poll answer").Kind(errs.Private)
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
-	poll, err := s.businessStorage.OSBB.GetPoll(PollID, ListPollFilter{WithTestAnswers: false})
+	poll, err := s.businessStorage.OSBB.GetPoll(PollID, PollFilter{OSBBID: &OSBBID, WithTestAnswers: false})
 	if err != nil {
 		logger.Error("failed to get poll", "error", err)
 		return nil, errs.M("failed to get poll").Code("Failed to get poll").Kind(errs.Database)
@@ -230,16 +251,21 @@ func (s *osbbService) AddPollAnswer(UserID, PollID uint64, inputPollAnswer entit
 	return answer, nil
 }
 
-func (s *osbbService) AddPollAnswerTest(UserID, PollID uint64, inputPollAnswerTest entity.EventPollAnswerTestPayload) (*entity.Answer, error) {
+func (s *osbbService) AddPollAnswerTest(UserID, PollID, OSBBID uint64, inputPollAnswerTest entity.EventPollAnswerTestPayload) (*entity.Answer, error) {
 	logger := s.logger.Named("AddPollAnswerTest").
-		With("user_id", UserID).With("poll_id", PollID).With("input_poll_answer_test", inputPollAnswerTest)
+		With("user_id", UserID).With("poll_id", PollID).With("osbb_id", PollID).
+		With("input_poll_answer_test", inputPollAnswerTest)
 
-	_, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	poll, err := s.businessStorage.OSBB.GetPoll(PollID, ListPollFilter{WithTestAnswers: true})
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	poll, err := s.businessStorage.OSBB.GetPoll(PollID, PollFilter{OSBBID: &OSBBID, WithTestAnswers: true})
 	if err != nil {
 		logger.Error("failed to get poll", "error", err)
 		return nil, errs.M("failed to get poll").Code("Failed to get poll").Kind(errs.Database)
@@ -275,10 +301,14 @@ func (s *osbbService) GetPollResult(UserID, OSBBID, PollID uint64) (*entity.Poll
 	logger := s.logger.Named("ListPollsAnswers").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("poll_id", PollID)
 
-	_, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	osbb, err := s.businessStorage.OSBB.GetOSBB(OSBBID)
 	if osbb == nil {
@@ -297,10 +327,14 @@ func (s *osbbService) AddPayment(UserID, OSBBID uint64, inputPayment entity.Even
 	logger := s.logger.Named("AddPayment").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("input_payment", inputPayment)
 
-	user, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	if user.Role != entity.UserRoleOSBBHEad {
 		logger.Error("User can not create a poll answer", "error", err)
@@ -325,10 +359,14 @@ func (s *osbbService) AddPurchase(UserID, PaymentID uint64) (*entity.Purchase, e
 	logger := s.logger.Named("AddPayment").
 		With("user_id", UserID).With("payment_id", PaymentID)
 
-	user, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	if user.Role != entity.UserRoleOSBBHEad {
 		logger.Error("User can not create a poll answer", "error", err)
@@ -351,7 +389,7 @@ func (s *osbbService) AddPurchase(UserID, PaymentID uint64) (*entity.Purchase, e
 func (s *osbbService) GetInhabitant(UserID uint64) (*entity.User, error) {
 	logger := s.logger.Named("GetInhabitant").With("user_id", UserID)
 
-	inhabitant, err := s.businessStorage.User.GetUser(UserID)
+	inhabitant, err := s.businessStorage.User.GetUser(UserID, UserFilter{})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
@@ -364,10 +402,14 @@ func (s *osbbService) ListInhabitants(UserID, OSBBID uint64) ([]entity.User, err
 	logger := s.logger.Named("ListInhabitans").
 		With("user_id", UserID).With("osbb_id", OSBBID)
 
-	user, err := s.businessStorage.User.GetUser(UserID)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	if user.Role != entity.UserRoleOSBBHEad {
 		logger.Error("User can not create a poll answer", "error", err)
@@ -378,7 +420,7 @@ func (s *osbbService) ListInhabitants(UserID, OSBBID uint64) ([]entity.User, err
 		logger.Error("osbb do not exist", "error", err)
 		return nil, errs.M("osbb not found").Code("Osbb do not exist").Kind(errs.Database)
 	}
-	inhabitants, err := s.businessStorage.User.ListUsers(ListUserFilter{OSBBID: &OSBBID})
+	inhabitants, err := s.businessStorage.User.ListUsers(UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get list users", "error", err)
 		return nil, errs.Err(err).Code("Failed to get list users").Kind(errs.Database)
@@ -389,12 +431,20 @@ func (s *osbbService) ListInhabitants(UserID, OSBBID uint64) ([]entity.User, err
 func (s *osbbService) UpdateInhabitant(UserID, OSBBID uint64, inhabitant entity.EventUserUpdatePayload) error {
 	logger := s.logger.Named("UpdateInhabitant").
 		With("user_id", UserID).With("inhabitant", inhabitant)
-
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user != nil {
+		logger.Error("user do not exist", "error", err)
+		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
 	if err := inhabitant.Validate(); err != nil {
 		logger.Error("failed to validate update inhabitant data", "error", err)
 		return errs.Err(err).Code("failed to validate update inhabitant data").Kind(errs.Validation)
 	}
-	err := s.businessStorage.User.UpdateUser(UserID, OSBBID, &inhabitant)
+	err = s.businessStorage.User.UpdateUser(UserID, OSBBID, &inhabitant)
 	if err != nil {
 		logger.Error("failed to update inhabitant", "error", err)
 		return errs.Err(err).Code("Failed to update inhabitant").Kind(errs.Database)
