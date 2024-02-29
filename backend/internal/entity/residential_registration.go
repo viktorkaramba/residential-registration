@@ -12,13 +12,15 @@ type FullName struct {
 }
 
 type User struct {
-	ID        uint64    `gorm:"primaryKey;autoIncrement:true"`
-	Apartment Apartment `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE"`
-	FullName
-	Password    Password
-	PhoneNumber PhoneNumber
-	OSBBID      uint64 `gorm:"index"`
-	Role        UserRole
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"-"`
+	OSBBID uint64 `gorm:"index" json:"osbbid"`
+
+	Apartment   Apartment `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"apartment"`
+	FullName    `json:"full_name"`
+	Password    Password    `json:"-"`
+	PhoneNumber PhoneNumber `json:"phone_number"`
+	Role        UserRole    `json:"role"`
+
 	database.PostgreSQLModel
 }
 
@@ -26,67 +28,117 @@ type Apartment struct {
 	ID         uint64 `gorm:"primaryKey;autoIncrement:true"`
 	BuildingID uint64 `gorm:"index"`
 	UserID     uint64 `gorm:"index"`
-	Number     ApartmentNumber
-	Area       ApartmentArea
+
+	Number ApartmentNumber
+	Area   ApartmentArea
+
 	database.PostgreSQLModel
 }
 
 type Building struct {
-	ID         uint64      `gorm:"primaryKey;autoIncrement:true"`
-	OSBBID     uint64      `gorm:"index"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
+	OSBBID uint64 `gorm:"index"`
+
 	Apartments []Apartment `gorm:"foreignKey:BuildingID;OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Address    Address
+
 	database.PostgreSQLModel
 }
 
 type OSBB struct {
-	ID           uint64         `gorm:"primaryKey;autoIncrement:true"`
-	OSBBHead     User           `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+	ID uint64 `gorm:"primaryKey;autoIncrement:true"`
+
 	Building     Building       `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Announcement []Announcement `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Name         Name
-	EDRPOU       EDRPOU `gorm:"index"`
-	Rent         Rent
+
+	OSBBHead User `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Name     Name
+	EDRPOU   EDRPOU `gorm:"index"`
+	Rent     Rent
 	database.PostgreSQLModel
 }
 
 type Announcement struct {
-	ID        uint64 `gorm:"primaryKey;autoIncrement:true"`
-	UserID    uint64 `gorm:"index"`
-	OSBBID    uint64 `gorm:"index"`
-	Title     Text
-	Content   Text
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
+	UserID uint64 `gorm:"index"`
+	OSBBID uint64 `gorm:"index"`
+
+	Title   Text
+	Content Text
+
 	CreatedAt time.Time `gorm:"index"`
 	database.PostgreSQLModel
 }
 
 type Poll struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
-	UserID uint64 `gorm:"index"`
-	OSBBID uint64 `gorm:"index"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"-"`
+	UserID uint64 `gorm:"index" json:"-"`
+	OSBBID uint64 `gorm:"index" json:"-"`
 
-	Question    Text
-	TestAnswer  []TestAnswer `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE"`
-	UserAnswers []Answer     `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Question    Text         `json:"question"`
+	TestAnswers []TestAnswer `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"test_answer"`
+	UserAnswers []Answer     `gorm:"foreignKey:PollID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"-"`
 
-	Type       PollType
-	CreatedAt  time.Time `gorm:"index"`
-	FinishedAt time.Time `gorm:"index"`
+	Type PollType `json:"type"`
+
+	CreatedAt  time.Time `gorm:"index"  json:"created_at"`
+	FinishedAt time.Time `gorm:"index" json:"finished_at"`
 	database.PostgreSQLModel
 }
 
 type TestAnswer struct {
-	ID      uint64 `gorm:"primaryKey;autoIncrement:true"`
-	PollID  uint64 `gorm:"index"`
-	Content Text   `json:"content" binding:"required"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
+	PollID uint64 `gorm:"index" json:"-"`
+
+	Content Text `json:"content" binding:"required"`
+
 	database.PostgreSQLModel
 }
 
 type Answer struct {
 	ID           uint64 `gorm:"primaryKey;autoIncrement:true"`
-	PollID       uint64 `gorm:"index"`
+	PollID       uint64 `gorm:"index" json:"-"`
 	UserID       uint64 `gorm:"index"`
 	TestAnswerID uint64 `gorm:"index"`
-	Content      Text
+
+	Content Text
+
+	CreatedAt time.Time `gorm:"index"  json:"created_at"`
+	UpdateAt  time.Time `gorm:"index" json:"updated_at"`
+
+	database.PostgreSQLModel
+}
+
+type TestAnswerCount struct {
+	Id    uint64 `json:"test_answer_id" db:"id"`
+	Count uint64 `json:"count" db:"count"`
+}
+
+type PollResult struct {
+	Answer             []Answer          `json:"answers" db:"answers"`
+	CountOfTestAnswers []TestAnswerCount `json:"count_of_test_answers"`
+	CountOfAllAnswers  uint64            `json:"count_of_answers"`
+}
+
+type Payment struct {
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
+	OSBBID uint64 `gorm:"index"`
+
+	Amount      Amount
+	Appointment Appointment
+
+	CreatedAt time.Time `gorm:"index"`
+	Deadline  time.Time `gorm:"index"`
+
+	database.PostgreSQLModel
+}
+
+type Purchase struct {
+	ID        uint64 `gorm:"primaryKey;autoIncrement:true"`
+	PaymentID uint64 `gorm:"index"`
+	UserID    uint64 `gorm:"index"`
+
+	PaymentStatus PaymentStatus
+
 	database.PostgreSQLModel
 }
