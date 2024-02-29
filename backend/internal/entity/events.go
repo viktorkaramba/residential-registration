@@ -71,6 +71,10 @@ type EventUserUpdatePayload struct {
 	*PhoneNumber     `json:"phone_number"`
 }
 
+type EventTokenPayload struct {
+	TokenValue `json:"token" binding:"required"`
+}
+
 func (i EventUserUpdatePayload) Validate() error {
 	if i.ApartmentNumber == nil && i.ApartmentArea == nil && i.FirstName == nil && i.Surname == nil && i.Patronymic == nil && i.PhoneNumber == nil {
 		return errors.New("update structure has no value")

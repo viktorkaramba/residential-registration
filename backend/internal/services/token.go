@@ -124,6 +124,13 @@ func (s *tokenService) RefreshToken(UserID uint64) (string, error) {
 		logger.Error("failed to sign token", "error", err)
 		return "", errs.Err(err).Code("Failed to sign token").Kind(errs.Private)
 	}
+	newToken := &entity.Token{Value: entity.TokenValue(tokenSigned),
+		UserID: UserID, Revoked: false}
+	err = s.businessStorage.Token.CreateToken(newToken)
+	if err != nil {
+		logger.Error("failed to create token", "error", err)
+		return "", errs.Err(err).Code("Failed to create token").Kind(errs.Database)
+	}
 
 	return tokenSigned, err
 }

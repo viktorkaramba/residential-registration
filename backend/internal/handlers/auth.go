@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -72,5 +73,53 @@ func (h *Handler) logout(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User Logout successfully",
+	})
+}
+
+func (h *Handler) refreshToken(c *gin.Context) {
+	logger := h.Logger.Named("refreshToken").WithContext(c)
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		return
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+	// Check if there are any additional fields in the JSON body
+	if err := h.validateJSONTags(body, entity.EventTokenPayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
+		return
+	}
+
+	var input entity.EventTokenPayload
+	if err := c.BindJSON(&input); err != nil {
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		return
+	}
+
+	oldToken, err := h.Services.Token.GetByToken(string(input.TokenValue))
+	if err != nil {
+		logger.Error("failed to get old token", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get old token: %w", err))
+		return
+	}
+	if oldToken.Revoked {
+		logger.Error("failed to refresh token", "error", errors.New("token is revoked"))
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to refresh token: %w", errors.New("token is revoked")))
+		return
+	}
+	newToken, err := h.Services.Token.RefreshToken(oldToken.UserID)
+	if err != nil {
+		logger.Error("failed to refresh token", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to refresh token: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": newToken,
 	})
 }
