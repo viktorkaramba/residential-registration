@@ -20,6 +20,7 @@ type (
 		LogLevel       string `env:"LOG_LEVEL" env-default:"info"`
 		SaveLogsToFile bool   `env:"SAVE_LOGS_TO_FILE" env-default:"false"`
 		TimeLocation   string `env:"TIME_LOCATION" env-default:"Europe/Kyiv"`
+		Salt           string `env:"SALT" env-default:""`
 	}
 	Server struct {
 		Port string `env:"PORT" env-default:"8080"`
