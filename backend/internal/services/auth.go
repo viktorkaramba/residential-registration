@@ -1,6 +1,8 @@
 package services
 
 import (
+	"crypto/sha1"
+	"fmt"
 	"residential-registration/backend/config"
 	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/pkg/errs"
@@ -48,7 +50,7 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 			Surname:    inputUser.Surname,
 			Patronymic: inputUser.Patronymic,
 		},
-		Password:    inputUser.Password,
+		Password:    s.generatePasswordHash(string(inputUser.Password)),
 		PhoneNumber: inputUser.PhoneNumber,
 		Role:        entity.UserRoleInhabitant,
 	}
@@ -65,18 +67,19 @@ func (s *authService) Login(inputLogin entity.EventLoginPayload) (*entity.User, 
 	logger := s.logger.Named("Login").
 		With("input_login", inputLogin)
 
-	user, err := s.businessStorage.User.GetUserByPhoneNumber(inputLogin.PhoneNumber)
-
+	user, err := s.businessStorage.User.GetUser(0, UserFilter{
+		PhoneNumber: &inputLogin.PhoneNumber,
+	})
 	if err != nil {
-		logger.Error("failed to get building", "error", err)
-		return nil, errs.Err(err).Code("Failed to get building").Kind(errs.Database)
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
 	if user == nil {
 		logger.Error("user do not exist", "error", err)
-		return nil, errs.M("user not found").Code("Building do not exist").Kind(errs.NotExist)
+		return nil, errs.M("user not found").Code("User do not exist").Kind(errs.NotExist)
 	}
 
-	if user.Password != inputLogin.Password {
+	if user.Password != s.generatePasswordHash(string(inputLogin.Password)) {
 		logger.Error("incorrect password", "error", err)
 		return nil, errs.M("incorrect password").Code("Failed to login").Kind(errs.Private)
 	}
@@ -108,4 +111,10 @@ func (s *authService) Logout(token entity.TokenValue) error {
 		return errs.Err(err).Code("Failed to revoke all users tokens").Kind(errs.Database)
 	}
 	return nil
+}
+
+func (s *authService) generatePasswordHash(password string) entity.Password {
+	hash := sha1.New()
+	hash.Write([]byte(password))
+	return entity.Password(fmt.Sprintf("%x", hash.Sum([]byte(s.config.Salt))))
 }

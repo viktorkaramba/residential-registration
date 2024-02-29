@@ -9,6 +9,7 @@ import (
 	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/internal/handlers"
 	"residential-registration/backend/internal/services"
+	"residential-registration/backend/internal/storages"
 	"residential-registration/backend/pkg/database"
 	"residential-registration/backend/pkg/logging"
 	"syscall"
@@ -64,16 +65,23 @@ func Run() {
 		&entity.Poll{},
 		&entity.TestAnswer{},
 		&entity.Answer{},
+		&entity.Payment{},
+		&entity.Purchase{},
 	)
 	if err != nil {
 		return
 	}
 
-	storage := services.NewStorages(sql.DB)
+	storage := services.Storages{
+		User:     storages.NewUserStorage(sql.DB),
+		Building: storages.NewBuildingStorage(sql.DB),
+		OSBB:     storages.NewOSBBStorage(sql.DB),
+		Token:    storages.NewTokenStorage(sql.DB),
+	}
 	serviceOptions := services.Options{
 		Logger:   logger,
 		Config:   conf,
-		Storages: *storage,
+		Storages: storage,
 	}
 	service := services.Services{
 		Auth:  services.NewAuthService(&serviceOptions),
