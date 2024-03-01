@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/errs"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +18,8 @@ func (h *Handler) login(c *gin.Context) {
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 
@@ -32,7 +34,8 @@ func (h *Handler) login(c *gin.Context) {
 	var input entity.EventLoginPayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -82,7 +85,9 @@ func (h *Handler) refreshToken(c *gin.Context) {
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
+
 		return
 	}
 
@@ -97,7 +102,8 @@ func (h *Handler) refreshToken(c *gin.Context) {
 	var input entity.EventTokenPayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
