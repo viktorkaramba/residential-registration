@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"

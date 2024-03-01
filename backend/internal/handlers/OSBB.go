@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -415,7 +416,7 @@ func (h *Handler) getAllPollsAnswers(c *gin.Context) {
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
 		h.sendErrResponse(c, h.Logger,
-			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))n
 		return
 	}
 
