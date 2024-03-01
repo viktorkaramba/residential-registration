@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/errs"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +20,9 @@ func (h *Handler) registerOSBB(c *gin.Context) {
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		logger.Error("failed to rea-d body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
@@ -32,7 +35,8 @@ func (h *Handler) registerOSBB(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bing JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bing JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -69,14 +73,16 @@ func (h *Handler) addAnnouncement(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 
@@ -91,7 +97,8 @@ func (h *Handler) addAnnouncement(c *gin.Context) {
 	var input entity.EventAnnouncementPayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -120,7 +127,8 @@ func (h *Handler) getAllAnnouncement(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse osbb id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
@@ -147,14 +155,16 @@ func (h *Handler) addPoll(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse osbb id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 
@@ -169,7 +179,8 @@ func (h *Handler) addPoll(c *gin.Context) {
 	var input entity.EventPollPayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -198,14 +209,16 @@ func (h *Handler) addPollTest(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse osbb id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 
@@ -220,7 +233,8 @@ func (h *Handler) addPollTest(c *gin.Context) {
 	var input entity.EventPollTestPayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -249,7 +263,8 @@ func (h *Handler) getAllPolls(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse osbb id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
@@ -276,21 +291,25 @@ func (h *Handler) addPollAnswer(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse osbb id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
 	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse poll id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse poll id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse poll id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
+
 		return
 	}
 
@@ -305,7 +324,8 @@ func (h *Handler) addPollAnswer(c *gin.Context) {
 	var input entity.EventPollAnswerPayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -334,21 +354,25 @@ func (h *Handler) addPollAnswerTest(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse osbb id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
 	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse poll id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse poll id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse poll id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
+
 		return
 	}
 
@@ -363,7 +387,8 @@ func (h *Handler) addPollAnswerTest(c *gin.Context) {
 	var input entity.EventPollAnswerTestPayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -392,14 +417,16 @@ func (h *Handler) getAllPollsAnswers(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse osbb id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
 	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse poll id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
@@ -426,14 +453,16 @@ func (h *Handler) addPayment(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse osbb id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 
@@ -448,7 +477,8 @@ func (h *Handler) addPayment(c *gin.Context) {
 	var input entity.EventPaymentPayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -477,7 +507,8 @@ func (h *Handler) makePurchase(c *gin.Context) {
 	paymentID, err := strconv.ParseUint(c.Param("paymentID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(errors.New("failed to parse osbb id")).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
