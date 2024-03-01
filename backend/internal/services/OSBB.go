@@ -61,7 +61,7 @@ func (s *osbbService) AddAnnouncement(UserID, OSBBID uint64, inputAnnouncement e
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -98,7 +98,7 @@ func (s *osbbService) ListAnnouncements(UserID, OSBBID uint64) ([]entity.Announc
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -123,7 +123,7 @@ func (s *osbbService) AddPoll(UserID, OSBBID uint64, inputPoll entity.EventPollP
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -160,7 +160,7 @@ func (s *osbbService) AddPollTest(UserID, OSBBID uint64, inputPollTest entity.Ev
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -195,7 +195,7 @@ func (s *osbbService) ListPolls(UserID, OSBBID uint64) ([]entity.Poll, error) {
 		With("user_id", UserID).With("osbb_id", OSBBID)
 
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
-	if err != nil {
+	if err == nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
@@ -225,7 +225,7 @@ func (s *osbbService) AddPollAnswer(UserID, PollID, OSBBID uint64, inputPollAnsw
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -261,7 +261,7 @@ func (s *osbbService) AddPollAnswerTest(UserID, PollID, OSBBID uint64, inputPoll
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -306,7 +306,7 @@ func (s *osbbService) GetPollResult(UserID, OSBBID, PollID uint64) (*entity.Poll
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -332,7 +332,7 @@ func (s *osbbService) AddPayment(UserID, OSBBID uint64, inputPayment entity.Even
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -364,7 +364,7 @@ func (s *osbbService) AddPurchase(UserID, PaymentID uint64) (*entity.Purchase, e
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -407,7 +407,7 @@ func (s *osbbService) ListInhabitants(UserID, OSBBID uint64) ([]entity.User, err
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
@@ -436,7 +436,7 @@ func (s *osbbService) UpdateInhabitant(UserID, OSBBID uint64, inhabitant entity.
 		logger.Error("failed to get user", "error", err)
 		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
