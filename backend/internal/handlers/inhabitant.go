@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/errs"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -17,14 +19,16 @@ func (h *Handler) registerInhabitant(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 
@@ -39,7 +43,8 @@ func (h *Handler) registerInhabitant(c *gin.Context) {
 	var input entity.EventUserPayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -76,7 +81,8 @@ func (h *Handler) getAllInhabitants(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 
@@ -122,13 +128,15 @@ func (h *Handler) updateInhabitant(c *gin.Context) {
 	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to parse osbb id: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
 		return
 	}
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to read body request: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 
@@ -143,7 +151,8 @@ func (h *Handler) updateInhabitant(c *gin.Context) {
 	var input entity.EventUserUpdatePayload
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to bind JSON: %w", err))
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
