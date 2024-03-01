@@ -53,7 +53,6 @@ jobs:
             export POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
             export SIGNINKEY=${{ secrets.SIGNINKEY }}
             export SALT=${{ secrets.SALT }}
-            
             # Stop running container
             docker stop $(echo $CONTAINER_NAME)
       
