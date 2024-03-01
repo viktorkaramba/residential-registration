@@ -19,7 +19,7 @@ func (h *Handler) login(c *gin.Context) {
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
 		h.sendErrResponse(c, h.Logger,
-			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 
@@ -35,7 +35,7 @@ func (h *Handler) login(c *gin.Context) {
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
 		h.sendErrResponse(c, h.Logger,
-			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
@@ -86,8 +86,7 @@ func (h *Handler) refreshToken(c *gin.Context) {
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
 		h.sendErrResponse(c, h.Logger,
-			errs.Err(errors.New("failed to read body request")).Code("Failed body validation").Kind(errs.Validation))
-
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
 		return
 	}
 
@@ -103,7 +102,7 @@ func (h *Handler) refreshToken(c *gin.Context) {
 	if err := c.BindJSON(&input); err != nil {
 		logger.Error("failed to bind JSON", "error", err)
 		h.sendErrResponse(c, h.Logger,
-			errs.Err(errors.New("failed to bind JSON")).Code("Failed bind JSON").Kind(errs.Validation))
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
 		return
 	}
 
