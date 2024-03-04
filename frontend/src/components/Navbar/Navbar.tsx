@@ -15,7 +15,6 @@ const Navbar = () =>{
             </div>
             <Menu/>
         </div>
-
     )
 }
 
