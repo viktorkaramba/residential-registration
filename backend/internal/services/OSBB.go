@@ -53,6 +53,20 @@ func (s *osbbService) AddOSBB(inputOSBB entity.EventOSBBPayload) (*entity.OSBB, 
 	return osbb, nil
 }
 
+func (s *osbbService) ListOSBBS() ([]entity.OSBB, error) {
+	logger := s.logger.Named("ListOSBBS")
+	osbbs, err := s.businessStorage.OSBB.ListOSBBS(OSBBFilter{
+		WithBuilding: true,
+		WithOSBBHead: true,
+	})
+	if err != nil {
+		logger.Error("failed to get list osbbs", "error", err)
+		return nil, errs.Err(err).Code("Failed to get list osbb").Kind(errs.Database)
+	}
+
+	return osbbs, nil
+}
+
 func (s *osbbService) AddAnnouncement(UserID, OSBBID uint64, inputAnnouncement entity.EventAnnouncementPayload) (*entity.Announcement, error) {
 	logger := s.logger.Named("AddAnnouncement").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("input_announcement", inputAnnouncement)

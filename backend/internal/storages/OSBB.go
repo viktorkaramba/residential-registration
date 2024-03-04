@@ -22,6 +22,23 @@ func (s *OSBBStorage) CreateOSBB(OSBB *entity.OSBB) error {
 	return s.db.Create(OSBB).Error
 }
 
+func (s *OSBBStorage) ListOSBBS(filter services.OSBBFilter) ([]entity.OSBB, error) {
+	stmt := s.db.
+		Model(&entity.OSBB{})
+	if filter.WithOSBBHead {
+		stmt.Preload("OSBBHead")
+	}
+	if filter.WithBuilding {
+		stmt.Preload("Building")
+	}
+	if filter.WithAnnouncements {
+		stmt.Preload("Announcement").Order("created_at DESC")
+	}
+
+	var osbbs []entity.OSBB
+	return osbbs, stmt.Order("created_at DESC").Find(&osbbs).Error
+}
+
 func (s *OSBBStorage) GetOSBB(OSBBID uint64) (*entity.OSBB, error) {
 	osbb := &entity.OSBB{}
 	err := s.db.Model(&entity.OSBB{}).Where(entity.OSBB{ID: OSBBID}).First(osbb).Error

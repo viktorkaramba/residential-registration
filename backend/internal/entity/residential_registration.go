@@ -46,15 +46,16 @@ type Building struct {
 }
 
 type OSBB struct {
-	ID uint64 `gorm:"primaryKey;autoIncrement:true"`
+	ID uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
 
-	Building     Building       `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Announcement []Announcement `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Building     Building       `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"building"`
+	Announcement []Announcement `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"announcements"`
 
-	OSBBHead User `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Name     Name
-	EDRPOU   EDRPOU `gorm:"index"`
-	Rent     Rent
+	OSBBHead User   `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"osbb_head"`
+	Name     Name   `json:"name"`
+	EDRPOU   EDRPOU `gorm:"index" json:"edrpou"`
+	Rent     Rent   `json:"rent"`
+
 	database.PostgreSQLModel
 }
 
