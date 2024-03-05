@@ -15,11 +15,7 @@ env:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
-    if: steps.branch_name.outputs.branch != 'feature/frontend'
     steps:
-      - name: Get current branch name
-        id: branch_name
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       - name: Checkout main
         uses: actions/checkout@v3
       - name: Login to DockerHub
