@@ -72,6 +72,26 @@ func (h *Handler) getAllOSBB(c *gin.Context) {
 	c.JSON(http.StatusOK, osbbs)
 }
 
+func (h *Handler) getOSBBProfile(c *gin.Context) {
+	logger := h.Logger.Named("getOSBBProfile").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbb, err := h.Services.OSBB.GetOSBB(userID)
+	if err != nil {
+		logger.Error("failed to get osbb profile", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get osbb profile: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, osbb)
+}
+
 func (h *Handler) addAnnouncement(c *gin.Context) {
 	logger := h.Logger.Named("addAnnouncement").WithContext(c)
 
