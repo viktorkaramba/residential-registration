@@ -25,7 +25,7 @@ type BuildingStorage interface {
 type OSBBStorage interface {
 	CreateOSBB(OSBB *entity.OSBB) error
 	ListOSBBS(filter OSBBFilter) ([]entity.OSBB, error)
-	GetOSBB(OSBBID uint64) (*entity.OSBB, error)
+	GetOSBB(filter OSBBFilter) (*entity.OSBB, error)
 	CreateAnnouncement(announcement *entity.Announcement) error
 	ListAnnouncements(filter AnnouncementFilter) ([]entity.Announcement, error)
 	CreatePoll(poll *entity.Poll) error
@@ -60,6 +60,7 @@ type PollFilter struct {
 }
 
 type OSBBFilter struct {
+	OSBBID            *uint64
 	WithBuilding      bool
 	WithAnnouncements bool
 	WithOSBBHead      bool
