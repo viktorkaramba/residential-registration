@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import config from "../../config";
+import Header from "../../components/Header/Header";
+import {useOSBBContext} from "../../components/OSBB/OSBBContext";
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+    // @ts-ignore
+    const {osbbID} = useOSBBContext();
     const [phone_number, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [token, setToken] = useState('');
-
+    const navigate = useNavigate();
     const handleLogin = async () => {
-        // В цьому місці ви можете використати вашу логіку для відправки запиту на сервер для перевірки номера телефону та паролю
-        // Наприклад, використовуючи fetch або axios
         try {
             const response = await fetch(config.apiUrl+'auth/login', {
                 method: 'POST',
@@ -20,6 +23,9 @@ const LoginPage = () => {
             const data = await response.json();
             const { token } = data;
             setToken(token);
+            console.log(data)
+
+            navigate("/osbbs/" + osbbID);
         } catch (error) {
             console.error('Помилка під час логіну:', error);
         }
@@ -28,7 +34,7 @@ const LoginPage = () => {
     useEffect(() => {
 
         if (token) {
-            localStorage.setItem('accessToken', token);
+            localStorage.setItem('token', token);
         }
     }, [token]);
 
@@ -42,6 +48,7 @@ const LoginPage = () => {
 
     return (
         <div>
+            <Header/>
             <h1>Логін</h1>
             <form onSubmit={(e) => {
                 e.preventDefault();
