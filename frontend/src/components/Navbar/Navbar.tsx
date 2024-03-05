@@ -1,19 +1,18 @@
 import React from "react";
 import "./Navbar.css"
-import Menu from "../Menu/Menu";
 
 const Navbar = () =>{
     return(
         <div>
-            <div className='navbar'>
-                <a href='#'>ds</a>
+            <div className='navbar'>d
+                <a href='/'>osbb-online</a>
                 <nav role={"navigation"}>
-                    <a href='#'>Home</a>
+                    <a href='/'>Home</a>
+                    <a href='/login'>Увійти</a>
                     <a href='#'>About</a>
                     <a href='#'>Contact</a>
                 </nav>
             </div>
-            <Menu/>
         </div>
     )
 }
