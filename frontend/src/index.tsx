@@ -10,8 +10,7 @@ import reportWebVitals from './reportWebVitals';
 import Login from "./pages/Login/Login";
 import {OSBBProvider} from "./components/OSBB/OSBBContext";
 import OSBBProfile from "./components/OSBB/OSBBProfile/OSBBProfile";
-
-
+        
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -23,9 +22,12 @@ root.render(
                 <Route path="/osbbs/:osbbID" element={<OSBBProfile/>}/>
                 <Route path="/login" element={<Login/>}/>
             </Routes>
-        </BrowserRouter>
-    </OSBBProvider>
+            </Route>
+            <Route path="/login" element={<Login/>}>
 
+            </Route>
+        </Routes>
+    </BrowserRouter>
 );
 
 reportWebVitals();

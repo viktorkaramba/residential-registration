@@ -23,8 +23,6 @@ const LoginPage = () => {
             const data = await response.json();
             const { token } = data;
             setToken(token);
-            console.log(data)
-
             navigate("/osbbs/" + osbbID);
         } catch (error) {
             console.error('Помилка під час логіну:', error);
@@ -32,7 +30,6 @@ const LoginPage = () => {
     };
 
     useEffect(() => {
-
         if (token) {
             localStorage.setItem('token', token);
         }

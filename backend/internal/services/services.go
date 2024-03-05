@@ -26,6 +26,7 @@ type AuthService interface {
 
 type OSBBService interface {
 	AddOSBB(inputOSSB entity.EventOSBBPayload) (*entity.OSBB, error)
+	ListOSBBS() ([]entity.OSBB, error)
 	AddAnnouncement(UserID, OSBBID uint64, inputAnnouncement entity.EventAnnouncementPayload) (*entity.Announcement, error)
 	ListAnnouncements(UserID, OSBBID uint64) ([]entity.Announcement, error)
 	AddPoll(UserID, OSBBID uint64, inputPoll entity.EventPollPayload) (*entity.Poll, error)

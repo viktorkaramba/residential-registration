@@ -59,6 +59,19 @@ func (h *Handler) registerOSBB(c *gin.Context) {
 	})
 }
 
+func (h *Handler) getAllOSBB(c *gin.Context) {
+	logger := h.Logger.Named("getAllOSBB").WithContext(c)
+
+	osbbs, err := h.Services.OSBB.ListOSBBS()
+	if err != nil {
+		logger.Error("failed to get list osbb", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get list osbb: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, osbbs)
+}
+
 func (h *Handler) addAnnouncement(c *gin.Context) {
 	logger := h.Logger.Named("addAnnouncement").WithContext(c)
 

@@ -25,7 +25,6 @@ const Menu = () =>{
                 <div className='text-block' onClick={() => handleClick('2')}>
                     Додати ОСББ
                 </div>
-
             </section>
             {activeOSBBElement === '1' && <OSBBList/>}
             {activeOSBBElement === '2' && <OSBBForm/>}

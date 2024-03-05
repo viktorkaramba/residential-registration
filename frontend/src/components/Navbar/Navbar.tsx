@@ -4,7 +4,7 @@ import "./Navbar.css"
 const Navbar = () =>{
     return(
         <div>
-            <div className='navbar'>
+            <div className='navbar'>d
                 <a href='/'>osbb-online</a>
                 <nav role={"navigation"}>
                     <a href='/'>Home</a>
