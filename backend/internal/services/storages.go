@@ -27,9 +27,16 @@ type OSBBStorage interface {
 	ListOSBBS(filter OSBBFilter) ([]entity.OSBB, error)
 	GetOSBB(filter OSBBFilter) (*entity.OSBB, error)
 	CreateAnnouncement(announcement *entity.Announcement) error
+	GetAnnouncement(AnnouncementID uint64, filter AnnouncementFilter) (*entity.Announcement, error)
 	ListAnnouncements(filter AnnouncementFilter) ([]entity.Announcement, error)
+	UpdateAnnouncement(AnnouncementID uint64, announcement *entity.EventAnnouncementUpdatePayload) error
+	DeleteAnnouncement(AnnouncementID uint64, filter AnnouncementFilter) error
 	CreatePoll(poll *entity.Poll) error
 	ListPolls(filter PollFilter) ([]entity.Poll, error)
+	UpdatePoll(PollID uint64, opts *entity.EventPollUpdatePayload) error
+	DeletePoll(PollID uint64, filter PollFilter) error
+	UpdateTestAnswer(TestAnswerID uint64, poll *entity.EventTestAnswerUpdatePayload) error
+	DeleteTestAnswer(TestAnswerID uint64, filter TestAnswerFilter) error
 	GetPoll(PollID uint64, filter PollFilter) (*entity.Poll, error)
 	GetPollResult(PollID uint64) (*entity.PollResult, error)
 	CreatAnswer(answer *entity.Answer) error
@@ -57,6 +64,11 @@ type AnnouncementFilter struct {
 type PollFilter struct {
 	OSBBID          *uint64
 	WithTestAnswers bool
+}
+
+type TestAnswerFilter struct {
+	PollID  *uint64
+	Content *entity.Text
 }
 
 type OSBBFilter struct {

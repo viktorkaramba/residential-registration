@@ -67,6 +67,24 @@ func (s *OSBBStorage) CreateAnnouncement(announcement *entity.Announcement) erro
 	return s.db.Create(announcement).Error
 }
 
+func (s *OSBBStorage) GetAnnouncement(AnnouncementID uint64, filter services.AnnouncementFilter) (*entity.Announcement, error) {
+	announcement := &entity.Announcement{}
+	stmt := s.db.
+		Model(&entity.Announcement{})
+	if AnnouncementID != 0 {
+		stmt = stmt.Where(entity.Announcement{ID: AnnouncementID})
+	}
+	if filter.OSBBID != nil {
+		stmt = stmt.Where(entity.Announcement{OSBBID: *filter.OSBBID})
+	}
+
+	err := stmt.First(announcement).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return announcement, err
+}
+
 func (s *OSBBStorage) ListAnnouncements(filter services.AnnouncementFilter) ([]entity.Announcement, error) {
 	stmt := s.db.
 		Model(&entity.Announcement{})
@@ -76,6 +94,39 @@ func (s *OSBBStorage) ListAnnouncements(filter services.AnnouncementFilter) ([]e
 	}
 	var announcements []entity.Announcement
 	return announcements, stmt.Order("created_at DESC").Find(&announcements).Error
+}
+
+func (s *OSBBStorage) UpdateAnnouncement(AnnouncementID uint64, opts *entity.EventAnnouncementUpdatePayload) error {
+	stmt := s.db.Model(&entity.Announcement{})
+	var announcement entity.Announcement
+
+	if AnnouncementID != 0 {
+		stmt = stmt.Where(entity.Announcement{ID: AnnouncementID})
+	}
+
+	if opts.Title != nil {
+		announcement.Title = *opts.Title
+	}
+	if opts.Content != nil {
+		announcement.Content = *opts.Content
+	}
+
+	return stmt.Updates(announcement).Error
+}
+
+func (s *OSBBStorage) DeleteAnnouncement(AnnouncementID uint64, filter services.AnnouncementFilter) error {
+	stmt := s.db.Model(&entity.Announcement{})
+	var announcement *entity.Announcement
+
+	if AnnouncementID != 0 {
+		stmt = stmt.Where(entity.Announcement{ID: AnnouncementID})
+	}
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where(entity.Announcement{OSBBID: *filter.OSBBID})
+	}
+
+	return stmt.Delete(&announcement).Error
 }
 
 func (s *OSBBStorage) CreatePoll(poll *entity.Poll) error {
@@ -94,6 +145,69 @@ func (s *OSBBStorage) ListPolls(filter services.PollFilter) ([]entity.Poll, erro
 	}
 	var polls []entity.Poll
 	return polls, stmt.Order("created_at DESC").Find(&polls).Error
+}
+
+func (s *OSBBStorage) UpdatePoll(PollID uint64, opts *entity.EventPollUpdatePayload) error {
+	stmt := s.db.Model(&entity.Poll{})
+	var poll entity.Poll
+
+	if PollID != 0 {
+		stmt = stmt.Where(entity.Poll{ID: PollID})
+	}
+
+	if opts.Question != nil {
+		poll.Question = *opts.Question
+	}
+	if opts.FinishedAt != nil {
+		poll.FinishedAt = *opts.FinishedAt
+	}
+
+	return stmt.Updates(poll).Error
+}
+
+func (s *OSBBStorage) DeletePoll(PollID uint64, filter services.PollFilter) error {
+	stmt := s.db.Model(&entity.Poll{})
+	var poll *entity.Poll
+
+	if PollID != 0 {
+		stmt = stmt.Where(entity.Poll{ID: PollID})
+	}
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where(entity.Poll{OSBBID: *filter.OSBBID})
+	}
+
+	return stmt.Delete(&poll).Error
+}
+
+func (s *OSBBStorage) UpdateTestAnswer(TestAnswerID uint64, opts *entity.EventTestAnswerUpdatePayload) error {
+	stmt := s.db.Model(&entity.TestAnswer{})
+	var testAnswer entity.TestAnswer
+
+	if TestAnswerID != 0 {
+		stmt = stmt.Where(entity.TestAnswer{ID: TestAnswerID})
+	}
+
+	if opts.Content != nil {
+		testAnswer.Content = *opts.Content
+	}
+
+	return stmt.Updates(testAnswer).Error
+}
+
+func (s *OSBBStorage) DeleteTestAnswer(TestAnswerID uint64, filter services.TestAnswerFilter) error {
+	stmt := s.db.Model(&entity.TestAnswer{})
+	var testAnswer *entity.TestAnswer
+
+	if TestAnswerID != 0 {
+		stmt = stmt.Where(entity.TestAnswer{ID: TestAnswerID})
+	}
+
+	if filter.PollID != nil {
+		stmt = stmt.Where(entity.TestAnswer{PollID: *filter.PollID})
+	}
+
+	return stmt.Delete(&testAnswer).Error
 }
 
 func (s *OSBBStorage) GetPoll(PollID uint64, filter services.PollFilter) (*entity.Poll, error) {
