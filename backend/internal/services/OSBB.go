@@ -227,11 +227,11 @@ func (s *osbbService) ListPolls(UserID, OSBBID uint64) ([]entity.Poll, error) {
 		With("user_id", UserID).With("osbb_id", OSBBID)
 
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
-	if err == nil {
+	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
-	if user != nil {
+	if user == nil {
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
