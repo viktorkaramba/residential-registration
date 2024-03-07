@@ -42,10 +42,17 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 		osbb.POST("/:osbbID/announcements", h.userIdentity, h.addAnnouncement)
 		osbb.GET("/:osbbID/announcements", h.userIdentity, h.getAllAnnouncement)
+		osbb.PUT("/:osbbID/announcements/:announcementID", h.userIdentity, h.updateAnnouncement)
+		osbb.DELETE("/:osbbID/announcements/:announcementID", h.userIdentity, h.deleteAnnouncement)
 
-		osbb.POST("/:osbbID/polls", h.userIdentity, h.addPoll)
-		osbb.POST("/:osbbID/polls-test", h.userIdentity, h.addPollTest)
 		osbb.GET("/:osbbID/polls", h.userIdentity, h.getAllPolls)
+		osbb.POST("/:osbbID/polls", h.userIdentity, h.addPoll)
+		osbb.PUT("/:osbbID/polls/:pollID", h.userIdentity, h.updatePoll)
+		osbb.DELETE("/:osbbID/polls/:pollID", h.userIdentity, h.deletePoll)
+
+		osbb.POST("/:osbbID/polls-test", h.userIdentity, h.addPollTest)
+		osbb.PUT("/:osbbID/polls-test/:testAnswerID", h.userIdentity, h.updateTestAnswer)
+		osbb.DELETE("/:osbbID/polls-test/:testAnswerID", h.userIdentity, h.deleteTestAnswer)
 
 		osbb.POST("/:osbbID/polls/:pollID/answers", h.userIdentity, h.addPollAnswer)
 		osbb.POST("/:osbbID/polls/:pollID/answers-test", h.userIdentity, h.addPollAnswerTest)

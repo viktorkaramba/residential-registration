@@ -174,6 +174,106 @@ func (h *Handler) getAllAnnouncement(c *gin.Context) {
 	c.JSON(http.StatusOK, announcements)
 }
 
+func (h *Handler) updateAnnouncement(c *gin.Context) {
+	logger := h.Logger.Named("updateAnnouncement").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	announcementID, err := strconv.ParseUint(c.Param("announcementID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
+		return
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+	// Check if there are any additional fields in the JSON body
+	if err := h.validateJSONTags(body, entity.EventAnnouncementUpdatePayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
+		return
+	}
+
+	var input entity.EventAnnouncementUpdatePayload
+	if err := c.BindJSON(&input); err != nil {
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
+		return
+	}
+
+	err = h.Services.OSBB.UpdateAnnouncement(userID, osbbID, announcementID, input)
+	if err != nil {
+		logger.Error("failed to update announcement", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to update announcement: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
+}
+
+func (h *Handler) deleteAnnouncement(c *gin.Context) {
+	logger := h.Logger.Named("deleteAnnouncement").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	announcementID, err := strconv.ParseUint(c.Param("announcementID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	err = h.Services.OSBB.DeleteAnnouncement(userID, osbbID, announcementID)
+	if err != nil {
+		logger.Error("failed to delete announcement", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to delete announcement: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
+}
+
 func (h *Handler) addPoll(c *gin.Context) {
 	logger := h.Logger.Named("addPoll").WithContext(c)
 
@@ -308,6 +408,106 @@ func (h *Handler) getAllPolls(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, polls)
+}
+
+func (h *Handler) updatePoll(c *gin.Context) {
+	logger := h.Logger.Named("updatePoll").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
+		return
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+	// Check if there are any additional fields in the JSON body
+	if err := h.validateJSONTags(body, entity.EventPollUpdatePayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
+		return
+	}
+
+	var input entity.EventPollUpdatePayload
+	if err := c.BindJSON(&input); err != nil {
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
+		return
+	}
+
+	err = h.Services.OSBB.UpdatePoll(userID, osbbID, pollID, input)
+	if err != nil {
+		logger.Error("failed to update poll", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to update poll: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
+}
+
+func (h *Handler) deletePoll(c *gin.Context) {
+	logger := h.Logger.Named("deletePoll").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	err = h.Services.OSBB.DeletePoll(userID, osbbID, pollID)
+	if err != nil {
+		logger.Error("failed to delete poll", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to delete poll: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
 }
 
 func (h *Handler) addPollAnswer(c *gin.Context) {
@@ -468,6 +668,106 @@ func (h *Handler) getAllPollsAnswers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, polls)
+}
+
+func (h *Handler) updateTestAnswer(c *gin.Context) {
+	logger := h.Logger.Named("updateTestAnswer").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	testAnswerID, err := strconv.ParseUint(c.Param("testAnswerID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse test answer id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse test answer id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
+		return
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+	// Check if there are any additional fields in the JSON body
+	if err := h.validateJSONTags(body, entity.EventTestAnswerUpdatePayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
+		return
+	}
+
+	var input entity.EventTestAnswerUpdatePayload
+	if err := c.BindJSON(&input); err != nil {
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
+		return
+	}
+
+	err = h.Services.OSBB.UpdateTestAnswer(userID, osbbID, testAnswerID, input)
+	if err != nil {
+		logger.Error("failed to update test answer", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to update answer: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
+}
+
+func (h *Handler) deleteTestAnswer(c *gin.Context) {
+	logger := h.Logger.Named("deleteTestAnswer").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	testAnswerID, err := strconv.ParseUint(c.Param("testAnswerID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	err = h.Services.OSBB.DeleteTestAnswer(userID, osbbID, testAnswerID)
+	if err != nil {
+		logger.Error("failed to delete test answer", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to delete test answer: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
 }
 
 func (h *Handler) addPayment(c *gin.Context) {

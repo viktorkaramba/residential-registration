@@ -71,12 +71,47 @@ type EventUserUpdatePayload struct {
 	*PhoneNumber     `json:"phone_number"`
 }
 
+type EventAnnouncementUpdatePayload struct {
+	Title   *Text `json:"title"`
+	Content *Text `json:"content"`
+}
+
+type EventPollUpdatePayload struct {
+	Question   *Text      `json:"question"`
+	FinishedAt *time.Time `json:"finished_at"`
+}
+
+type EventTestAnswerUpdatePayload struct {
+	Content *Text `json:"content"`
+}
+
 type EventTokenPayload struct {
 	TokenValue `json:"token" binding:"required"`
 }
 
 func (i EventUserUpdatePayload) Validate() error {
 	if i.ApartmentNumber == nil && i.ApartmentArea == nil && i.FirstName == nil && i.Surname == nil && i.Patronymic == nil && i.PhoneNumber == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
+}
+
+func (i EventAnnouncementUpdatePayload) Validate() error {
+	if i.Title == nil && i.Content == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
+}
+
+func (i EventPollUpdatePayload) Validate() error {
+	if i.Question == nil && i.FinishedAt == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
+}
+
+func (i EventTestAnswerUpdatePayload) Validate() error {
+	if i.Content == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil

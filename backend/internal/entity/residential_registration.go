@@ -72,7 +72,7 @@ type Announcement struct {
 }
 
 type Poll struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"-"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
 	UserID uint64 `gorm:"index" json:"-"`
 	OSBBID uint64 `gorm:"index" json:"-"`
 
@@ -88,7 +88,7 @@ type Poll struct {
 }
 
 type TestAnswer struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
 	PollID uint64 `gorm:"index" json:"-"`
 
 	Content Text `json:"content" binding:"required"`
