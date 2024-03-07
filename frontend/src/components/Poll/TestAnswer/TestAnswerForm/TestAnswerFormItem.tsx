@@ -1,5 +1,5 @@
 
-const TestAnswerItem = ({content, index, deleteAnswer}:any) =>{
+const TestAnswerFormItem = ({content, index, deleteAnswer}:any) =>{
     return(
         <li>
             <label>
@@ -14,4 +14,4 @@ const TestAnswerItem = ({content, index, deleteAnswer}:any) =>{
     )
 }
 
-export default TestAnswerItem
+export default TestAnswerFormItem

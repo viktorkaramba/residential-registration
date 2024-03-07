@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import config from "../../../config";
 import {useOSBBContext} from "../../OSBB/OSBBContext";
-import TestAnswerForm from "../TestAnswer/TestAnswerForm";
-import TestAnswerList from "../TestAnswer/TestAnswerList";
+import TestAnswerForm from "../TestAnswer/TestAnswerForm/TestAnswerForm";
+import TestAnswerFormList from "../TestAnswer/TestAnswerForm/TestAnswerFormList";
 
 const PollTestForm = () =>{
     // @ts-ignore
@@ -31,6 +31,7 @@ const PollTestForm = () =>{
             return currentAnswer.filter((answer, i) => index !== i)
         })
     }
+
     const handleSubmit = (event: any) => {
         console.log('handleSubmit ran');
         event.preventDefault();
@@ -72,7 +73,7 @@ const PollTestForm = () =>{
                    id='finished_at'/>
             <TestAnswerForm addTestAnswer={addTestAnswer}/>
             <h1>Тестові відповіді</h1>
-            <TestAnswerList answers={answers} deleteAnswer={deleteAnswer}/>
+            <TestAnswerFormList answers={answers} deleteAnswer={deleteAnswer}/>
             <button>Submit form</button>
         </form>
         </div>

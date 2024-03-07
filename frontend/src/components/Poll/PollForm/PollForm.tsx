@@ -11,11 +11,11 @@ const PollForm = () =>{
 
         // 👇️ access input values using name prop
         const question = event.target.question.value;
-        const finished_at = event.target.finished_at.value;
+        const finished_at = new Date(event.target.finished_at.value);
         const requestOptions = {
             method: 'POST',
             headers:config.headers,
-            body: JSON.stringify({ question: question, finished_at: finished_at})
+            body: JSON.stringify({ question: question, finished_at: finished_at.toISOString()})
         }
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls', requestOptions)
             .then(response => response.json())
@@ -34,7 +34,7 @@ const PollForm = () =>{
             <label form={'finished_at'}>
                Дата завершення
             </label>
-            <input required={true} name="finished_at" placeholder="" type='date' id='finished_at'/>
+            <input required={true} name="finished_at" placeholder="" type='datetime-local' step="1" id='finished_at'/>
             <button type="submit">Submit form</button>
         </form>
     )

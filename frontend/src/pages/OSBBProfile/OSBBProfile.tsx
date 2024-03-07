@@ -4,6 +4,7 @@ import Header from "../../components/Header/Header";
 import AnnouncementList from "../../components/Announcements/AnnouncementList/AnnouncementList";
 import {useOSBBContext} from "../../components/OSBB/OSBBContext";
 import PollTestForm from "../../components/Poll/PollForm/PollTestForm";
+import PollAdminList from "../../components/Poll/PollAdmin/PollAdminList";
 import PollForm from "../../components/Poll/PollForm/PollForm";
 
 
@@ -59,8 +60,14 @@ const OSBBProfile = () => {
             <br/>
             <AnnouncementList key={osbb?.id}/>
             <br/>
+            <div style={{background:"peru"}}>
+                <PollForm/>
+            </div>
             <div style={{background:"bisque"}}>
                 <PollTestForm/>
+            </div>
+            <div style={{background:"green"}}>
+                <PollAdminList/>
             </div>
         </div>
     )

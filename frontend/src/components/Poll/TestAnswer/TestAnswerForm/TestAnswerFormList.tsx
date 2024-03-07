@@ -1,12 +1,12 @@
-import TestAnswerItem from "./TestAnswerItem";
+import TestAnswerFormItem from "./TestAnswerFormItem";
 
-const TestAnswerList = ({answers, deleteAnswer}:any) =>{
+const TestAnswerFormList = ({answers, deleteAnswer}:any) =>{
     return(
         <ul>
             {answers.length === 0 && "Немає відповідей"}
             {answers.map((answer: {content:any}, index:any)=>{
                 return(
-                  <TestAnswerItem
+                  <TestAnswerFormItem
                       {...answer}
                       index={index}
                       key={index}
@@ -18,4 +18,4 @@ const TestAnswerList = ({answers, deleteAnswer}:any) =>{
     )
 }
 
-export default TestAnswerList
+export default TestAnswerFormList
