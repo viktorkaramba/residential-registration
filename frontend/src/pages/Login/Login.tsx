@@ -5,8 +5,7 @@ import {useOSBBContext} from "../../components/OSBB/OSBBContext";
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
-    // @ts-ignore
-    const {osbbID} = useOSBBContext();
+
     const [phone_number, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [token, setToken] = useState('');
@@ -21,9 +20,9 @@ const LoginPage = () => {
                 body: JSON.stringify({ phone_number, password }),
             });
             const data = await response.json();
+            console.log(data)
             const { token } = data;
             setToken(token);
-            navigate("/osbbs/" + osbbID);
         } catch (error) {
             console.error('Помилка під час логіну:', error);
         }
@@ -32,6 +31,7 @@ const LoginPage = () => {
     useEffect(() => {
         if (token) {
             localStorage.setItem('token', token);
+            navigate("/osbbs/profile");
         }
     }, [token]);
 
