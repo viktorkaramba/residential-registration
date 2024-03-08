@@ -1,6 +1,8 @@
 package services
 
 import (
+	"crypto/sha1"
+	"fmt"
 	"residential-registration/backend/config"
 	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/pkg/logging"
@@ -54,4 +56,10 @@ type TokenService interface {
 	GetByToken(token string) (*entity.Token, error)
 	ParseToken(token string) (uint64, error)
 	RefreshToken(UserID uint64) (string, error)
+}
+
+func GeneratePasswordHash(salt, password string) entity.Password {
+	hash := sha1.New()
+	hash.Write([]byte(password))
+	return entity.Password(fmt.Sprintf("%x", hash.Sum([]byte(salt))))
 }

@@ -1,8 +1,6 @@
 package services
 
 import (
-	"crypto/sha1"
-	"fmt"
 	"residential-registration/backend/config"
 	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/pkg/errs"
@@ -50,7 +48,7 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 			Surname:    inputUser.Surname,
 			Patronymic: inputUser.Patronymic,
 		},
-		Password:    s.generatePasswordHash(string(inputUser.Password)),
+		Password:    GeneratePasswordHash(s.config.Salt, string(inputUser.Password)),
 		PhoneNumber: inputUser.PhoneNumber,
 		Role:        entity.UserRoleInhabitant,
 	}
@@ -79,7 +77,7 @@ func (s *authService) Login(inputLogin entity.EventLoginPayload) (*entity.User, 
 		return nil, errs.M("user not found").Code("User do not exist").Kind(errs.NotExist)
 	}
 
-	if user.Password != s.generatePasswordHash(string(inputLogin.Password)) {
+	if user.Password != GeneratePasswordHash(s.config.Salt, string(inputLogin.Password)) {
 		logger.Error("incorrect password", "error", err)
 		return nil, errs.M("incorrect password").Code("Failed to login").Kind(errs.Private)
 	}
@@ -111,10 +109,4 @@ func (s *authService) Logout(token entity.TokenValue) error {
 		return errs.Err(err).Code("Failed to revoke all users tokens").Kind(errs.Database)
 	}
 	return nil
-}
-
-func (s *authService) generatePasswordHash(password string) entity.Password {
-	hash := sha1.New()
-	hash.Write([]byte(password))
-	return entity.Password(fmt.Sprintf("%x", hash.Sum([]byte(s.config.Salt))))
 }
