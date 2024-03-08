@@ -7,6 +7,7 @@ const PollAdminList = () =>{
     // @ts-ignore
     const {osbbID} = useOSBBContext()
     const [polls, setPolls] = useState([]);
+
     const fetchPolls = useCallback(async() => {
         try{
             const requestOptions = {
@@ -16,10 +17,11 @@ const PollAdminList = () =>{
             const response = await fetch(config.apiUrl+'osbb/'+ osbbID+ '/polls', requestOptions);
             const data = await response.json();
             const polls = data.slice(0, 20).map(
-                (pollSingle: { question: any; test_answer: any; type: any; created_at: any;
+                (pollSingle: { id:any, question: any; test_answer: any; type: any; created_at: any;
                     finished_at: any; createdAt: any; updatedAt: any }) => {
-                    const {question, test_answer, type, created_at, finished_at, createdAt, updatedAt} = pollSingle;
+                    const {id, question, test_answer, type, created_at, finished_at, createdAt, updatedAt} = pollSingle;
                     return {
+                        id: id,
                         question: question,
                         test_answer: test_answer,
                         type: type,
@@ -29,16 +31,15 @@ const PollAdminList = () =>{
                         updatedAt: updatedAt
                     }
                 });
+            console.log(polls)
             setPolls(polls)
         } catch(error){
             console.log(error);
         }
     }, [osbbID]);
-
     useEffect(() => {
         fetchPolls();
-    }, [fetchPolls]);
-
+    }, []);
     function updatePoll(id:any, question:any, finished_at:any){
         console.log('handleSubmit ran');
         let body = null;

@@ -55,13 +55,13 @@ const TestAnswerAdminList = ({answers}:any) =>{
     }
     return(
         <ul>
-            {testAnswers.map((answer: {ID:any, content:any})=>{
+            {testAnswers.map((answer: {id:any, content:any})=>{
                 return(
                     <TestAnswerAdminItem
                         {...answer}
                         updateTestAnswer={updateTestAnswer}
                         deleteTestAnswer={deleteTestAnswer}
-                        key={answer.ID}
+                        key={answer.id}
                     />
                 )
             })}
