@@ -5,7 +5,7 @@ import TestAnswerAdminList from "../TestAnswer/TestAnswerAdmin/TestAnswerAdminLi
 const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
     const [isChecked, setIsChecked] = useState(false);
     const [newQuestion, setNewQuestion] = useState(poll.question);
-    const [newFinished, setNewFinished] = useState(poll.finished_at);
+    const [newFinished, setNewFinished] = useState("");
 
     return(
         <li>

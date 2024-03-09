@@ -42,8 +42,14 @@ const PollAdminList = () =>{
     }, []);
     function updatePoll(id:any, question:any, finished_at:any){
         console.log('handleSubmit ran');
+        console.log(question, finished_at);
+        if(finished_at!==""){
+            finished_at = new Date(finished_at);
+        }else {
+            finished_at = null;
+        }
         let body = null;
-        if(question != null && finished_at != null){
+        if(question !== "" && finished_at != null){
             body = JSON.stringify({question: question, finished_at: finished_at.toISOString()});
         }
         if(question == null){

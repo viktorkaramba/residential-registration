@@ -13,7 +13,6 @@ const AnnouncementList = () =>{
                 method: 'GET',
                 headers: config.headers,
             }
-            console.log("osbbID " + osbbID)
             const response = await fetch(config.apiUrl+'osbb/'+ osbbID+ '/announcements', requestOptions);
             const data = await response.json();
             const announcements = data.slice(0, 20).map(
@@ -29,6 +28,7 @@ const AnnouncementList = () =>{
                         updatedAt: updatedAt
                     }
                 });
+            console.log(announcements)
             setAnnouncements(announcements)
         } catch(error){
             console.log(error);

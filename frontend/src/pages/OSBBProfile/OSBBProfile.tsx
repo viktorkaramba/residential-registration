@@ -6,6 +6,7 @@ import {useOSBBContext} from "../../components/OSBB/OSBBContext";
 import PollTestForm from "../../components/Poll/PollForm/PollTestForm";
 import PollAdminList from "../../components/Poll/PollAdmin/PollAdminList";
 import PollForm from "../../components/Poll/PollForm/PollForm";
+import PollUserList from "../../components/Poll/PollUser/PollUserList";
 
 
 const OSBBProfile = () => {
@@ -46,7 +47,7 @@ const OSBBProfile = () => {
     }, []);
     useEffect(() => {
         fetchOSBB();
-    }, [fetchOSBB]);
+    }, []);
 
 
     
@@ -67,7 +68,7 @@ const OSBBProfile = () => {
                 <PollTestForm/>
             </div>
             <div style={{background:"green"}}>
-                <PollAdminList/>
+                <PollUserList/>
             </div>
         </div>
     )

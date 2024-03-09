@@ -3,10 +3,11 @@ import config from "../../../../config";
 import {useState} from "react";
 import {useOSBBContext} from "../../../OSBB/OSBBContext";
 
-const TestAnswerAdminList = ({answers}:any) =>{
+const TestAnswerAdminList = ({answers, pollID}:any) =>{
     // @ts-ignore
     const {osbbID} = useOSBBContext()
     const [testAnswers, setTestAnswers] = useState(answers);
+
 
     function updateTestAnswer(id:any, content:any){
 
