@@ -4,7 +4,9 @@ import (
 	"errors"
 	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/internal/services"
+	"strings"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 )
 
@@ -19,7 +21,18 @@ func NewOSBBStorage(db *gorm.DB) *OSBBStorage {
 }
 
 func (s *OSBBStorage) CreateOSBB(OSBB *entity.OSBB) error {
-	return s.db.Create(OSBB).Error
+	err := s.db.Create(OSBB).Error
+	pgErr, ok := err.(*pgconn.PgError)
+	if ok {
+		if pgErr.Code == "23505" {
+			if strings.Contains(err.Error(), "\"idx_users_phone_number\"") {
+				return services.ErrPhoneNumberDuplicate
+			} else if strings.Contains(err.Error(), "\"idx_name\"") {
+				return services.ErrEDRPOUDuplicate
+			}
+		}
+	}
+	return err
 }
 
 func (s *OSBBStorage) ListOSBBS(filter services.OSBBFilter) ([]entity.OSBB, error) {

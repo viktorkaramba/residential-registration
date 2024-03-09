@@ -53,7 +53,7 @@ type EventPollAnswerPayload struct {
 }
 
 type EventPollAnswerTestPayload struct {
-	TestAnswerID uint64 `json:"test-answer-id"  binding:"required"`
+	TestAnswerID uint64 `json:"test_answer_id"  binding:"required"`
 }
 
 type EventPaymentPayload struct {

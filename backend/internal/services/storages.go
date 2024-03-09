@@ -2,6 +2,7 @@ package services
 
 import (
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/errs"
 )
 
 type Storages struct {
@@ -77,3 +78,8 @@ type OSBBFilter struct {
 	WithAnnouncements bool
 	WithOSBBHead      bool
 }
+
+var (
+	ErrPhoneNumberDuplicate = errs.M("user with this number already exist").Code("duplicate_phone_number")
+	ErrEDRPOUDuplicate      = errs.M("osbb with this edrpou already exist").Code("duplicate_edrpou")
+)
