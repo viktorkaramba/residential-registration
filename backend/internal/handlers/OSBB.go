@@ -634,7 +634,43 @@ func (h *Handler) addPollAnswerTest(c *gin.Context) {
 	})
 }
 
-func (h *Handler) getAllPollsAnswers(c *gin.Context) {
+func (h *Handler) getUserAnswers(c *gin.Context) {
+	logger := h.Logger.Named("getUserAnswers").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse poll id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	userAnswers, err := h.Services.OSBB.GetUserAnswers(userID, osbbID, pollID)
+	if err != nil {
+		logger.Error("failed to get user answers", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user answers: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, userAnswers)
+}
+
+func (h *Handler) getPollsResults(c *gin.Context) {
 	logger := h.Logger.Named("getAllPollsAnswer").WithContext(c)
 
 	userID, err := h.getUserId(c)

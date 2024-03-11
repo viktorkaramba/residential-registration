@@ -82,6 +82,8 @@ type Poll struct {
 
 	Type PollType `json:"type"`
 
+	IsOpen bool `json:"is_open"`
+
 	CreatedAt  time.Time `gorm:"index"  json:"created_at"`
 	FinishedAt time.Time `gorm:"index" json:"finished_at"`
 	database.PostgreSQLModel
@@ -97,12 +99,12 @@ type TestAnswer struct {
 }
 
 type Answer struct {
-	ID           uint64 `gorm:"primaryKey;autoIncrement:true"`
-	PollID       uint64 `gorm:"index" json:"-"`
-	UserID       uint64 `gorm:"index"`
-	TestAnswerID uint64 `gorm:"index"`
+	ID           uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
+	PollID       uint64 `gorm:"index" json:"pollID"`
+	UserID       uint64 `gorm:"index" json:"userID"`
+	TestAnswerID uint64 `gorm:"index" json:"test_answer_id"`
 
-	Content Text
+	Content Text `json:"content"`
 
 	CreatedAt time.Time `gorm:"index"  json:"created_at"`
 	UpdateAt  time.Time `gorm:"index" json:"updated_at"`

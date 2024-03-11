@@ -56,7 +56,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 		osbb.POST("/:osbbID/polls/:pollID/answers", h.userIdentity, h.addPollAnswer)
 		osbb.POST("/:osbbID/polls/:pollID/answers-test", h.userIdentity, h.addPollAnswerTest)
-		osbb.GET("/:osbbID/polls/:pollID/answers", h.userIdentity, h.getAllPollsAnswers)
+		osbb.GET("/:osbbID/polls/:pollID/answers-results", h.userIdentity, h.getPollsResults)
+		osbb.GET("/:osbbID/polls/:pollID/user-answers", h.userIdentity, h.getUserAnswers)
 
 		osbb.POST("/:osbbID/payments", h.userIdentity, h.addPayment)
 		osbb.POST("/:osbbID/payments/:paymentID/make-purchase", h.userIdentity, h.makePurchase)

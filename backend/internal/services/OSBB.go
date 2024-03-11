@@ -558,6 +558,40 @@ func (s *osbbService) DeleteTestAnswer(UserID, OSBBID, TestAnswerID uint64) erro
 	return nil
 }
 
+func (s *osbbService) GetUserAnswers(UserID, OSBBID, PollID uint64) ([]entity.Answer, error) {
+	logger := s.logger.Named("GetUserAnswers").
+		With("user_id", UserID).With("osbb_id", OSBBID).With("poll_id", PollID)
+
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	poll, err := s.businessStorage.OSBB.GetPoll(PollID, PollFilter{OSBBID: &OSBBID, WithTestAnswers: false})
+	if err != nil {
+		logger.Error("failed to get poll", "error", err)
+		return nil, errs.M("failed to get poll").Code("Failed to get poll").Kind(errs.Database)
+	}
+	if poll == nil {
+		logger.Error("poll do not exist", "error", err)
+		return nil, errs.M("poll not found").Code("Poll do not exist").Kind(errs.Database)
+	}
+
+	userAnswers, err := s.businessStorage.OSBB.ListAnswers(AnswerFilter{
+		PollID: &PollID,
+		UserID: &UserID,
+	})
+	if err != nil {
+		logger.Error("failed to get list answers", "error", err)
+		return nil, errs.Err(err).Code("Failed to get list answers").Kind(errs.Database)
+	}
+	return userAnswers, nil
+}
+
 func (s *osbbService) GetPollResult(UserID, OSBBID, PollID uint64) (*entity.PollResult, error) {
 	logger := s.logger.Named("ListPollsAnswers").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("poll_id", PollID)
@@ -576,10 +610,10 @@ func (s *osbbService) GetPollResult(UserID, OSBBID, PollID uint64) (*entity.Poll
 		logger.Error("osbb do not exist", "error", err)
 		return nil, errs.M("osbb not found").Code("Osbb do not exist").Kind(errs.Database)
 	}
-	pollResult, err := s.businessStorage.OSBB.GetPollResult(PollID)
+	pollResult, err := s.businessStorage.OSBB.GetPollResult(PollID, PollFilter{OSBBID: &OSBBID})
 	if err != nil {
-		logger.Error("failed to get polls", "error", err)
-		return nil, errs.Err(err).Code("Failed to get list polls").Kind(errs.Database)
+		logger.Error("failed to get poll results", "error", err)
+		return nil, errs.Err(err).Code("Failed to get poll result").Kind(errs.Database)
 	}
 	return pollResult, nil
 }

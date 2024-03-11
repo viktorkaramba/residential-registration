@@ -171,6 +171,9 @@ func (s *OSBBStorage) UpdatePoll(PollID uint64, opts *entity.EventPollUpdatePayl
 	if opts.Question != nil {
 		poll.Question = *opts.Question
 	}
+	if opts.IsOpen != nil {
+		poll.IsOpen = *opts.IsOpen
+	}
 	if opts.FinishedAt != nil {
 		poll.FinishedAt = *opts.FinishedAt
 	}
@@ -239,7 +242,7 @@ func (s *OSBBStorage) GetPoll(PollID uint64, filter services.PollFilter) (*entit
 	return poll, err
 }
 
-func (s *OSBBStorage) GetPollResult(PollID uint64) (*entity.PollResult, error) {
+func (s *OSBBStorage) GetPollResult(PollID uint64, filter services.PollFilter) (*entity.PollResult, error) {
 	pollResult := &entity.PollResult{}
 
 	stmt := s.db.
@@ -272,6 +275,33 @@ func (s *OSBBStorage) GetPollResult(PollID uint64) (*entity.PollResult, error) {
 
 func (s *OSBBStorage) CreatAnswer(answer *entity.Answer) error {
 	return s.db.Create(answer).Error
+}
+
+func (s *OSBBStorage) ListAnswers(filter services.AnswerFilter) ([]entity.Answer, error) {
+	stmt := s.db.
+		Model(&entity.Answer{})
+
+	if filter.TestAnswerID != nil {
+		stmt = stmt.Where(entity.Answer{TestAnswerID: *filter.TestAnswerID})
+	}
+	if filter.PollID != nil {
+		stmt = stmt.Where(entity.Answer{PollID: *filter.PollID})
+	}
+	if filter.UserID != nil {
+		stmt = stmt.Where(entity.Answer{UserID: *filter.UserID})
+	}
+	if filter.Content != nil {
+		stmt = stmt.Where(entity.Answer{Content: *filter.Content})
+	}
+	if filter.CreatedAt != nil {
+		stmt = stmt.Where(entity.Answer{CreatedAt: *filter.CreatedAt})
+	}
+	if filter.UpdateAt != nil {
+		stmt = stmt.Where(entity.Answer{UpdateAt: *filter.UpdateAt})
+	}
+
+	var answers []entity.Answer
+	return answers, stmt.Order("created_at DESC").Find(&answers).Error
 }
 
 func (s *OSBBStorage) GetAnswer(AnswerID uint64, filter services.AnswerFilter) (*entity.Answer, error) {

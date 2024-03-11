@@ -40,8 +40,9 @@ type OSBBStorage interface {
 	UpdateTestAnswer(TestAnswerID uint64, poll *entity.EventTestAnswerUpdatePayload) error
 	DeleteTestAnswer(TestAnswerID uint64, filter TestAnswerFilter) error
 	GetPoll(PollID uint64, filter PollFilter) (*entity.Poll, error)
-	GetPollResult(PollID uint64) (*entity.PollResult, error)
+	GetPollResult(PollID uint64, filter PollFilter) (*entity.PollResult, error)
 	CreatAnswer(answer *entity.Answer) error
+	ListAnswers(filter AnswerFilter) ([]entity.Answer, error)
 	GetAnswer(AnswerID uint64, filter AnswerFilter) (*entity.Answer, error)
 	UpdateAnswer(AnswerID uint64, answer *entity.EventUserAnswerUpdatePayload) error
 	CreatePayment(payment *entity.Payment) error
