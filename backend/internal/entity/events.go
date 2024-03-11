@@ -53,7 +53,7 @@ type EventPollAnswerPayload struct {
 }
 
 type EventPollAnswerTestPayload struct {
-	TestAnswerID uint64 `json:"test-answer-id"  binding:"required"`
+	TestAnswerID uint64 `json:"test_answer_id"  binding:"required"`
 }
 
 type EventPaymentPayload struct {
@@ -78,6 +78,7 @@ type EventAnnouncementUpdatePayload struct {
 
 type EventPollUpdatePayload struct {
 	Question   *Text      `json:"question"`
+	IsOpen     *bool      `json:"is_open"`
 	FinishedAt *time.Time `json:"finished_at"`
 }
 
@@ -85,8 +86,25 @@ type EventTestAnswerUpdatePayload struct {
 	Content *Text `json:"content"`
 }
 
+type EventUserAnswerUpdatePayload struct {
+	Content      *Text   `json:"content"`
+	TestAnswerID *uint64 `json:"test_answer_id"`
+}
+
 type EventTokenPayload struct {
 	TokenValue `json:"token" binding:"required"`
+}
+
+type EventUserAnswersResponse struct {
+	ID           uint64 `json:"id"`
+	PollID       uint64 `json:"pollID"`
+	UserID       uint64 `json:"userID"`
+	TestAnswerID uint64 `json:"test_answer_id"`
+
+	Content Text `json:"content"`
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdateAt  time.Time `json:"updated_at"`
 }
 
 func (i EventUserUpdatePayload) Validate() error {

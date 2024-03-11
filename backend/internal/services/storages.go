@@ -2,6 +2,8 @@ package services
 
 import (
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/pkg/errs"
+	"time"
 )
 
 type Storages struct {
@@ -38,8 +40,11 @@ type OSBBStorage interface {
 	UpdateTestAnswer(TestAnswerID uint64, poll *entity.EventTestAnswerUpdatePayload) error
 	DeleteTestAnswer(TestAnswerID uint64, filter TestAnswerFilter) error
 	GetPoll(PollID uint64, filter PollFilter) (*entity.Poll, error)
-	GetPollResult(PollID uint64) (*entity.PollResult, error)
+	GetPollResult(PollID uint64, filter PollFilter) (*entity.PollResult, error)
 	CreatAnswer(answer *entity.Answer) error
+	ListAnswers(filter AnswerFilter) ([]entity.Answer, error)
+	GetAnswer(AnswerID uint64, filter AnswerFilter) (*entity.Answer, error)
+	UpdateAnswer(AnswerID uint64, answer *entity.EventUserAnswerUpdatePayload) error
 	CreatePayment(payment *entity.Payment) error
 	CreateUserPayment(userPayment *entity.Purchase) error
 }
@@ -71,9 +76,23 @@ type TestAnswerFilter struct {
 	Content *entity.Text
 }
 
+type AnswerFilter struct {
+	PollID       *uint64
+	UserID       *uint64
+	TestAnswerID *uint64
+	Content      *entity.Text
+	CreatedAt    *time.Time
+	UpdateAt     *time.Time
+}
+
 type OSBBFilter struct {
 	OSBBID            *uint64
 	WithBuilding      bool
 	WithAnnouncements bool
 	WithOSBBHead      bool
 }
+
+var (
+	ErrPhoneNumberDuplicate = errs.M("user with this number already exist").Code("duplicate_phone_number")
+	ErrEDRPOUDuplicate      = errs.M("osbb with this edrpou already exist").Code("duplicate_edrpou")
+)
