@@ -9,7 +9,7 @@ import Home from './pages/Home/Home'
 import reportWebVitals from './reportWebVitals';
 import Login from "./pages/Login/Login";
 import {OSBBProvider} from "./components/OSBB/OSBBContext";
-import OSBBProfile from "./components/OSBB/OSBBProfile/OSBBProfile";
+import OSBBProfile from "./pages/OSBBProfile/OSBBProfile";
         
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -19,15 +19,12 @@ root.render(
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home/>}/>
-                <Route path="/osbbs/:osbbID" element={<OSBBProfile/>}/>
+                <Route path="/osbbs/profile" element={<OSBBProfile/>}/>
+                <Route path="/login" element={<Login/>}/>
                 <Route path="/login" element={<Login/>}/>
             </Routes>
-            </Route>
-            <Route path="/login" element={<Login/>}>
-
-            </Route>
-        </Routes>
     </BrowserRouter>
+    </OSBBProvider>
 );
 
 reportWebVitals();
