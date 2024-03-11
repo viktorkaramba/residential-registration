@@ -468,6 +468,25 @@ func (s *osbbService) AddPollAnswerTest(UserID, PollID, OSBBID uint64, inputPoll
 		logger.Error("test answer do not exist", "error", err)
 		return nil, errs.M("test answer not found").Code("Test answer do not exist").Kind(errs.Database)
 	}
+	isAnswerAlreadyExist, err := s.businessStorage.OSBB.GetAnswer(0, AnswerFilter{
+		PollID: &PollID,
+		UserID: &UserID,
+	})
+	if err != nil {
+		logger.Error("failed to get answer", "error", err)
+		return nil, errs.Err(err).Code("Failed to get answer").Kind(errs.Database)
+	}
+	if isAnswerAlreadyExist != nil {
+		logger.Error("answer already exist", "error", err)
+		err = s.businessStorage.OSBB.UpdateAnswer(isAnswerAlreadyExist.ID, &entity.EventUserAnswerUpdatePayload{
+			TestAnswerID: &inputPollAnswerTest.TestAnswerID,
+		})
+		if err != nil {
+			logger.Error("failed to update answer", "error", err)
+			return nil, errs.Err(err).Code("Failed to update answer").Kind(errs.Database)
+		}
+		return isAnswerAlreadyExist, nil
+	}
 	answer := &entity.Answer{
 		PollID:       PollID,
 		UserID:       UserID,

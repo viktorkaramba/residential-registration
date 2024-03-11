@@ -85,6 +85,11 @@ type EventTestAnswerUpdatePayload struct {
 	Content *Text `json:"content"`
 }
 
+type EventUserAnswerUpdatePayload struct {
+	Content      *Text   `json:"content"`
+	TestAnswerID *uint64 `json:"test_answer_id"`
+}
+
 type EventTokenPayload struct {
 	TokenValue `json:"token" binding:"required"`
 }

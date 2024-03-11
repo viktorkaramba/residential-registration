@@ -3,6 +3,7 @@ package services
 import (
 	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/pkg/errs"
+	"time"
 )
 
 type Storages struct {
@@ -41,6 +42,8 @@ type OSBBStorage interface {
 	GetPoll(PollID uint64, filter PollFilter) (*entity.Poll, error)
 	GetPollResult(PollID uint64) (*entity.PollResult, error)
 	CreatAnswer(answer *entity.Answer) error
+	GetAnswer(AnswerID uint64, filter AnswerFilter) (*entity.Answer, error)
+	UpdateAnswer(AnswerID uint64, answer *entity.EventUserAnswerUpdatePayload) error
 	CreatePayment(payment *entity.Payment) error
 	CreateUserPayment(userPayment *entity.Purchase) error
 }
@@ -70,6 +73,15 @@ type PollFilter struct {
 type TestAnswerFilter struct {
 	PollID  *uint64
 	Content *entity.Text
+}
+
+type AnswerFilter struct {
+	PollID       *uint64
+	UserID       *uint64
+	TestAnswerID *uint64
+	Content      *entity.Text
+	CreatedAt    *time.Time
+	UpdateAt     *time.Time
 }
 
 type OSBBFilter struct {
