@@ -114,7 +114,8 @@ func (h *Handler) refreshToken(c *gin.Context) {
 	}
 	if oldToken.Revoked {
 		logger.Error("failed to refresh token", "error", errors.New("token is revoked"))
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to refresh token: %w", errors.New("token is revoked")))
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to refresh token: %w",
+			errs.Err(errors.New("token is revoked")).Code("Token is revoked").Kind(errs.Private)))
 		return
 	}
 	newToken, err := h.Services.Token.RefreshToken(oldToken.UserID)
