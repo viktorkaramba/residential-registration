@@ -8,6 +8,7 @@ const OSBBList = () =>{
         try{
             const response = await fetch(config.apiUrl+'osbb/');
             const data = await response.json();
+            console.log(data)
             const newOSBBS = data.slice(0, 20).map(
                     (osbbSingle: { id: any; building: any; announcements: any; osbb_head: any; name: any; edrpou: any; }) => {
                         const {id, building, announcements, osbb_head, name, edrpou} = osbbSingle;

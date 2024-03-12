@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import config from "../../config";
 import Header from "../../components/Header/Header";
-import {useOSBBContext} from "../../components/OSBB/OSBBContext";
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {

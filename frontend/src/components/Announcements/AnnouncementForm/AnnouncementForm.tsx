@@ -1,12 +1,13 @@
 import React from "react";
 import config from "../../../config";
 import {useOSBBContext} from "../../OSBB/OSBBContext";
+import error from "../../../error";
+import RefreshToken from "../../../auth";
 
 const AnnouncementForm = () =>{
     // @ts-ignore
     const {osbbID} = useOSBBContext()
-    const handleSubmit = (event: any) => {
-        console.log('handleSubmit ran');
+    const addAnnouncement = (event: any) => {
         event.preventDefault();
 
         // 👇️ access input values using name prop
@@ -14,20 +15,23 @@ const AnnouncementForm = () =>{
         const content = event.target.content.value;
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json',
-                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
+            headers: config.headers,
             body: JSON.stringify({ title: title, content: content})
         }
         fetch(config.apiUrl+'osbb/'+osbbID+'/announcements', requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // if(data.toString().includes(error.tokenExpire)){
+                //     if (RefreshToken()){
+                //         addAnnouncement(event);
+                //     }
+                // }
             });
         // // 👇️ clear all input values in the form
         // event.target.reset();
     };
     return(
-        <form className='form' method='post'  onSubmit={handleSubmit}>
+        <form className='form' method='post'  onSubmit={addAnnouncement}>
             <label form={'title'}>
                Назва оголошення
             </label>

@@ -2,6 +2,7 @@ import {useCallback, useEffect, useState} from "react";
 import AnnouncementListElement from "./AnnouncementListElement";
 import config from "../../../config";
 import {useOSBBContext} from "../../OSBB/OSBBContext";
+import error from "../../../error";
 
 const AnnouncementList = () =>{
     // @ts-ignore
@@ -15,6 +16,9 @@ const AnnouncementList = () =>{
             }
             const response = await fetch(config.apiUrl+'osbb/'+ osbbID+ '/announcements', requestOptions);
             const data = await response.json();
+            if(data.includes(error.tokenIsRevoked)){
+                console.log("yes")
+            }
             const announcements = data.slice(0, 20).map(
                 (announcementSingle: { ID: any; UserID: any; OSBBID: any; Title: any; Content: any; CreatedAt: any; updatedAt: any }) => {
                     const {ID, UserID, OSBBID, Title, Content, CreatedAt, updatedAt} = announcementSingle;
@@ -28,7 +32,6 @@ const AnnouncementList = () =>{
                         updatedAt: updatedAt
                     }
                 });
-            console.log(announcements)
             setAnnouncements(announcements)
         } catch(error){
             console.log(error);
