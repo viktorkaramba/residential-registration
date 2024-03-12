@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import config from "../../config";
 import Header from "../../components/Header/Header";
 import { useNavigate } from 'react-router-dom';
+import {useOSBBContext} from "../../components/OSBB/OSBBContext";
 
 const LoginPage = () => {
 
     const [phone_number, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [token, setToken] = useState('');
+
     const navigate = useNavigate();
     const handleLogin = async () => {
         try {
@@ -19,7 +21,6 @@ const LoginPage = () => {
                 body: JSON.stringify({ phone_number, password }),
             });
             const data = await response.json();
-            console.log(data)
             const { token } = data;
             setToken(token);
         } catch (error) {
@@ -29,7 +30,6 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (token) {
-            localStorage.setItem('token', token);
             navigate("/osbbs/profile");
         }
     }, [token]);

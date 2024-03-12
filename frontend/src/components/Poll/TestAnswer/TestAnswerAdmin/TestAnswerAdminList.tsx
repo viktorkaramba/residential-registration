@@ -28,14 +28,19 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                setTestAnswers((currentAnswer: any[]) => {
-                    return currentAnswer.map((answer:any)=>{
-                        if(answer.id === id){
-                            return {...answer}
-                        }
-                        return answer
-                    })
-                })
+                const {error}:any = data;
+                if(error){
+                    error.HandleError({error, updateTestAnswer});
+                }else {
+                    setTestAnswers((currentAnswer: any[]) => {
+                        return currentAnswer.map((answer:any)=>{
+                            if(answer.id === id){
+                                return {...answer}
+                            }
+                            return answer
+                        })
+                    });
+                }
             });
     }
 
@@ -48,10 +53,14 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls-test/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                setTestAnswers((currentAnswer: any[]) => {
-                    return currentAnswer.filter(answer => answer.id !== id)
-                })
+                const {error}:any = data;
+                if(error){
+                    error.HandleError({error, deleteTestAnswer});
+                }else {
+                    setTestAnswers((currentAnswer: any[]) => {
+                        return currentAnswer.filter(answer => answer.id !== id)
+                    })
+                }
             });
     }
     return(

@@ -1,16 +1,24 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 
 const OSBBContext = React.createContext('light');
 
 const OSBBProvider = ({children}: { children?: React.ReactNode }) => {
     const [activeOSBBElement, setActiveOSBBElement] = useState("1");
+    const [isLogin] = useState(()=>{
+        let token = localStorage.getItem('token') || '';
+        if(token!==''){
+            return true;
+        }else {
+            return false;
+        }
+    });
     const [osbbID, setOsbbID] = useState(0);
 
     return (
         // @ts-ignore
         <OSBBContext.Provider value = {{
-            activeOSBBElement, setActiveOSBBElement, osbbID, setOsbbID
+            activeOSBBElement, setActiveOSBBElement, osbbID, setOsbbID, isLogin
         }}>
             {children}
         </OSBBContext.Provider>

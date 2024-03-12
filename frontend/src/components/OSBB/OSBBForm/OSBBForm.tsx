@@ -1,11 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
 import config from "../../../config";
+import err from "../../../err";
+import {useNavigate} from "react-router-dom";
+import {useOSBBContext} from "../OSBBContext";
 
 const OSBBForm = () =>{
-    const handleSubmit = (event: any) => {
-        console.log('handleSubmit ran');
-        event.preventDefault();
+    const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
+    const [errorEDRPOU, setErrorEDRPOU] = useState(false);
+    const navigate = useNavigate();
+    const addOSBB = (event: any) => {
 
+        event.preventDefault();
+        setErrorEDRPOU(false);
+        setErrorPhoneNumber(false);
         // 👇️ access input values using name prop
         const firstName = event.target.first_name.value;
         const surname = event.target.surname.value;
@@ -27,13 +34,27 @@ const OSBBForm = () =>{
         fetch(config.apiUrl+'osbb/', requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                const {error}:any = data;
+                if(error){
+                    if(error.includes(err.errorsMessages.osbbAlreadyExist)){
+                        setErrorEDRPOU(true);
+                    }else if(error.includes(err.errorsMessages.phoneNumberAlreadyExist)) {
+                        setErrorPhoneNumber(true);
+                    }else {
+                        err.HandleError({errorMsg:error, func:addOSBB, navigate:navigate});
+                    }
+                }else {
+                    if(data){
+                        const {token}:any = data
+                        localStorage.setItem("token", token);
+                    }
+                }
             });
         // // 👇️ clear all input values in the form
         // event.target.reset();
     };
     return(
-        <form className='form' method='post'  onSubmit={handleSubmit}>
+        <form className='form' method='post'  onSubmit={addOSBB}>
             <label form={'first_name'}>
                 Ім'я
             </label>
@@ -70,7 +91,11 @@ const OSBBForm = () =>{
                 Плата за м^2
             </label>
             <input name="rent" required={true} placeholder="" type='text' id='rent'/>
-            <button type="submit">Submit form</button>
+            {errorPhoneNumber &&
+                <span className='error'>Користувач з таким номером телефона уже зареєсторваний</span>}
+            {errorEDRPOU &&
+                <span className='error'>ОСББ із таким ЕДРПОУ уже додане</span>}
+            <button type="submit">Додати ОСББ</button>
         </form>
     )
 }

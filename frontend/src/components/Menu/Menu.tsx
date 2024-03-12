@@ -6,13 +6,22 @@ import OSBBList from "../OSBB/OSBBList/OSBBList";
 import OSBBForm from "../OSBB/OSBBForm/OSBBForm";
 import InhabitantForm from "../Inhabitant/InhabitantForm/InhabitantForm";
 import {useOSBBContext} from "../OSBB/OSBBContext";
+import {Link} from "react-router-dom";
+import { useNavigate } from "react-router-dom"
 
 const Menu = () =>{
 
     // @ts-ignore
     const {activeOSBBElement, setActiveOSBBElement} = useOSBBContext();
+    // @ts-ignore
+    const {isLogin} = useOSBBContext();
+    const navigate = useNavigate()
     const handleClick = (element: React.SetStateAction<string>) => {
-        setActiveOSBBElement(element);
+        if(element === '4'){
+            navigate('/osbbs/profile')
+        }else {
+            setActiveOSBBElement(element);
+        }
     };
 
     return(
@@ -22,9 +31,14 @@ const Menu = () =>{
                 <div className='text-block' onClick={() => handleClick('1')}>
                     Список ОСББ
                 </div>
-                <div className='text-block' onClick={() => handleClick('2')}>
-                    Додати ОСББ
-                </div>
+                {!isLogin &&
+                    <div className='text-block' onClick={() => handleClick('2')}>
+                        Додати ОСББ
+                    </div>}
+                {isLogin &&
+                    <div className='text-block' onClick={() => handleClick('4')}>
+                        Профіль ОСББ
+                    </div>}
             </section>
             {activeOSBBElement === '1' && <OSBBList/>}
             {activeOSBBElement === '2' && <OSBBForm/>}

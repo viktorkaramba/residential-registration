@@ -14,70 +14,85 @@ const PollAdminList = () =>{
                 method: 'GET',
                 headers: config.headers,
             }
-            const response = await fetch(config.apiUrl+'osbb/'+ osbbID+ '/polls', requestOptions);
-            const data = await response.json();
-            const polls = data.slice(0, 20).map(
-                (pollSingle: { id:any, question: any; test_answer: any; type: any; created_at: any;
-                    finished_at: any; createdAt: any; updatedAt: any }) => {
-                    const {id, question, test_answer, type, created_at, finished_at, createdAt, updatedAt} = pollSingle;
-                    return {
-                        id: id,
-                        question: question,
-                        test_answer: test_answer,
-                        type: type,
-                        created_at: created_at,
-                        finished_at: finished_at,
-                        createdAt: createdAt,
-                        updatedAt: updatedAt
-                    }
-                });
-            console.log(polls)
-            setPolls(polls)
+           fetch(config.apiUrl+'osbb/'+ osbbID+ '/polls', requestOptions)
+               .then(response => response.json())
+               .then(data => {
+                   const {error}:any = data;
+                   if(error){
+                       error.HandleError({error, fetchPolls});
+                   }else {
+                       if(data){
+                           const polls = data.slice(0, 20).map(
+                               (pollSingle: { id:any, question: any; test_answer: any; type: any; created_at: any;
+                                   finished_at: any; createdAt: any; updatedAt: any }) => {
+                                   const {id, question, test_answer, type, created_at, finished_at, createdAt, updatedAt} = pollSingle;
+                                   return {
+                                       id: id,
+                                       question: question,
+                                       test_answer: test_answer,
+                                       type: type,
+                                       created_at: created_at,
+                                       finished_at: finished_at,
+                                       createdAt: createdAt,
+                                       updatedAt: updatedAt
+                                   }
+                               });
+                           setPolls(polls);
+                       }else {
+                           setPolls([]);
+                       }
+                   }
+               });
         } catch(error){
             console.log(error);
         }
     }, [osbbID]);
+
     useEffect(() => {
         fetchPolls();
     }, []);
-    function updatePoll(id:any, question:any, finished_at:any){
-        console.log('handleSubmit ran');
-        console.log(question, finished_at);
+
+    function updatePoll(id:any, question:any, isOpen:any, finished_at:any){
         if(finished_at!==""){
             finished_at = new Date(finished_at);
         }else {
             finished_at = null;
         }
-        let body = null;
-        if(question !== "" && finished_at != null){
-            body = JSON.stringify({question: question, finished_at: finished_at.toISOString()});
+        let questionJSON = null
+        let finishedAtJSON = null
+        let isOpenJSON = null
+        if(question !== "" ){
+            questionJSON = {question: question};
         }
-        if(question == null){
-            body = JSON.stringify({finished_at: finished_at.toISOString()});
+        if(finished_at != null){
+            finishedAtJSON={finished_at:finished_at};
         }
-        if(finished_at == null) {
-            body = JSON.stringify({question: question});
+        if(isOpen != null) {
+            isOpenJSON = {is_open:isOpen};
         }
-
+        let body = {...questionJSON, ...finishedAtJSON, ...isOpenJSON};
         const requestOptions = {
             method: 'PUT',
             headers:config.headers,
-            body: body,
+            body:  JSON.stringify(body),
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-
-                setPolls((currentPoll:any) => {
-                    return currentPoll.map((poll:any)=>{
-                        if(poll.id === id){
-                            return {...poll, question, finished_at}
-                        }
-                        return poll
+                const {error}:any = data;
+                if(error){
+                    error.HandleError({error, updatePoll});
+                }else {
+                    setPolls((currentPoll:any) => {
+                        return currentPoll.map((poll:any)=>{
+                            if(poll.id === id){
+                                return {...poll, question, finished_at}
+                            }
+                            return poll
+                        })
                     })
-                })
+                }
             });
     }
 
@@ -90,10 +105,14 @@ const PollAdminList = () =>{
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                setPolls((currentPoll: any) => {
-                    return currentPoll.filter((poll:any) => poll.id !== id)
-                })
+                const {error}:any = data;
+                if(error){
+                    error.HandleError({error, deletePoll});
+                }else {
+                    setPolls((currentPoll: any) => {
+                        return currentPoll.filter((poll:any) => poll.id !== id)
+                    })
+                }
             });
     }
 

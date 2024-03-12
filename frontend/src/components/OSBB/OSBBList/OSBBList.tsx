@@ -6,29 +6,42 @@ const OSBBList = () =>{
     const [osbbs, setOSBBS] = useState([]);
     const fetchOSBBS = useCallback(async() => {
         try{
-            const response = await fetch(config.apiUrl+'osbb/');
-            const data = await response.json();
-            console.log(data)
-            const newOSBBS = data.slice(0, 20).map(
-                    (osbbSingle: { id: any; building: any; announcements: any; osbb_head: any; name: any; edrpou: any; }) => {
-                        const {id, building, announcements, osbb_head, name, edrpou} = osbbSingle;
-                        return {
-                            id: id,
-                            building: building,
-                            announcements: announcements,
-                            osbb_head: osbb_head,
-                            name: name,
-                            edrpou: edrpou
+            fetch(config.apiUrl+'osbb/')
+                .then(response => response.json())
+                .then(data => {
+                    const {error}:any = data;
+                    if(error){
+                        error.HandleError({error, fetchOSBBS});
+                    }else {
+                        if(data){
+                            const newOSBBS = data.slice(0, 20).map(
+                                (osbbSingle: { id: any; building: any; announcements: any; osbb_head: any; name: any; edrpou: any; }) => {
+                                    const {id, building, announcements, osbb_head, name, edrpou} = osbbSingle;
+                                    return {
+                                        id: id,
+                                        building: building,
+                                        announcements: announcements,
+                                        osbb_head: osbb_head,
+                                        name: name,
+                                        edrpou: edrpou
+                                    }
+                                });
+                            setOSBBS(newOSBBS);
                         }
-                    });
-            setOSBBS(newOSBBS)
+                        else {
+                            setOSBBS([]);
+                        }
+                    }
+                });
         } catch(error){
             console.log(error);
         }
     }, []);
+
     useEffect(() => {
         fetchOSBBS();
     }, [fetchOSBBS]);
+
     return(
         <div>
             <section className='booklist'>

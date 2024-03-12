@@ -5,7 +5,7 @@ import {useOSBBContext} from "../../OSBB/OSBBContext";
 const PollForm = () =>{
     // @ts-ignore
     const {osbbID} = useOSBBContext()
-    const handleSubmit = (event: any) => {
+    const addPoll = (event: any) => {
         console.log('handleSubmit ran');
         event.preventDefault();
 
@@ -20,13 +20,16 @@ const PollForm = () =>{
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls', requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                const {error}:any = data;
+                if(error){
+                    error.HandleError({error, addPoll});
+                }
             });
         // // 👇️ clear all input values in the form
         // event.target.reset();
     };
     return(
-        <form className='form' method='post'  onSubmit={handleSubmit}>
+        <form className='form' method='post'  onSubmit={addPoll}>
             <label form={'question'}>
                 Запитання
             </label>
@@ -35,7 +38,7 @@ const PollForm = () =>{
                Дата завершення
             </label>
             <input required={true} name="finished_at" placeholder="" type='datetime-local' step="1" id='finished_at'/>
-            <button type="submit">Submit form</button>
+            <button type="submit">Add poll</button>
         </form>
     )
 }

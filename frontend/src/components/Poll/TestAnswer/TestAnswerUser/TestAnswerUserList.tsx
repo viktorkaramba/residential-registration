@@ -7,24 +7,22 @@ const TestAnswerUserList = ({answers, pollID}:any) =>{
     // @ts-ignore
     const {osbbID} = useOSBBContext()
     const [testAnswers, setTestAnswers] = useState(answers);
+
     function addTestAnswer(testAnswerID:any){
         const requestOptions = {
             method: 'POST',
             headers:config.headers,
-            body: JSON.stringify({test_answer_id: testAnswerID}),
+            body: JSON.stringify({test_answer_id: parseInt(testAnswerID)}),
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+pollID+'/answers-test', requestOptions)
             .then(response => response.json())
             .then(data => {
+                const {error}:any = data;
                 console.log(data);
-                // @ts-ignore
-                setTestAnswers(currentTestAnswer => {
-                    return [
-                        ...currentTestAnswer,
-                        {test_answer_id:testAnswerID}
-                    ]
-                })
+                if(error){
+                    error.HandleError({error, addTestAnswer, testAnswerID});
+                }
             });
     }
 

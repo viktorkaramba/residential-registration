@@ -5,7 +5,7 @@ import {useOSBBContext} from "../../OSBB/OSBBContext";
 const InhabitantForm = () =>{
     // @ts-ignore
     const {osbbID} = useOSBBContext();
-    const handleSubmit = (event: any) => {
+    const addInhabitant = (event: any) => {
         console.log('handleSubmit ran');
         event.preventDefault();
 
@@ -28,14 +28,22 @@ const InhabitantForm = () =>{
         fetch(config.apiUrl+'osbb/' + osbbID + '/inhabitants', requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                const {error}:any = data;
+                if(error){
+                    error.HandleError({error, addInhabitant});
+                }else {
+                    if(data){
+                        const {token}:any = data
+                        localStorage.setItem("token", token);
+                    }
+                }
             });
         // 👇️ clear all input values in the form
         event.target.reset();
     };
 
     return(
-        <form className='form' method='post' onSubmit={handleSubmit}>
+        <form className='form' method='post' onSubmit={addInhabitant}>
             <label form={'first_name'}>
                 Ім'я
             </label>

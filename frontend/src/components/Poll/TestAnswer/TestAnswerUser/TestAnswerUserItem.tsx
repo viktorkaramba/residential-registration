@@ -4,10 +4,9 @@ const TestAnswerUserItem = ({content, id, addTestAnswer}:any) =>{
     const [selectedValue, setSelectedValue] = useState('');
 
     const handleChange = (e:any) => {
-        console.log(id)
         console.log(e)
         setSelectedValue(e);
-        addTestAnswer(selectedValue);
+        addTestAnswer(e);
     };
 
     return(

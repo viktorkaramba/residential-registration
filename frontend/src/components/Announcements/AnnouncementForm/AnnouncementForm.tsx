@@ -1,7 +1,7 @@
 import React from "react";
 import config from "../../../config";
 import {useOSBBContext} from "../../OSBB/OSBBContext";
-import error from "../../../error";
+import error from "../../../err";
 import RefreshToken from "../../../auth";
 
 const AnnouncementForm = () =>{
@@ -21,11 +21,10 @@ const AnnouncementForm = () =>{
         fetch(config.apiUrl+'osbb/'+osbbID+'/announcements', requestOptions)
             .then(response => response.json())
             .then(data => {
-                // if(data.toString().includes(error.tokenExpire)){
-                //     if (RefreshToken()){
-                //         addAnnouncement(event);
-                //     }
-                // }
+                const {error}:any = data;
+                if(error){
+                    error.HandleError({error, addAnnouncement});
+                }
             });
         // // 👇️ clear all input values in the form
         // event.target.reset();
