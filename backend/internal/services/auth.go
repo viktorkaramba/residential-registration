@@ -36,7 +36,7 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 		return nil, errs.M("building not found").Code("Building do not exist").Kind(errs.Database)
 	}
 
-	User := &entity.User{
+	user := &entity.User{
 		Apartment: entity.Apartment{
 			BuildingID: building.ID,
 			Number:     inputUser.ApartmentNumber,
@@ -52,13 +52,13 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 		PhoneNumber: inputUser.PhoneNumber,
 		Role:        entity.UserRoleInhabitant,
 	}
-	err = s.businessStorage.User.CreateUser(User)
+	err = s.businessStorage.User.CreateUser(user)
 	if err != nil {
 		logger.Error("failed to сreate user", "error", err)
 		return nil, errs.Err(err).Code("Failed to сreate user").Kind(errs.Database)
 	}
 
-	return User, nil
+	return user, nil
 }
 
 func (s *authService) Login(inputLogin entity.EventLoginPayload) (*entity.User, error) {
