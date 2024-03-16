@@ -25,12 +25,12 @@ type User struct {
 }
 
 type Apartment struct {
-	ID         uint64 `gorm:"primaryKey;autoIncrement:true"`
-	BuildingID uint64 `gorm:"index"`
-	UserID     uint64 `gorm:"index"`
+	ID         uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
+	BuildingID uint64 `gorm:"index" json:"buildingID "`
+	UserID     uint64 `gorm:"index" json:"userID"`
 
-	Number ApartmentNumber
-	Area   ApartmentArea
+	Number ApartmentNumber `json:"number"`
+	Area   ApartmentArea   `json:"area"`
 
 	database.PostgreSQLModel
 }

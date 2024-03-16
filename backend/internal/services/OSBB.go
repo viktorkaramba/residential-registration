@@ -577,8 +577,8 @@ func (s *osbbService) DeleteTestAnswer(UserID, OSBBID, TestAnswerID uint64) erro
 	return nil
 }
 
-func (s *osbbService) GetUserAnswers(UserID, OSBBID, PollID uint64) ([]entity.Answer, error) {
-	logger := s.logger.Named("GetUserAnswers").
+func (s *osbbService) GetUserAnswer(UserID, OSBBID, PollID uint64) (*entity.Answer, error) {
+	logger := s.logger.Named("GetUserAnswer").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("poll_id", PollID)
 
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
@@ -600,7 +600,7 @@ func (s *osbbService) GetUserAnswers(UserID, OSBBID, PollID uint64) ([]entity.An
 		return nil, errs.M("poll not found").Code("Poll do not exist").Kind(errs.Database)
 	}
 
-	userAnswers, err := s.businessStorage.OSBB.ListAnswers(AnswerFilter{
+	userAnswers, err := s.businessStorage.OSBB.GetAnswer(0, AnswerFilter{
 		PollID: &PollID,
 		UserID: &UserID,
 	})

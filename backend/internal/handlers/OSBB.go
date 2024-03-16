@@ -660,14 +660,14 @@ func (h *Handler) getUserAnswers(c *gin.Context) {
 		return
 	}
 
-	userAnswers, err := h.Services.OSBB.GetUserAnswers(userID, osbbID, pollID)
+	userAnswer, err := h.Services.OSBB.GetUserAnswer(userID, osbbID, pollID)
 	if err != nil {
 		logger.Error("failed to get user answers", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user answers: %w", err))
 		return
 	}
 
-	c.JSON(http.StatusOK, userAnswers)
+	c.JSON(http.StatusOK, userAnswer)
 }
 
 func (h *Handler) getPollsResults(c *gin.Context) {
