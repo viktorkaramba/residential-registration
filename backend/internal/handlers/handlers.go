@@ -55,6 +55,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		osbb.DELETE("/:osbbID/polls-test/:testAnswerID", h.userIdentity, h.deleteTestAnswer)
 
 		osbb.POST("/:osbbID/polls/:pollID/answers", h.userIdentity, h.addPollAnswer)
+		osbb.PUT("/:osbbID/polls/:pollID/answers", h.userIdentity, h.updateUserAnswer)
+		osbb.DELETE("/:osbbID/polls/:pollID/answers", h.userIdentity, h.deleteUserAnswer)
 		osbb.POST("/:osbbID/polls/:pollID/answers-test", h.userIdentity, h.addPollAnswerTest)
 		osbb.GET("/:osbbID/polls/:pollID/answers-results", h.userIdentity, h.getPollsResults)
 		osbb.GET("/:osbbID/polls/:pollID/user-answers", h.userIdentity, h.getUserAnswers)
