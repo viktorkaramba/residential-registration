@@ -1,17 +1,21 @@
 import React, {useEffect, useState} from "react";
 
-const TestAnswerUserItem = ({content, id, userAnswers, addTestAnswer, selectedValue, setSelectedValue, deleteAnswer}:any) =>{
+const TestAnswerUserItem = ({content, id, userAnswer, addTestAnswer, selectedValue, setSelectedValue, deleteAnswer}:any) =>{
 
     const handleChange = (e:any) => {
         setSelectedValue(e);
         addTestAnswer(e);
     };
 
+
+
     useEffect(() => {
-        if(userAnswers.some((answer:any) => answer.test_answer_id === id)){
-            setSelectedValue(id)
+        if(userAnswer != null){
+            if(userAnswer.test_answer_id === id){
+                setSelectedValue(id)
+            }
         }
-    }, [userAnswers]);
+    }, [userAnswer]);
 
     return(
         <li>
@@ -25,11 +29,6 @@ const TestAnswerUserItem = ({content, id, userAnswers, addTestAnswer, selectedVa
                     />
                     {content}
                 </div>
-                <button
-                    onClick={()=>deleteAnswer(id)}
-                >
-                    Delete
-                </button>
             </label>
         </li>
     )

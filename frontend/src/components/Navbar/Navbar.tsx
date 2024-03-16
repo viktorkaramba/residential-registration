@@ -9,8 +9,6 @@ const Navbar = () =>{
     const {isLogin, setIsLogin} = useAppContext();
     const navigate = useNavigate();
     function onLogout() {
-        console.log("in")
-        auth.Logout(navigate);
         setIsLogin(false);
     }
     return(

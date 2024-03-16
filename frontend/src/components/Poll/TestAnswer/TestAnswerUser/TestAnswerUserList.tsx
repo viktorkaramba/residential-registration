@@ -1,11 +1,11 @@
 import config from "../../../../config";
-import {useState} from "react";
+import React, {useState} from "react";
 import {useAppContext} from "../../../../AppContext";
 import TestAnswerUserItem from "./TestAnswerUserItem";
 import err from "../../../../err";
 import {useNavigate} from "react-router-dom";
 
-const TestAnswerUserList = ({answers, pollID, userAnswers}:any) =>{
+const TestAnswerUserList = ({answers, pollID, userAnswer, deleteAnswer}:any) =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
     const [testAnswers] = useState(answers);
@@ -31,33 +31,24 @@ const TestAnswerUserList = ({answers, pollID, userAnswers}:any) =>{
             });
     }
 
-    function deleteAnswer(pollID:any){
-        const requestOptions = {
-            method: 'DELETE',
-            headers:config.headers,
-        }
-
-        fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+pollID + '/answers', requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                const {error}:any = data;
-                if(error){
-                    error.HandleError({error, deleteAnswer});
-                }else {
-                    setSelectedValue(undefined);
-                }
-            });
+    function handleDelete(){
+        deleteAnswer(pollID)
+        setSelectedValue(undefined)
     }
-
     return(
         <ul>
             {testAnswers.map((answer: {id:any, content:any})=>{
                 return(
-                   <TestAnswerUserItem {...answer} key={answer.id} userAnswers={userAnswers} addTestAnswer={addTestAnswer}
+                   <TestAnswerUserItem {...answer} key={answer.id} userAnswer={userAnswer} addTestAnswer={addTestAnswer}
                                        selectedValue={selectedValue} setSelectedValue={setSelectedValue}
                                        deleteAnswer={deleteAnswer}/>
                 )
             })}
+            <button
+                onClick={()=>handleDelete()}
+            >
+                Delete
+            </button>
         </ul>
     )
 }

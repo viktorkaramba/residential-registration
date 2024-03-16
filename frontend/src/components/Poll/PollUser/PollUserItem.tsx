@@ -10,7 +10,7 @@ import {useNavigate} from "react-router-dom";
 const PollUserItem = ({poll}:any) => {
     // @ts-ignore
     const {osbbID} = useAppContext()
-    const [userAnswers, setUserAnswers] = useState([]);
+    const [userAnswer, setUserAnswer] = useState<any>(null);
     const navigate = useNavigate();
     const [isExist, setIsExist] = useState(false);
 
@@ -24,43 +24,74 @@ const PollUserItem = ({poll}:any) => {
             fetch(config.apiUrl+'osbb/'+ osbbID+ '/polls/' + poll.id + '/user-answers', requestOptions)
                 .then(response => response.json())
                 .then(data => {
-                    const {error}:any = data;
-                    if(error){
-                        err.HandleError({errorMsg:error, func:fetchUserAnswers, navigate:navigate});
-                    }else {
                         if(data){
-                            const answers = data.map(
-                                (answerSingle: { id:any, pollID: any; userID: any; test_answer_id: any; content: any;
-                                    created_at: any; updated_at: any }) => {
-                                    const {id, pollID, userID, test_answer_id, content, created_at, updated_at} = answerSingle;
-                                    return {
-                                        id: id,
-                                        pollID: pollID,
-                                        userID: userID,
-                                        test_answer_id: test_answer_id,
-                                        content: content,
-                                        created_at: created_at,
-                                        updated_at: updated_at,
-                                    }
-                                });
-                            setUserAnswers(answers)
+                            const {error}:any = data;
+                            if(error){
+                                err.HandleError({errorMsg:error, func:fetchUserAnswers, navigate:navigate});
+                            }else {
+                                const { id, pollID, userID, test_answer_id, content, created_at, updated_at }:any =data
+                                const newAnswer ={
+                                    id: id,
+                                    pollID: pollID,
+                                    userID: userID,
+                                    test_answer_id: test_answer_id,
+                                    content: content,
+                                    created_at: created_at,
+                                    updated_at: updated_at,
+                                }
+                                setUserAnswer(newAnswer)
+                            }
                         }else {
-                            setUserAnswers([])
+                            setUserAnswer(null)
                         }
-                    }
                 });
         } catch(error){
             console.log(error);
         }
     }, []);
 
+    function updateAnswer(pollID:any){
+        const requestOptions = {
+            method: 'PUT',
+            headers:config.headers,
+        }
+
+        fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+pollID + '/answers', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                const {error}:any = data;
+                if(error){
+                    error.HandleError({errorMsg:error, func:updateAnswer});
+                }
+            });
+    }
+
+    function deleteAnswer(pollID:any){
+        const requestOptions = {
+            method: 'DELETE',
+            headers:config.headers,
+        }
+
+        fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+pollID + '/answers', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                const {error}:any = data;
+                if(error){
+                    error.HandleError({errorMsg:error, func:deleteAnswer});
+                }
+            });
+    }
+
     useEffect(() => {
         fetchUserAnswers();
     }, []);
 
     useEffect(() => {
-       setIsExist(userAnswers.some((answer:any) => answer.content.length!==0))
-    }, [userAnswers]);
+        if(userAnswer != null){
+            setIsExist(userAnswer.content.length!==0)
+        }
+
+    }, [userAnswer]);
 
     return(
         <li>
@@ -68,9 +99,9 @@ const PollUserItem = ({poll}:any) => {
                 {poll.question}
             </label>
             {poll.test_answer.length !== 0 && <TestAnswerUserList answers={poll.test_answer} pollID={poll.id}
-                                                                   userAnswers={userAnswers}/>}
-            {poll.test_answer.length === 0 && <AnswerForm pollID={poll.id} userAnswers={userAnswers} isExist={isExist}
-                                                           setIsExist={setIsExist}/>}
+                                                                   userAnswer={userAnswer} deleteAnswer={deleteAnswer}/>}
+            {poll.test_answer.length === 0 && <AnswerForm pollID={poll.id} userAnswer={userAnswer} isExist={isExist}
+                                                           setIsExist={setIsExist} deleteAnswer={deleteAnswer}/>}
         </li>
     )
 }
