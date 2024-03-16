@@ -43,7 +43,7 @@ type OSBBService interface {
 	AddPollAnswerTest(UserID, PollID, OSBBID uint64, inputPollAnswerTest entity.EventPollAnswerTestPayload) (*entity.Answer, error)
 	UpdateTestAnswer(UserID, OSBBID, TestAnswerID uint64, testAnswer entity.EventTestAnswerUpdatePayload) error
 	DeleteTestAnswer(UserID, OSBBID, TestAnswerID uint64) error
-	GetUserAnswers(UserID, OSBBID, PollID uint64) ([]entity.Answer, error)
+	GetUserAnswer(UserID, OSBBID, PollID uint64) (*entity.Answer, error)
 	GetPollResult(UserID, OSBBID, PollID uint64) (*entity.PollResult, error)
 	AddPayment(UserID, OSBBID uint64, inputPayment entity.EventPaymentPayload) (*entity.Payment, error)
 	AddPurchase(UserID, PaymentID uint64) (*entity.Purchase, error)
