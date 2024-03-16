@@ -134,3 +134,10 @@ func (i EventTestAnswerUpdatePayload) Validate() error {
 	}
 	return nil
 }
+
+func (i EventUserAnswerUpdatePayload) Validate() error {
+	if i.Content == nil && i.TestAnswerID == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
+}

@@ -497,7 +497,7 @@ func (s *osbbService) AddPollAnswerTest(UserID, PollID, OSBBID uint64, inputPoll
 	}
 	if isAnswerAlreadyExist != nil {
 		logger.Error("answer already exist", "error", err)
-		err = s.businessStorage.OSBB.UpdateAnswer(isAnswerAlreadyExist.ID, &entity.EventUserAnswerUpdatePayload{
+		err = s.businessStorage.OSBB.UpdateAnswer(isAnswerAlreadyExist.ID, 0, &entity.EventUserAnswerUpdatePayload{
 			TestAnswerID: &inputPollAnswerTest.TestAnswerID,
 		})
 		if err != nil {
@@ -609,6 +609,80 @@ func (s *osbbService) GetUserAnswer(UserID, OSBBID, PollID uint64) (*entity.Answ
 		return nil, errs.Err(err).Code("Failed to get list answers").Kind(errs.Database)
 	}
 	return userAnswers, nil
+}
+
+func (s *osbbService) UpdateAnswer(UserID, OSBBID, PollID uint64, answer *entity.EventUserAnswerUpdatePayload) error {
+	logger := s.logger.Named("UpdateAnswer").
+		With("user_id", UserID).With("osbb_id", OSBBID).With("poll_id", PollID).
+		With("answer", answer)
+	if err := answer.Validate(); err != nil {
+		logger.Error("failed to validate update poll data", "error", err)
+		return errs.Err(err).Code("failed to validate update poll data").Kind(errs.Validation)
+	}
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	if user.Role != entity.UserRoleOSBBHead {
+		logger.Error("User can not update a test answer", "error", err)
+		return errs.M("user not osbb head").Code("User can not update a test answer").Kind(errs.Private)
+	}
+	poll, err := s.businessStorage.OSBB.GetPoll(PollID, PollFilter{OSBBID: &OSBBID, WithTestAnswers: true})
+	if err != nil {
+		logger.Error("failed to get poll", "error", err)
+		return errs.M("failed to get poll").Code("Failed to get poll").Kind(errs.Database)
+	}
+	if poll == nil {
+		logger.Error("poll do not exist", "error", err)
+		return errs.M("poll not found").Code("Poll do not exist").Kind(errs.Database)
+	}
+	err = s.businessStorage.OSBB.UpdateAnswer(0, PollID, answer)
+	if err != nil {
+		logger.Error("failed to update answer", "error", err)
+		return errs.Err(err).Code("Failed to update answer").Kind(errs.Database)
+	}
+
+	return nil
+}
+
+func (s *osbbService) DeleteAnswer(UserID, OSBBID, PollID uint64) error {
+	logger := s.logger.Named("DeleteAnswer").
+		With("user_id", UserID).With("osbb_id", OSBBID).With("poll_id", PollID)
+
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	if user.Role != entity.UserRoleOSBBHead {
+		logger.Error("User can not delete an test answer", "error", err)
+		return errs.M("user not osbb head").Code("User can not delete a test answer").Kind(errs.Private)
+	}
+	poll, err := s.businessStorage.OSBB.GetPoll(PollID, PollFilter{OSBBID: &OSBBID, WithTestAnswers: true})
+	if err != nil {
+		logger.Error("failed to get poll", "error", err)
+		return errs.M("failed to get poll").Code("Failed to get poll").Kind(errs.Database)
+	}
+	if poll == nil {
+		logger.Error("poll do not exist", "error", err)
+		return errs.M("poll not found").Code("Poll do not exist").Kind(errs.Database)
+	}
+	err = s.businessStorage.OSBB.DeleteAnswer(0, AnswerFilter{PollID: &PollID})
+	if err != nil {
+		logger.Error("failed to delete answer", "error", err)
+		return errs.Err(err).Code("Failed to delete answer").Kind(errs.Database)
+	}
+
+	return nil
 }
 
 func (s *osbbService) GetPollResult(UserID, OSBBID, PollID uint64) (*entity.PollResult, error) {

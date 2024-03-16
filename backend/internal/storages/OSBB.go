@@ -337,7 +337,7 @@ func (s *OSBBStorage) GetAnswer(AnswerID uint64, filter services.AnswerFilter) (
 	return answer, err
 }
 
-func (s *OSBBStorage) UpdateAnswer(AnswerID uint64, opts *entity.EventUserAnswerUpdatePayload) error {
+func (s *OSBBStorage) UpdateAnswer(AnswerID, PollID uint64, opts *entity.EventUserAnswerUpdatePayload) error {
 	stmt := s.db.Model(&entity.Answer{})
 	var answer entity.Answer
 
@@ -345,6 +345,9 @@ func (s *OSBBStorage) UpdateAnswer(AnswerID uint64, opts *entity.EventUserAnswer
 		stmt = stmt.Where(entity.Answer{ID: AnswerID})
 	}
 
+	if PollID != 0 {
+		stmt = stmt.Where(entity.Answer{PollID: PollID})
+	}
 	if opts.TestAnswerID != nil {
 		answer.TestAnswerID = *opts.TestAnswerID
 	}
@@ -354,6 +357,21 @@ func (s *OSBBStorage) UpdateAnswer(AnswerID uint64, opts *entity.EventUserAnswer
 	}
 
 	return stmt.Updates(answer).Error
+}
+
+func (s *OSBBStorage) DeleteAnswer(AnswerID uint64, filter services.AnswerFilter) error {
+	stmt := s.db.Model(&entity.Answer{})
+	var answer *entity.Answer
+
+	if AnswerID != 0 {
+		stmt = stmt.Where(entity.Answer{ID: AnswerID})
+	}
+
+	if filter.PollID != nil {
+		stmt = stmt.Where(entity.Answer{PollID: *filter.PollID})
+	}
+
+	return stmt.Delete(&answer).Error
 }
 
 func (s *OSBBStorage) CreatePayment(payment *entity.Payment) error {
