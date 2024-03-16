@@ -9,7 +9,6 @@ const Navbar = () =>{
     const {isLogin, setIsLogin} = useAppContext();
     const navigate = useNavigate();
     function onLogout() {
-        console.log("in")
         auth.Logout(navigate);
         setIsLogin(false);
     }
@@ -19,7 +18,7 @@ const Navbar = () =>{
                 <a href='/'>osbb-online</a>
                 <nav role={"navigation"}>
                     <a href='/'>Home</a>
-                    <a href='/profile'>У власний кабінет</a>
+                    <a href='/osbbs/profile'>Профіль ОСББ</a>
                     <a href='#'>Contact</a>
                     {isLogin && <span onClick={onLogout}>Вийти</span>}
                     {!isLogin && <a href='/login'>Увійти</a>}

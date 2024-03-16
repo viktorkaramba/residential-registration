@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import OSBBListElement from "./OSBBListElement";
 import config from "../../../config";
+import err from "../../../err";
 
 const OSBBList = () =>{
     const [osbbs, setOSBBS] = useState([]);
@@ -11,7 +12,7 @@ const OSBBList = () =>{
                 .then(data => {
                     const {error}:any = data;
                     if(error){
-                        error.HandleError({error, fetchOSBBS});
+                        err.HandleError({error, fetchOSBBS});
                     }else {
                         if(data){
                             const newOSBBS = data.slice(0, 20).map(

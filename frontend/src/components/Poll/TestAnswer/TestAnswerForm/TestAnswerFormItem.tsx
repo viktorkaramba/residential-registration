@@ -1,12 +1,12 @@
 
-const TestAnswerFormItem = ({content, index, deleteAnswer}:any) =>{
+const TestAnswerFormItem = ({content, index, deleteTestAnswer}:any) =>{
     return(
         <li>
             <label>
                 {content}
             </label>
             <button
-                onClick={()=>deleteAnswer(index)}
+                onClick={()=>deleteTestAnswer(index)}
             >
                 Delete
             </button>

@@ -1,11 +1,12 @@
 import TestAnswerAdminItem from "./TestAnswerAdminItem";
 import config from "../../../../config";
 import {useState} from "react";
-import {useOSBBContext} from "../../../OSBB/OSBBContext";
+import {useAppContext} from "../../../../AppContext";
+import err from "../../../../err";
 
 const TestAnswerAdminList = ({answers, pollID}:any) =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext()
+    const {osbbID} = useAppContext()
     const [testAnswers, setTestAnswers] = useState(answers);
 
 
@@ -30,7 +31,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
                 console.log(data);
                 const {error}:any = data;
                 if(error){
-                    error.HandleError({error, updateTestAnswer});
+                    err.HandleError({error, updateTestAnswer});
                 }else {
                     setTestAnswers((currentAnswer: any[]) => {
                         return currentAnswer.map((answer:any)=>{
@@ -55,7 +56,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    error.HandleError({error, deleteTestAnswer});
+                    err.HandleError({error, deleteTestAnswer});
                 }else {
                     setTestAnswers((currentAnswer: any[]) => {
                         return currentAnswer.filter(answer => answer.id !== id)

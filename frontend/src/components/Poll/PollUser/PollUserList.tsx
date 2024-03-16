@@ -1,24 +1,29 @@
 import {useCallback, useEffect, useState} from "react";
 import config from "../../../config";
-import {useOSBBContext} from "../../OSBB/OSBBContext";
+import {useAppContext} from "../../../AppContext";
 import PollUserItem from "./PollUserItem";
+import err from "../../../err";
+import {useNavigate} from "react-router-dom";
 
 const PollUserList = () =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext()
-    const [polls, setPolls] = useState([]);
+    const {osbbID} = useAppContext()
 
+    const [polls, setPolls] = useState([]);
+    const navigate = useNavigate();
     const fetchPolls = useCallback(async() => {
         try{
             const requestOptions = {
                 method: 'GET',
-                headers: config.headers,
+                headers: { 'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             }
-            fetch(config.apiUrl+'osbb/'+ osbbID+ '/polls', requestOptions)  .then(response => response.json())
+            fetch(config.apiUrl+'osbb/'+ osbbID+ '/polls', requestOptions)
+                .then(response => response.json())
                 .then(data => {
                     const {error}:any = data;
                     if(error){
-                        error.HandleError({error, fetchPolls});
+                        err.HandleError({errorMsg:error, func:fetchPolls, navigate:navigate});
                     }else {
                         if(data){
                             const polls = data.slice(0, 20).map(
@@ -45,7 +50,7 @@ const PollUserList = () =>{
         } catch(error){
             console.log(error);
         }
-    }, [osbbID]);
+    }, []);
 
     useEffect(() => {
         fetchPolls();

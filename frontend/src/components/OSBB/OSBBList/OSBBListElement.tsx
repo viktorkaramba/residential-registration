@@ -1,10 +1,10 @@
 import React from "react";
-import {useOSBBContext} from "../OSBBContext";
+import {useAppContext} from "../../../AppContext";
 
 const OSBBListElement = ((osbb:any) => {
 
     // @ts-ignore
-    const {setOsbbID, setActiveOSBBElement} = useOSBBContext();
+    const {setOsbbID, setActiveOSBBElement} = useAppContext();
     const handleConnectOSBB = (id:number, element: React.SetStateAction<string>) => {
         setActiveOSBBElement(element);
         setOsbbID(id);

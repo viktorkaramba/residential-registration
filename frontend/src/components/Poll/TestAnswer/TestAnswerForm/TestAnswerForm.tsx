@@ -5,7 +5,6 @@ const TestAnswerForm = (props:any) =>{
 
     const handleAddTestAnswer = (event: any) => {
         event.preventDefault();
-        console.log('handleSubmit ran', newAnswer);
 
         if(newAnswer === "")return
 

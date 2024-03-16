@@ -1,10 +1,10 @@
 import React from "react";
 import config from "../../../config";
-import {useOSBBContext} from "../../OSBB/OSBBContext";
+import {useAppContext} from "../../../AppContext";
 
 const PollForm = () =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext()
+    const {osbbID} = useAppContext()
     const addPoll = (event: any) => {
         console.log('handleSubmit ran');
         event.preventDefault();

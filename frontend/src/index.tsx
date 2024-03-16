@@ -8,14 +8,15 @@ import {
 import Home from './pages/Home/Home'
 import reportWebVitals from './reportWebVitals';
 import Login from "./pages/Login/Login";
-import {OSBBProvider} from "./components/OSBB/OSBBContext";
+import {AppProvider} from "./AppContext";
 import OSBBProfile from "./pages/OSBBProfile/OSBBProfile";
+import Profile from "./pages/Profile/Profile";
         
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-    <OSBBProvider>
+    <AppProvider>
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home/>}/>
@@ -24,10 +25,11 @@ root.render(
                     element={<Navigate to="/" />}
                 />
                 <Route path="/osbbs/profile" element={<OSBBProfile/>}/>
-                <Route path="/login" element={<Login/>}/>
+                <Route path="/login" element={<Login/>} />
+                <Route path="/profile" element={<Profile/>} />
             </Routes>
     </BrowserRouter>
-    </OSBBProvider>
+    </AppProvider>
 );
 
 reportWebVitals();

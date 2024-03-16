@@ -1,25 +1,31 @@
 import {useCallback, useEffect, useState} from "react";
 import AnnouncementListElement from "./AnnouncementListElement";
 import config from "../../../config";
-import {useOSBBContext} from "../../OSBB/OSBBContext";
+import {useAppContext} from "../../../AppContext";
 import error from "../../../err";
+import err from "../../../err";
+import {useNavigate} from "react-router-dom";
 
 const AnnouncementList = () =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext()
+    const {osbbID} = useAppContext()
     const [announcements, setAnnouncements] = useState([]);
+    const navigate = useNavigate();
+
     const fetchAnnouncements = useCallback(async() => {
         try{
             const requestOptions = {
                 method: 'GET',
-                headers: config.headers,
+                headers: { 'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             }
             fetch(config.apiUrl+'osbb/'+ osbbID+ '/announcements', requestOptions)
                 .then(response => response.json())
                     .then(data=>{
                         const {error}:any = data;
                         if(error){
-                            error.HandleError({error, fetchAnnouncements});
+                            err.HandleError({errorMsg:error, func:fetchAnnouncements,
+                                navigate:navigate});
                         }else {
                             if(data){
                                 const announcements = data.slice(0, 20).map(

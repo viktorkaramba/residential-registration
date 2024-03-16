@@ -1,29 +1,33 @@
 import React, {useCallback, useEffect, useState} from "react";
 import config from "../../config";
 import Header from "../../components/Header/Header";
-import AnnouncementList from "../../components/Announcements/AnnouncementList/AnnouncementList";
-import {useOSBBContext} from "../../components/OSBB/OSBBContext";
-import PollTestForm from "../../components/Poll/PollForm/PollTestForm";
-import PollForm from "../../components/Poll/PollForm/PollForm";
-import PollUserList from "../../components/Poll/PollUser/PollUserList";
+import {useAppContext} from "../../AppContext";
+import err from "../../err";
+import {useNavigate} from "react-router-dom";
+import OSBBProfileMenu from "../../components/Menu/OSBBProfileMenu";
 
 
 const OSBBProfile = () => {
     // @ts-ignore
-    const {setOsbbID} = useOSBBContext();
+    const {setOsbbID} = useAppContext();
+    // @ts-ignore
+    const {token} = useAppContext();
+    const navigate = useNavigate();
     const [osbb, setOSBB] = useState<any>(null);
     const fetchOSBB = useCallback(async() => {
         try{
             const requestOptions = {
                 method: 'GET',
-                headers:config.headers,
+                headers:{ 'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             };
             fetch(config.apiUrl+'osbb/profile', requestOptions)
                 .then(response => response.json())
                 .then(data =>{
+                    console.log(data);
                     const {error}:any = data;
                     if(error){
-                        error.HandleError({error, fetchOSBB});
+                        err.HandleError({errorMsg:error, func:fetchOSBB, navigate:navigate});
                     }else {
                         if(data){
                             const {announcements, building, createdAt, edrpou, id, name, osbb_head, rent, updatedAt}:any = data;
@@ -48,34 +52,32 @@ const OSBBProfile = () => {
         } catch(error){
             console.log(error);
         }
-    }, []);
+    }, [token]);
 
     useEffect(() => {
         fetchOSBB();
     }, []);
 
-
-    
     return (
         <div>
-            <Header/>
+            <OSBBProfileMenu/>
             <div>{osbb?.name}</div>
             <br />
             <div>{osbb?.osbb_head?.full_name?.first_name}</div>
             <div>{osbb?.osbb_head?.full_name?.surname}</div>
             <div>{osbb?.osbb_head?.full_name?.patronymic}</div>
-            <br/>
-            <AnnouncementList key={osbb?.id}/>
-            <br/>
-            <div style={{background:"peru"}}>
-                <PollForm/>
-            </div>
-            <div style={{background:"bisque"}}>
-                <PollTestForm/>
-            </div>
-            <div style={{background:"green"}}>
-                <PollUserList/>
-            </div>
+            {/*<br/>*/}
+            {/*<AnnouncementList key={osbb?.id}/>*/}
+            {/*<br/>*/}
+            {/*<div style={{background:"peru"}}>*/}
+            {/*    <PollForm/>*/}
+            {/*</div>*/}
+            {/*<div style={{background:"bisque"}}>*/}
+            {/*    <PollTestForm/>*/}
+            {/*</div>*/}
+            {/*<div style={{background:"green"}}>*/}
+            {/*    <PollUserList/>*/}
+            {/*</div>*/}
         </div>
     )
 }

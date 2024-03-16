@@ -1,11 +1,12 @@
 import {useCallback, useEffect, useState} from "react";
 import config from "../../../config";
-import {useOSBBContext} from "../../OSBB/OSBBContext";
+import {useAppContext} from "../../../AppContext";
 import PollAdminItem from "./PollAdminItem";
+import err from "../../../err";
 
 const PollAdminList = () =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext()
+    const {osbbID} = useAppContext()
     const [polls, setPolls] = useState([]);
 
     const fetchPolls = useCallback(async() => {
@@ -82,7 +83,7 @@ const PollAdminList = () =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    error.HandleError({error, updatePoll});
+                    err.HandleError({error, updatePoll});
                 }else {
                     setPolls((currentPoll:any) => {
                         return currentPoll.map((poll:any)=>{

@@ -1,24 +1,35 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
-const TestAnswerUserItem = ({content, id, addTestAnswer}:any) =>{
-    const [selectedValue, setSelectedValue] = useState('');
+const TestAnswerUserItem = ({content, id, userAnswers, addTestAnswer, selectedValue, setSelectedValue, deleteAnswer}:any) =>{
 
     const handleChange = (e:any) => {
-        console.log(e)
         setSelectedValue(e);
         addTestAnswer(e);
     };
 
+    useEffect(() => {
+        if(userAnswers.some((answer:any) => answer.test_answer_id === id)){
+            setSelectedValue(id)
+        }
+    }, [userAnswers]);
+
     return(
         <li>
             <label>
-                <input
-                    type="radio"
-                    checked={selectedValue===id}
-                    value={id}
-                    onChange={e=>handleChange(e.target.value)}
-                />
-                {content}
+                <div>
+                    <input
+                        type="radio"
+                        checked={selectedValue==id}
+                        value={id}
+                        onChange={e=>handleChange(e.target.value)}
+                    />
+                    {content}
+                </div>
+                <button
+                    onClick={()=>deleteAnswer(id)}
+                >
+                    Delete
+                </button>
             </label>
         </li>
     )

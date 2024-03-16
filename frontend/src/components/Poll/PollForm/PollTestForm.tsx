@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import config from "../../../config";
-import {useOSBBContext} from "../../OSBB/OSBBContext";
+import {useAppContext} from "../../../AppContext";
 import TestAnswerForm from "../TestAnswer/TestAnswerForm/TestAnswerForm";
 import TestAnswerFormList from "../TestAnswer/TestAnswerForm/TestAnswerFormList";
+import err from "../../../err";
 
 const PollTestForm = () =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext();
+    const {osbbID} = useAppContext();
     const [answers, setAnswers] = useState(()=>{
         const localValue = localStorage.getItem("TestAnswers")
         if(localValue==null)return[]
@@ -26,7 +27,7 @@ const PollTestForm = () =>{
             ]
         })
     }
-    function deleteAnswer(index:any){
+    function deleteTestAnswer(index:any){
         setAnswers((currentAnswer: any[]) => {
             return currentAnswer.filter((answer, i) => index !== i)
         })
@@ -45,7 +46,7 @@ const PollTestForm = () =>{
                 const {error}:any = data;
                 if(error){
                     let argument = { question, finished_at};
-                    error.HandleError({error, makeRequest, argument});
+                    err.HandleError({error, makeRequest, argument});
                 }else{
                     if(data){
                         localStorage.removeItem("TestAnswers")
@@ -83,7 +84,7 @@ const PollTestForm = () =>{
                    id='finished_at'/>
             <TestAnswerForm addTestAnswer={addTestAnswer}/>
             <h1>Тестові відповіді</h1>
-            <TestAnswerFormList answers={answers} deleteAnswer={deleteAnswer}/>
+            <TestAnswerFormList answers={answers} deleteTestAnswer={deleteTestAnswer}/>
             <button>Add poll test</button>
         </form>
         </div>

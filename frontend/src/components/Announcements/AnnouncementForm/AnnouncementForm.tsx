@@ -1,12 +1,13 @@
 import React from "react";
 import config from "../../../config";
-import {useOSBBContext} from "../../OSBB/OSBBContext";
+import {useAppContext} from "../../../AppContext";
 import error from "../../../err";
 import RefreshToken from "../../../auth";
+import err from "../../../err";
 
 const AnnouncementForm = () =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext()
+    const {osbbID} = useAppContext()
     const addAnnouncement = (event: any) => {
         event.preventDefault();
 
@@ -23,7 +24,7 @@ const AnnouncementForm = () =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    error.HandleError({error, addAnnouncement});
+                    err.HandleError({errorMsg:error, func:addAnnouncement});
                 }
             });
         // // 👇️ clear all input values in the form

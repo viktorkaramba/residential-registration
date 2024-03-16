@@ -1,10 +1,18 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import config from "../../../config";
-import {useOSBBContext} from "../../OSBB/OSBBContext";
+import {useAppContext} from "../../../AppContext";
+import err from "../../../err";
+import {useNavigate} from "react-router-dom";
 
 const InhabitantForm = () =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext();
+    const {osbbID} = useAppContext();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // @ts-ignore
+    const {token, setToken} = useAppContext();
+    // @ts-ignore
+    const {setIsLogin} = useAppContext();
+    const navigate = useNavigate();
     const addInhabitant = (event: any) => {
         console.log('handleSubmit ran');
         event.preventDefault();
@@ -30,17 +38,32 @@ const InhabitantForm = () =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    error.HandleError({error, addInhabitant});
+                    err.HandleError({errorMsg:error, func:addInhabitant, navigate:navigate});
                 }else {
                     if(data){
                         const {token}:any = data
-                        localStorage.setItem("token", token);
+                        setToken(token);
                     }
                 }
             });
         // 👇️ clear all input values in the form
         event.target.reset();
     };
+
+    useEffect(() => {
+        if (token) {
+            localStorage.setItem("token", token);
+            setIsLogin(true);
+            setIsLoggedIn(true);
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/osbbs/profile');
+        }
+    }, [isLoggedIn]);
+
 
     return(
         <form className='form' method='post' onSubmit={addInhabitant}>

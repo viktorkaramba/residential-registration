@@ -1,6 +1,6 @@
 import TestAnswerFormItem from "./TestAnswerFormItem";
 
-const TestAnswerFormList = ({answers, deleteAnswer}:any) =>{
+const TestAnswerFormList = ({answers, deleteTestAnswer}:any) =>{
     return(
         <ul>
             {answers.length === 0 && "Немає відповідей"}
@@ -10,7 +10,7 @@ const TestAnswerFormList = ({answers, deleteAnswer}:any) =>{
                       {...answer}
                       index={index}
                       key={index}
-                      deleteAnswer={deleteAnswer}
+                      deleteAnswer={deleteTestAnswer}
                   />
                 )
             })}

@@ -1,12 +1,17 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import config from "../../../config";
 import err from "../../../err";
 import {useNavigate} from "react-router-dom";
-import {useOSBBContext} from "../OSBBContext";
+import {useAppContext} from "../../../AppContext";
 
 const OSBBForm = () =>{
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
     const [errorEDRPOU, setErrorEDRPOU] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // @ts-ignore
+    const {token, setToken} = useAppContext();
+    // @ts-ignore
+    const {setIsLogin} = useAppContext();
     const navigate = useNavigate();
     const addOSBB = (event: any) => {
 
@@ -46,13 +51,28 @@ const OSBBForm = () =>{
                 }else {
                     if(data){
                         const {token}:any = data
-                        localStorage.setItem("token", token);
+                        setToken(token);
                     }
                 }
             });
         // // 👇️ clear all input values in the form
         // event.target.reset();
     };
+
+    useEffect(() => {
+        if (token) {
+            localStorage.setItem("token", token);
+            setIsLogin(true);
+            setIsLoggedIn(true);
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/osbbs/profile');
+        }
+    }, [isLoggedIn]);
+
     return(
         <form className='form' method='post'  onSubmit={addOSBB}>
             <label form={'first_name'}>
@@ -92,7 +112,7 @@ const OSBBForm = () =>{
             </label>
             <input name="rent" required={true} placeholder="" type='text' id='rent'/>
             {errorPhoneNumber &&
-                <span className='error'>Користувач з таким номером телефона уже зареєсторваний</span>}
+                <span className='error'>Користувач з таким номером телефона уже зареєстрований</span>}
             {errorEDRPOU &&
                 <span className='error'>ОСББ із таким ЕДРПОУ уже додане</span>}
             <button type="submit">Додати ОСББ</button>
