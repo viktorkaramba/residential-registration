@@ -666,7 +666,6 @@ func (h *Handler) getUserAnswers(c *gin.Context) {
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user answers: %w", err))
 		return
 	}
-
 	c.JSON(http.StatusOK, userAnswer)
 }
 
