@@ -17,7 +17,7 @@ const HomeMenu = () =>{
     const {isLogin} = useAppContext();
     const navigate = useNavigate()
     const handleClick = (element: React.SetStateAction<string>) => {
-        if(element === '4'){
+        if(element === 'OSBBProfile'){
             navigate('/osbbs/profile')
         }else {
             setActiveOSBBElement(element);
@@ -36,7 +36,7 @@ const HomeMenu = () =>{
                         Додати ОСББ
                     </div>}
                 {isLogin &&
-                    <div className='text-block' onClick={() => handleClick('InhabitantForm')}>
+                    <div className='text-block' onClick={() => handleClick('OSBBProfile')}>
                         Профіль ОСББ
                     </div>}
             </section>

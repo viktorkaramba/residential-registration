@@ -83,12 +83,13 @@ const PollAdminList = () =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
+                    console.log(error)
                     err.HandleError({error, updatePoll});
                 }else {
                     setPolls((currentPoll:any) => {
                         return currentPoll.map((poll:any)=>{
                             if(poll.id === id){
-                                return {...poll, question, finished_at}
+                                return {...poll, question, finished_at, isOpen}
                             }
                             return poll
                         })
@@ -120,7 +121,7 @@ const PollAdminList = () =>{
     return(
         <ul>
             {
-                polls.map((poll:{id:any, question:any, finished_at:any}) => {
+                polls.map((poll:{id:any, question:any, finished_at:any, is_open:any}) => {
                     return (
                         <PollAdminItem
                             poll={poll}

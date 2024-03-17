@@ -1,12 +1,12 @@
 import {useCallback, useEffect, useState} from "react";
-import AnnouncementListElement from "./AnnouncementListElement";
+import AnnouncementUserItem from "./AnnouncementUserItem";
 import config from "../../../config";
 import {useAppContext} from "../../../AppContext";
 import error from "../../../err";
 import err from "../../../err";
 import {useNavigate} from "react-router-dom";
 
-const AnnouncementList = () =>{
+const AnnouncementUserList = () =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
     const [announcements, setAnnouncements] = useState([]);
@@ -64,7 +64,7 @@ const AnnouncementList = () =>{
                             announcements.slice(0, 30).map((item, index) => {
                                 return (
                                     // @ts-ignore
-                                    <AnnouncementListElement key = {index}{...item}/>
+                                    <AnnouncementUserItem key = {index}{...item}/>
                                 )
                             })
                         }
@@ -75,4 +75,4 @@ const AnnouncementList = () =>{
     )
 }
 
-export default AnnouncementList
+export default AnnouncementUserList

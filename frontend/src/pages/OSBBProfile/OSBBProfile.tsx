@@ -67,7 +67,7 @@ const OSBBProfile = () => {
             <div>{osbb?.osbb_head?.full_name?.surname}</div>
             <div>{osbb?.osbb_head?.full_name?.patronymic}</div>
             {/*<br/>*/}
-            {/*<AnnouncementList key={osbb?.id}/>*/}
+            {/*<AnnouncementUserList key={osbb?.id}/>*/}
             {/*<br/>*/}
             {/*<div style={{background:"peru"}}>*/}
             {/*    <PollForm/>*/}

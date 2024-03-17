@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import config from "../../../config";
 import {useAppContext} from "../../../AppContext";
 import err from "../../../err";
@@ -7,7 +7,7 @@ const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, dele
     // @ts-ignore
     const {osbbID} = useAppContext()
     const [isChecked, setIsChecked] = useState(false);
-    const [newAnswer, setNewAnswer] = useState(userAnswer.content);
+    const [newAnswer, setNewAnswer] = useState(userAnswer !== null ? userAnswer.content : '');
    const addOpenAnswer = (event: any) => {
         event.preventDefault();
         // 👇️ access input values using name prop
@@ -32,14 +32,20 @@ const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, dele
         // 👇️ clear all input values in the form
         // event.target.reset();
     };
+    useEffect(() => {
+        if(userAnswer!=null){
+            setNewAnswer(userAnswer.content)
+        }
+    }, [userAnswer]);
 
     function handleDelete(){
-        deleteAnswer(userAnswer.pollID);
+        deleteAnswer(pollID);
+        setNewAnswer('')
         setIsExist(false);
     }
 
     function handleUpdate(){
-        updateAnswer(userAnswer.pollID);
+        updateAnswer(pollID, newAnswer);
         setIsChecked(false);
     }
 
@@ -73,7 +79,7 @@ const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, dele
                     checked={isChecked}
                     onChange={e=>setIsChecked(!isChecked)}
                 />
-                {userAnswer.content}
+                {newAnswer}
                 <button onClick={()=>handleDelete()}>Delete answer</button>
             </div>}
             {isExist && isChecked && <div style={{background:"bisque"}}>

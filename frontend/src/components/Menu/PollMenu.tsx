@@ -4,6 +4,7 @@ import "./Menu.css"
 import {useAppContext} from "../../AppContext";
 import PollForm from "../Poll/PollForm/PollForm";
 import PollTestForm from "../Poll/PollForm/PollTestForm";
+import PollAdminList from "../Poll/PollAdmin/PollAdminList";
 
 const PollMenu = () => {
 
@@ -26,6 +27,7 @@ const PollMenu = () => {
             </section>
             {activePollElement === 'PollForm' && <PollForm/>}
             {activePollElement === 'PollTestForm' && <PollTestForm/>}
+            <PollAdminList/>
         </div>
     )
 }

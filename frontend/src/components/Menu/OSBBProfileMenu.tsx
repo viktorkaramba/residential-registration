@@ -8,7 +8,7 @@ import InhabitantForm from "../Inhabitant/InhabitantForm/InhabitantForm";
 import {useAppContext} from "../../AppContext";
 import {Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom"
-import AnnouncementList from "../Announcements/AnnouncementList/AnnouncementList";
+import AnnouncementUserList from "../Announcements/AnnouncementListUser/AnnouncementUserList";
 import PollUserList from "../Poll/PollUser/PollUserList";
 
 const OSBBProfileMenu = () => {
@@ -31,7 +31,7 @@ const OSBBProfileMenu = () => {
                     Опитування
                 </div>
             </section>
-            {activeOSBBElement === 'AnnouncementList' && <AnnouncementList/>}
+            {activeOSBBElement === 'AnnouncementList' && <AnnouncementUserList/>}
             {activeOSBBElement === 'PollUserList' && <PollUserList/>}
         </div>
     )

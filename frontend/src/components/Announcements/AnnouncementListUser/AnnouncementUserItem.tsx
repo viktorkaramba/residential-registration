@@ -1,7 +1,7 @@
 import React from "react";
 
 
-const AnnouncementListElement = ((announcement:any) => {
+const AnnouncementUserItem = ((announcement:any) => {
 
     return(
         <div>
@@ -14,4 +14,4 @@ const AnnouncementListElement = ((announcement:any) => {
     )
 });
 
-export default AnnouncementListElement
+export default AnnouncementUserItem

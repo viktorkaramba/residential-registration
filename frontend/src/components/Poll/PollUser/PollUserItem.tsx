@@ -39,6 +39,7 @@ const PollUserItem = ({poll}:any) => {
                                     created_at: created_at,
                                     updated_at: updated_at,
                                 }
+                                console.log(newAnswer)
                                 setUserAnswer(newAnswer)
                             }
                         }else {
@@ -50,19 +51,25 @@ const PollUserItem = ({poll}:any) => {
         }
     }, []);
 
-    function updateAnswer(pollID:any){
+    function updateAnswer(pollID:any, content:any){
         const requestOptions = {
             method: 'PUT',
             headers:config.headers,
+            body: JSON.stringify({ content: content})
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+pollID + '/answers', requestOptions)
             .then(response => response.json())
             .then(data => {
-                const {error}:any = data;
-                if(error){
-                    error.HandleError({errorMsg:error, func:updateAnswer});
+                if(data){
+                    const {error}:any = data;
+                    if(error){
+                        err.HandleError({errorMsg:error, func:updateAnswer});
+                    }else {
+                        console.log(data)
+                    }
                 }
+
             });
     }
 
@@ -77,7 +84,7 @@ const PollUserItem = ({poll}:any) => {
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    error.HandleError({errorMsg:error, func:deleteAnswer});
+                    err.HandleError({errorMsg:error, func:deleteAnswer});
                 }
             });
     }
@@ -90,7 +97,6 @@ const PollUserItem = ({poll}:any) => {
         if(userAnswer != null){
             setIsExist(userAnswer.content.length!==0)
         }
-
     }, [userAnswer]);
 
     return(
@@ -101,7 +107,8 @@ const PollUserItem = ({poll}:any) => {
             {poll.test_answer.length !== 0 && <TestAnswerUserList answers={poll.test_answer} pollID={poll.id}
                                                                    userAnswer={userAnswer} deleteAnswer={deleteAnswer}/>}
             {poll.test_answer.length === 0 && <AnswerForm pollID={poll.id} userAnswer={userAnswer} isExist={isExist}
-                                                           setIsExist={setIsExist} deleteAnswer={deleteAnswer}/>}
+                                                           setIsExist={setIsExist} deleteAnswer={deleteAnswer}
+                                                          updateAnswer={updateAnswer}/>}
         </li>
     )
 }

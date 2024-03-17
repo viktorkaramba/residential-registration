@@ -6,6 +6,7 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
     const [isChecked, setIsChecked] = useState(false);
     const [newQuestion, setNewQuestion] = useState(poll.question);
     const [newFinished, setNewFinished] = useState("");
+    const [newIsClosed, setNewIsClosed] = useState(false);
 
     return(
         <li>
@@ -34,7 +35,15 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
                                type='datetime-local'
                                step="1"
                                id='poll_update_finished_at'/>
-                        <button onClick={()=>updatePoll(poll.id, newQuestion, newFinished)}>Оновити</button>
+                        <label>
+                            <input name="poll_update_is_closed"
+                                   checked={newIsClosed}
+                                   onChange={e=>setNewIsClosed(!newIsClosed)}
+                                   type='checkbox'
+                                   id='poll_update_is_closed'/>
+                            Завершити
+                        </label>
+                        <button onClick={()=>updatePoll(poll.id, newQuestion, newFinished, newIsClosed)}>Оновити</button>
                     </div>
                 }
             </label>
