@@ -668,6 +668,12 @@ func (s *osbbService) UpdateAnswer(UserID, OSBBID, PollID uint64, answer *entity
 		logger.Error("user do not exist", "error", err)
 		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
+
+	if user.Role != entity.UserRoleOSBBHead {
+		logger.Error("User can not update a test answer", "error", err)
+		return errs.M("user not osbb head").Code("User can not update a test answer").Kind(errs.Private)
+  }
+  
 	poll, err := s.businessStorage.OSBB.GetPoll(PollID, PollFilter{OSBBID: &OSBBID, WithTestAnswers: true})
 	if err != nil {
 		logger.Error("failed to get poll", "error", err)
@@ -699,6 +705,12 @@ func (s *osbbService) DeleteAnswer(UserID, OSBBID, PollID uint64) error {
 		logger.Error("user do not exist", "error", err)
 		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
+
+	if user.Role != entity.UserRoleOSBBHead {
+		logger.Error("User can not delete an test answer", "error", err)
+		return errs.M("user not osbb head").Code("User can not delete a test answer").Kind(errs.Private)
+	}
+
 	poll, err := s.businessStorage.OSBB.GetPoll(PollID, PollFilter{OSBBID: &OSBBID, WithTestAnswers: true})
 	if err != nil {
 		logger.Error("failed to get poll", "error", err)
