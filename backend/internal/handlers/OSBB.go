@@ -823,6 +823,14 @@ func (h *Handler) updateTestAnswer(c *gin.Context) {
 		return
 	}
 
+	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse poll id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse poll id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
 	testAnswerID, err := strconv.ParseUint(c.Param("testAnswerID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse test answer id", "error", err)
@@ -855,7 +863,7 @@ func (h *Handler) updateTestAnswer(c *gin.Context) {
 		return
 	}
 
-	err = h.Services.OSBB.UpdateTestAnswer(userID, osbbID, testAnswerID, input)
+	err = h.Services.OSBB.UpdateTestAnswer(userID, osbbID, pollID, testAnswerID, input)
 	if err != nil {
 		logger.Error("failed to update test answer", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to update answer: %w", err))
@@ -885,6 +893,14 @@ func (h *Handler) deleteTestAnswer(c *gin.Context) {
 		return
 	}
 
+	pollID, err := strconv.ParseUint(c.Param("pollID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse poll id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse poll id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
 	testAnswerID, err := strconv.ParseUint(c.Param("testAnswerID"), 10, 64)
 	if err != nil {
 		logger.Error("failed to parse osbb id", "error", err)
@@ -893,7 +909,7 @@ func (h *Handler) deleteTestAnswer(c *gin.Context) {
 		return
 	}
 
-	err = h.Services.OSBB.DeleteTestAnswer(userID, osbbID, testAnswerID)
+	err = h.Services.OSBB.DeleteTestAnswer(userID, osbbID, pollID, -testAnswerID)
 	if err != nil {
 		logger.Error("failed to delete test answer", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to delete test answer: %w", err))

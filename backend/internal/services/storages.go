@@ -18,6 +18,7 @@ type UserStorage interface {
 	GetUser(UserID uint64, filter UserFilter) (*entity.User, error)
 	ListUsers(filter UserFilter) ([]entity.User, error)
 	UpdateUser(UserID, OSBBID uint64, user *entity.EventUserUpdatePayload) error
+	ApproveUser(UserID, OSBBID uint64, filter UserFilter) error
 }
 
 type BuildingStorage interface {
@@ -61,6 +62,7 @@ type UserFilter struct {
 	OSBBID *uint64
 	*entity.PhoneNumber
 	*entity.UserRole
+	IsApproved *bool
 }
 
 type AnnouncementFilter struct {
@@ -70,7 +72,7 @@ type AnnouncementFilter struct {
 type PollFilter struct {
 	OSBBID          *uint64
 	WithTestAnswers bool
-	IsClosed        *bool
+	IsClosed        bool
 }
 
 type TestAnswerFilter struct {
