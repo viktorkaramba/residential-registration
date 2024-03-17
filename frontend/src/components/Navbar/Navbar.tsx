@@ -7,7 +7,6 @@ import {useNavigate} from "react-router-dom";
 const Navbar = () =>{
     // @ts-ignore
     const {isLogin, setIsLogin} = useAppContext();
-    const navigate = useNavigate();
     function onLogout() {
         setIsLogin(false);
     }
@@ -26,5 +25,6 @@ const Navbar = () =>{
         </div>
     )
 }
+
 
 export default Navbar

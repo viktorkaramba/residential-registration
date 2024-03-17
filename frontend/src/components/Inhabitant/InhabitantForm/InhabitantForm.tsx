@@ -14,7 +14,6 @@ const InhabitantForm = () =>{
     const {setIsLogin} = useAppContext();
     const navigate = useNavigate();
     const addInhabitant = (event: any) => {
-        console.log('handleSubmit ran');
         event.preventDefault();
 
         // 👇️ access input values using name prop

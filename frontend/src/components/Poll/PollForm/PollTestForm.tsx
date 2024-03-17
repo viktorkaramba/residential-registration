@@ -4,10 +4,12 @@ import {useAppContext} from "../../../AppContext";
 import TestAnswerForm from "../TestAnswer/TestAnswerForm/TestAnswerForm";
 import TestAnswerFormList from "../TestAnswer/TestAnswerForm/TestAnswerFormList";
 import err from "../../../err";
+import {useNavigate} from "react-router-dom";
 
 const PollTestForm = () =>{
     // @ts-ignore
     const {osbbID} = useAppContext();
+    const navigate = useNavigate();
     const [answers, setAnswers] = useState(()=>{
         const localValue = localStorage.getItem("TestAnswers")
         if(localValue==null)return[]
@@ -46,7 +48,8 @@ const PollTestForm = () =>{
                 const {error}:any = data;
                 if(error){
                     let argument = { question, finished_at};
-                    err.HandleError({error, makeRequest, argument});
+                    err.HandleError({errorMsg:error, func:makeRequest, argument:argument,
+                        navigate:navigate});
                 }else{
                     if(data){
                         localStorage.removeItem("TestAnswers")

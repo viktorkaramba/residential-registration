@@ -27,7 +27,6 @@ const TestAnswerUserList = ({answers, pollID, userAnswer, deleteAnswer}:any) =>{
                 if(error){
                     err.HandleError({errorMsg:error, func:addTestAnswer, navigate:navigate});
                 }
-                console.log(data)
             });
     }
 

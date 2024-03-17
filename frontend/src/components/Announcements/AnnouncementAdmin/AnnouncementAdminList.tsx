@@ -53,7 +53,7 @@ const AnnouncementAdminList = () =>{
         }
     }, []);
 
-    function updateAnnouncement(announcementID:any, title:any, content:any){
+    function updateAnnouncement(announcementID:any, title:any, content:any, setIsAnnouncementChecked:any){
         const requestOptions = {
             method: 'PUT',
             headers:config.headers,
@@ -66,7 +66,7 @@ const AnnouncementAdminList = () =>{
                 if(data){
                     const {error}:any = data;
                     if(error){
-                        err.HandleError({errorMsg:error, func:updateAnnouncement});
+                        err.HandleError({errorMsg:error, func:updateAnnouncement, navigate:navigate});
                     }else {
                         setAnnouncements((currentAnnouncement:any) => {
                             return currentAnnouncement.map((announcement:any)=>{
@@ -76,6 +76,7 @@ const AnnouncementAdminList = () =>{
                                 return announcement
                             })
                         })
+                        setIsAnnouncementChecked(false);
                     }
                 }
             });
@@ -92,7 +93,7 @@ const AnnouncementAdminList = () =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    err.HandleError({errorMsg:error, func:deleteAnnouncement});
+                    err.HandleError({errorMsg:error, func:deleteAnnouncement, navigate:navigate});
                 }else {
                     setAnnouncements((currentAnnouncements: any) => {
                         return currentAnnouncements.filter((announcement:any) => announcement.ID !== announcementID)

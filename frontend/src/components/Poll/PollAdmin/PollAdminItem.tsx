@@ -3,21 +3,35 @@ import TestAnswerAdminList from "../TestAnswer/TestAnswerAdmin/TestAnswerAdminLi
 
 
 const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
-    const [isChecked, setIsChecked] = useState(false);
+    const [isPollChecked, setIsPollChecked] = useState(false);
     const [newQuestion, setNewQuestion] = useState(poll.question);
     const [newFinished, setNewFinished] = useState("");
-    const [newIsClosed, setNewIsClosed] = useState(false);
+    const [newIsClosed, setNewIsClosed] = useState(poll.is_closed);
+
+    function handleDelete(){
+        deletePoll(poll.id);
+    }
+
+    function handleUpdate(){
+        updatePoll(poll.id, newQuestion, newFinished, newIsClosed, setIsPollChecked)
+    }
 
     return(
         <li>
             <label>
                 <input
                     type="checkbox"
-                    checked={isChecked}
-                    onChange={e=>setIsChecked(!isChecked)}
+                    checked={isPollChecked}
+                    onChange={()=>setIsPollChecked(!isPollChecked)}
                 />
-                {!isChecked && poll.question}
-                {isChecked &&
+                {!isPollChecked &&
+                    <div>
+                        {newQuestion}
+                        <br/>
+                        {newIsClosed && <p>Закрите</p>}
+                        {!newIsClosed && <p>Відкрите</p>}
+                    </div>}
+                {isPollChecked &&
                     <div>
                         <input maxLength={256}
                                minLength={2}
@@ -43,11 +57,11 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
                                    id='poll_update_is_closed'/>
                             Завершити
                         </label>
-                        <button onClick={()=>updatePoll(poll.id, newQuestion, newFinished, newIsClosed)}>Оновити</button>
+                        <button onClick={()=>handleUpdate()}>Оновити</button>
                     </div>
                 }
             </label>
-            <button onClick={()=>deletePoll(poll.id)}>Видалити</button>
+            <button onClick={()=>handleDelete()}>Видалити</button>
             {poll.test_answer.length !== 0 &&  <TestAnswerAdminList answers={poll.test_answer}/>}
         </li>
     )

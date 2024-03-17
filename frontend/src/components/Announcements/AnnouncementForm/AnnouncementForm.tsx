@@ -4,10 +4,12 @@ import {useAppContext} from "../../../AppContext";
 import error from "../../../err";
 import RefreshToken from "../../../auth";
 import err from "../../../err";
+import {useNavigate} from "react-router-dom";
 
 const AnnouncementForm = () =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
+    const navigate = useNavigate();
     const addAnnouncement = (event: any) => {
         event.preventDefault();
 
@@ -24,7 +26,7 @@ const AnnouncementForm = () =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    err.HandleError({errorMsg:error, func:addAnnouncement});
+                    err.HandleError({errorMsg:error, func:addAnnouncement, navigate:navigate});
                 }
             });
         // // 👇️ clear all input values in the form

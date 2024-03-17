@@ -2,9 +2,11 @@ import {useCallback, useEffect, useState} from "react";
 import OSBBListElement from "./OSBBListElement";
 import config from "../../../config";
 import err from "../../../err";
+import {useNavigate} from "react-router-dom";
 
 const OSBBList = () =>{
     const [osbbs, setOSBBS] = useState([]);
+    const navigate = useNavigate();
     const fetchOSBBS = useCallback(async() => {
         try{
             fetch(config.apiUrl+'osbb/')
@@ -12,7 +14,7 @@ const OSBBList = () =>{
                 .then(data => {
                     const {error}:any = data;
                     if(error){
-                        err.HandleError({error, fetchOSBBS});
+                        err.HandleError({errorMsg:error, func:fetchOSBBS, navigate:navigate});
                     }else {
                         if(data){
                             const newOSBBS = data.slice(0, 20).map(
@@ -49,7 +51,7 @@ const OSBBList = () =>{
                 <div className='container'>
                     <div className='booklist-content grid'>
                         {
-                            osbbs.slice(0, 30).map((item, index) => {
+                            osbbs.map((item, index) => {
                                 return (
                                     // @ts-ignore
                                     <OSBBListElement key = {index}{...item}/>

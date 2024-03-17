@@ -5,24 +5,13 @@ const AnnouncementAdminItem = ({announcement, deleteAnnouncement, updateAnnounce
     const [newTitle, setNewTitle] = useState(announcement.Title);
     const [newContent, setNewContent] = useState(announcement.Content);
     const [isAnnouncementChecked, setIsAnnouncementChecked] = useState(false);
-    const [isChecked, setIsChecked] = useState(false);
 
     function handleDelete(){
         deleteAnnouncement(announcement.ID);
     }
 
     function handleUpdate(){
-        updateAnnouncement(announcement.ID, newTitle, newContent)
-        setIsAnnouncementChecked(!isAnnouncementChecked);
-    }
-
-    function handleCheckBoxUpdate(){
-        if(!isChecked){
-            setIsAnnouncementChecked(!isAnnouncementChecked);
-            setIsChecked(true);
-        }else {
-            setIsChecked(false);
-        }
+        updateAnnouncement(announcement.ID, newTitle, newContent, setIsAnnouncementChecked)
     }
 
     return(
@@ -33,7 +22,7 @@ const AnnouncementAdminItem = ({announcement, deleteAnnouncement, updateAnnounce
                     id='announcement_check_box'
                     type="checkbox"
                     checked={isAnnouncementChecked}
-                    onChange={handleCheckBoxUpdate}
+                    onChange={()=>{setIsAnnouncementChecked(!isAnnouncementChecked)}}
                 />
                 {!isAnnouncementChecked && <div>
                     {newTitle}

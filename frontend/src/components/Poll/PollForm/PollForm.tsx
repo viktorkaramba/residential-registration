@@ -1,10 +1,13 @@
 import React from "react";
 import config from "../../../config";
 import {useAppContext} from "../../../AppContext";
+import err from "../../../err";
+import {useNavigate} from "react-router-dom";
 
 const PollForm = () =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
+    const navigate = useNavigate();
     const addPoll = (event: any) => {
         console.log('handleSubmit ran');
         event.preventDefault();
@@ -22,7 +25,7 @@ const PollForm = () =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    error.HandleError({error, addPoll});
+                    err.HandleError({errorMsg:error, func:addPoll, navigate:navigate});
                 }
             });
         // // 👇️ clear all input values in the form

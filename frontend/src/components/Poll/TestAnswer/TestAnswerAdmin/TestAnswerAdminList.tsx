@@ -10,7 +10,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
     const [testAnswers, setTestAnswers] = useState(answers);
 
 
-    function updateTestAnswer(id:any, content:any){
+    function updateTestAnswer(id:any, content:any, setIsChecked:any){
 
         let body = null;
         if(content != null){
@@ -31,7 +31,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
                 console.log(data);
                 const {error}:any = data;
                 if(error){
-                    err.HandleError({error, updateTestAnswer});
+                    err.HandleError({errorMsg:error, func:updateTestAnswer});
                 }else {
                     setTestAnswers((currentAnswer: any[]) => {
                         return currentAnswer.map((answer:any)=>{
@@ -41,6 +41,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
                             return answer
                         })
                     });
+                    setIsChecked(false);
                 }
             });
     }
@@ -56,7 +57,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    err.HandleError({error, deleteTestAnswer});
+                    err.HandleError({errorMsg:error, func:deleteTestAnswer});
                 }else {
                     setTestAnswers((currentAnswer: any[]) => {
                         return currentAnswer.filter(answer => answer.id !== id)

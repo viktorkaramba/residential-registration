@@ -102,7 +102,7 @@ const Profile = () => {
                 console.log(data);
                 const {error}:any = data;
                 if(error){
-                    err.HandleError({error, updateUserInfo});
+                    err.HandleError({errorMsg:error, func:updateUserInfo, navigate:navigate});
                 }else {
                     if(data){
                         setIsChecked(false);

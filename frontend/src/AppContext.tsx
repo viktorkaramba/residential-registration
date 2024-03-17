@@ -4,7 +4,7 @@ import React, {useContext, useState} from "react";
 const AppContext = React.createContext('light');
 
 const AppProvider = ({children}: { children?: React.ReactNode }) => {
-    const [activeOSBBElement, setActiveOSBBElement] = useState("1");
+    const [activeOSBBElement, setActiveOSBBElement] = useState("OSBBList");
     const [activePollElement, setActivePollElement] = useState("1");
     const [token, setToken] = useState("");
     const [isLogin, setIsLogin] = useState(()=>{

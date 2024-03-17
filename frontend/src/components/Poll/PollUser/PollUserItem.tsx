@@ -51,7 +51,7 @@ const PollUserItem = ({poll}:any) => {
         }
     }, []);
 
-    function updateAnswer(pollID:any, content:any){
+    function updateAnswer(pollID:any, content:any, setIsChecked:any){
         const requestOptions = {
             method: 'PUT',
             headers:config.headers,
@@ -66,7 +66,7 @@ const PollUserItem = ({poll}:any) => {
                     if(error){
                         err.HandleError({errorMsg:error, func:updateAnswer});
                     }else {
-                        console.log(data)
+                        setIsChecked(false);
                     }
                 }
 

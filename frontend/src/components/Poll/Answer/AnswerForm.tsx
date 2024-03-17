@@ -45,7 +45,7 @@ const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, dele
     }
 
     function handleUpdate(){
-        updateAnswer(pollID, newAnswer);
+        updateAnswer(pollID, newAnswer, setIsChecked);
         setIsChecked(false);
     }
 

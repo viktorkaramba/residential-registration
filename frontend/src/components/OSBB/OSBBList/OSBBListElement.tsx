@@ -4,7 +4,7 @@ import {useAppContext} from "../../../AppContext";
 const OSBBListElement = ((osbb:any) => {
 
     // @ts-ignore
-    const {setOsbbID, setActiveOSBBElement} = useAppContext();
+    const {isLogin, setOsbbID, setActiveOSBBElement} = useAppContext();
     const handleConnectOSBB = (id:number, element: React.SetStateAction<string>) => {
         setActiveOSBBElement(element);
         setOsbbID(id);
@@ -16,9 +16,9 @@ const OSBBListElement = ((osbb:any) => {
             <br></br>
             {osbb.osbb_head.phone_number}
             <br></br>
-            <div className='text-block' onClick={() => handleConnectOSBB(osbb.id, '3')}>
+            {!isLogin && <div className='text-block' onClick={() => handleConnectOSBB(osbb.id, '3')}>
                 Приєднатися до ОСББ
-            </div>
+            </div>}
         </div>
         )
 });

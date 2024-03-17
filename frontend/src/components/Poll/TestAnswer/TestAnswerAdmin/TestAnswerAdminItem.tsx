@@ -24,7 +24,7 @@ const TestAnswerAdminItem = ({content, id, updateTestAnswer, deleteTestAnswer}:a
                            onChange={e=>setNewContent(e.target.value)}
                            value={newContent}
                            id='test_answer_update_content'/>
-                    <button onClick={()=>updateTestAnswer(id, newContent)}>Оновити</button>
+                    <button onClick={()=>updateTestAnswer(id, newContent, setIsChecked)}>Оновити</button>
                 </div>
                 }
             </label>

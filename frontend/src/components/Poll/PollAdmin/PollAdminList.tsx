@@ -3,12 +3,13 @@ import config from "../../../config";
 import {useAppContext} from "../../../AppContext";
 import PollAdminItem from "./PollAdminItem";
 import err from "../../../err";
+import {useNavigate} from "react-router-dom";
 
 const PollAdminList = () =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
     const [polls, setPolls] = useState([]);
-
+    const navigate = useNavigate();
     const fetchPolls = useCallback(async() => {
         try{
             const requestOptions = {
@@ -20,13 +21,13 @@ const PollAdminList = () =>{
                .then(data => {
                    const {error}:any = data;
                    if(error){
-                       error.HandleError({error, fetchPolls});
+                       err.HandleError({errorMsg:error, func:fetchPolls, navigate:navigate});
                    }else {
                        if(data){
-                           const polls = data.slice(0, 20).map(
+                           const polls = data.map(
                                (pollSingle: { id:any, question: any; test_answer: any; type: any; created_at: any;
-                                   finished_at: any; createdAt: any; updatedAt: any }) => {
-                                   const {id, question, test_answer, type, created_at, finished_at, createdAt, updatedAt} = pollSingle;
+                                   finished_at: any; createdAt: any; updatedAt: any; is_closed:any}) => {
+                                   const {id, question, test_answer, type, created_at, finished_at, createdAt, updatedAt, is_closed} = pollSingle;
                                    return {
                                        id: id,
                                        question: question,
@@ -35,7 +36,8 @@ const PollAdminList = () =>{
                                        created_at: created_at,
                                        finished_at: finished_at,
                                        createdAt: createdAt,
-                                       updatedAt: updatedAt
+                                       updatedAt: updatedAt,
+                                       is_closed: is_closed
                                    }
                                });
                            setPolls(polls);
@@ -53,7 +55,7 @@ const PollAdminList = () =>{
         fetchPolls();
     }, []);
 
-    function updatePoll(id:any, question:any, isOpen:any, finished_at:any){
+    function updatePoll(id:any, question:any, finished_at:any, isClosed:any, setIsPollChecked:any){
         if(finished_at!==""){
             finished_at = new Date(finished_at);
         }else {
@@ -61,17 +63,17 @@ const PollAdminList = () =>{
         }
         let questionJSON = null
         let finishedAtJSON = null
-        let isOpenJSON = null
+        let isClosedJSON = null
         if(question !== "" ){
             questionJSON = {question: question};
         }
         if(finished_at != null){
             finishedAtJSON={finished_at:finished_at};
         }
-        if(isOpen != null) {
-            isOpenJSON = {is_open:isOpen};
+        if(isClosed != null) {
+            isClosedJSON = {is_closed:isClosed};
         }
-        let body = {...questionJSON, ...finishedAtJSON, ...isOpenJSON};
+        let body = {...questionJSON, ...finishedAtJSON, ...isClosedJSON};
         const requestOptions = {
             method: 'PUT',
             headers:config.headers,
@@ -84,16 +86,17 @@ const PollAdminList = () =>{
                 const {error}:any = data;
                 if(error){
                     console.log(error)
-                    err.HandleError({error, updatePoll});
+                    err.HandleError({errorMsg:error, func:updatePoll, navigate:navigate});
                 }else {
                     setPolls((currentPoll:any) => {
                         return currentPoll.map((poll:any)=>{
                             if(poll.id === id){
-                                return {...poll, question, finished_at, isOpen}
+                                return {...poll, question, finished_at, isClosed}
                             }
                             return poll
                         })
                     })
+                    setIsPollChecked(false);
                 }
             });
     }
@@ -109,7 +112,7 @@ const PollAdminList = () =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    error.HandleError({error, deletePoll});
+                    error.HandleError({errorMsg:error, func:deletePoll, navigate:navigate});
                 }else {
                     setPolls((currentPoll: any) => {
                         return currentPoll.filter((poll:any) => poll.id !== id)
@@ -121,7 +124,7 @@ const PollAdminList = () =>{
     return(
         <ul>
             {
-                polls.map((poll:{id:any, question:any, finished_at:any, is_open:any}) => {
+                polls.map((poll:{id:any, question:any, finished_at:any, is_closed:any}) => {
                     return (
                         <PollAdminItem
                             poll={poll}
