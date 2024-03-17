@@ -51,6 +51,7 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 		Password:    GeneratePasswordHash(s.config.Salt, string(inputUser.Password)),
 		PhoneNumber: inputUser.PhoneNumber,
 		Role:        entity.UserRoleInhabitant,
+		IsApproved:  false,
 	}
 	err = s.businessStorage.User.CreateUser(user)
 	if err != nil {

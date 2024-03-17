@@ -41,8 +41,8 @@ type OSBBService interface {
 	DeletePoll(UserID, OSBBID, PollID uint64) error
 	AddPollAnswer(UserID, PollID, OSBBID uint64, inputPollAnswer entity.EventPollAnswerPayload) (*entity.Answer, error)
 	AddPollAnswerTest(UserID, PollID, OSBBID uint64, inputPollAnswerTest entity.EventPollAnswerTestPayload) (*entity.Answer, error)
-	UpdateTestAnswer(UserID, OSBBID, TestAnswerID uint64, testAnswer entity.EventTestAnswerUpdatePayload) error
-	DeleteTestAnswer(UserID, OSBBID, TestAnswerID uint64) error
+	UpdateTestAnswer(UserID, OSBBID, PollID, TestAnswerID uint64, testAnswer entity.EventTestAnswerUpdatePayload) error
+	DeleteTestAnswer(UserID, OSBBID, PollID, TestAnswerID uint64) error
 	GetUserAnswer(UserID, OSBBID, PollID uint64) (*entity.Answer, error)
 	UpdateAnswer(UserID, OSBBID, PollID uint64, answer *entity.EventUserAnswerUpdatePayload) error
 	DeleteAnswer(UserID, OSBBID, PollID uint64) error
@@ -50,8 +50,9 @@ type OSBBService interface {
 	AddPayment(UserID, OSBBID uint64, inputPayment entity.EventPaymentPayload) (*entity.Payment, error)
 	AddPurchase(UserID, PaymentID uint64) (*entity.Purchase, error)
 	GetInhabitant(UserID uint64) (*entity.User, error)
-	ListInhabitants(UserID, OSBBID uint64) ([]entity.User, error)
+	ListInhabitants(UserID, OSBBID uint64, filter UserFilter) ([]entity.User, error)
 	UpdateInhabitant(UserID, OSBBID uint64, inhabitant entity.EventUserUpdatePayload) error
+	ApproveInhabitant(UserID, OSBBID uint64, inhabitant entity.EventApproveUser) error
 }
 
 type TokenService interface {

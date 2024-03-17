@@ -12,7 +12,7 @@ type FullName struct {
 }
 
 type User struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"-"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
 	OSBBID uint64 `gorm:"index" json:"osbbid"`
 
 	Apartment   Apartment `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"apartment"`
@@ -21,6 +21,7 @@ type User struct {
 	PhoneNumber PhoneNumber `gorm:"uniqueIndex" json:"phone_number"`
 	Role        UserRole    `json:"role"`
 
+	IsApproved bool `json:"is_approved"`
 	database.PostgreSQLModel
 }
 

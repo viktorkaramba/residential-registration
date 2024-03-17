@@ -71,6 +71,10 @@ type EventUserUpdatePayload struct {
 	*PhoneNumber     `json:"phone_number"`
 }
 
+type EventApproveUser struct {
+	UserID uint64 `json:"userID" binding:"required"`
+}
+
 type EventAnnouncementUpdatePayload struct {
 	Title   *Text `json:"title"`
 	Content *Text `json:"content"`
