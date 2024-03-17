@@ -172,8 +172,8 @@ func (s *OSBBStorage) UpdatePoll(PollID uint64, opts *entity.EventPollUpdatePayl
 		poll.Question = *opts.Question
 	}
 
-	if opts.IsOpen != nil {
-		poll.IsOpen = *opts.IsOpen
+	if opts.IsClosed != nil {
+		poll.IsClosed = *opts.IsClosed
 	}
 
 	if opts.FinishedAt != nil {
