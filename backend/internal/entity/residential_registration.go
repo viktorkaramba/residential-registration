@@ -82,7 +82,7 @@ type Poll struct {
 
 	Type PollType `json:"type"`
 
-	IsOpen bool `json:"is_open"`
+	IsClosed bool `json:"is_closed"`
 
 	CreatedAt  time.Time `gorm:"index"  json:"created_at"`
 	FinishedAt time.Time `gorm:"index" json:"finished_at"`

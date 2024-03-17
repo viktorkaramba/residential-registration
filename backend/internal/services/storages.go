@@ -70,6 +70,7 @@ type AnnouncementFilter struct {
 type PollFilter struct {
 	OSBBID          *uint64
 	WithTestAnswers bool
+	IsClosed        *bool
 }
 
 type TestAnswerFilter struct {

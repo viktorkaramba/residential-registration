@@ -266,6 +266,7 @@ func (s *osbbService) AddPoll(UserID, OSBBID uint64, inputPoll entity.EventPollP
 		CreatedAt:  time.Now().UTC(),
 		FinishedAt: inputPoll.FinishedAt,
 		Type:       entity.PollTypeOpenAnswer,
+		IsClosed:   false,
 	}
 	err = s.businessStorage.OSBB.CreatePoll(poll)
 	if err != nil {

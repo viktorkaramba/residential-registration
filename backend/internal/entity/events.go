@@ -78,7 +78,7 @@ type EventAnnouncementUpdatePayload struct {
 
 type EventPollUpdatePayload struct {
 	Question   *Text      `json:"question"`
-	IsOpen     *bool      `json:"is_open"`
+	IsClosed   *bool      `json:"is_closed"`
 	FinishedAt *time.Time `json:"finished_at"`
 }
 
