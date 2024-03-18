@@ -20,7 +20,6 @@ type User struct {
 	Password    Password    `json:"-"`
 	PhoneNumber PhoneNumber `gorm:"uniqueIndex" json:"phone_number"`
 	Role        UserRole    `json:"role"`
-
 	IsApproved *bool `json:"is_approved"`
 	database.PostgreSQLModel
 }
