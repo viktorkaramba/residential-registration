@@ -5,6 +5,7 @@ import {useAppContext} from "../../AppContext";
 import ProfileHeader from "../Header/ProfileHeader";
 import PollMenu from "./PollMenu";
 import AnnouncementAdminList from "../Announcements/AnnouncementAdmin/AnnouncementAdminList";
+import InhabitantRequestList from "../Inhabitant/InhabitantRequest/InhabitantRequestList";
 
 const ProfileMenu = ({role}:any) => {
 
@@ -26,13 +27,14 @@ const ProfileMenu = ({role}:any) => {
                     <div className='text-block' onClick={() => handleClick('PollMenu')}>
                         Опитування
                     </div>
-                    <div className='text-block' onClick={() => handleClick('')}>
+                    <div className='text-block' onClick={() => handleClick('InhabitantRequestList')}>
                         Запити мешканців
                     </div>
                 </section>
             }
             {activeOSBBElement === 'AnnouncementAdminItem' && <AnnouncementAdminList/>}
             {activeOSBBElement === 'PollMenu' && <PollMenu/>}
+            {activeOSBBElement === 'InhabitantRequestList' && <InhabitantRequestList/>}
 
         </div>
     )

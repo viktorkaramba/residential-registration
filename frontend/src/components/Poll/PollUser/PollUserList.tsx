@@ -26,7 +26,7 @@ const PollUserList = () =>{
                         err.HandleError({errorMsg:error, func:fetchPolls, navigate:navigate});
                     }else {
                         if(data){
-                            const polls = data.slice(0, 20).map(
+                            const polls = data.map(
                                 (pollSingle: { id:any, question: any; test_answer: any; type: any; created_at: any;
                                     finished_at: any; createdAt: any; updatedAt: any }) => {
                                     const {id, question, test_answer, type, created_at, finished_at, createdAt, updatedAt} = pollSingle;
