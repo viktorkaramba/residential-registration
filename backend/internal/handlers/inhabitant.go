@@ -70,7 +70,7 @@ func (h *Handler) registerInhabitant(c *gin.Context) {
 }
 
 func (h *Handler) getAllInhabitants(c *gin.Context) {
-	logger := h.Logger.Named("getAllInhabitans").WithContext(c)
+	logger := h.Logger.Named("getAllInhabitants").WithContext(c)
 
 	userID, err := h.getUserId(c)
 	if err != nil {
@@ -88,8 +88,9 @@ func (h *Handler) getAllInhabitants(c *gin.Context) {
 	}
 
 	inhabitants, err := h.Services.OSBB.ListInhabitants(userID, osbbID, services.UserFilter{
-		OSBBID:     &osbbID,
-		IsApproved: typecast.ToPtr(true),
+		OSBBID:         &osbbID,
+		IsApproved:     typecast.ToPtr(true),
+		WithIsApproved: typecast.ToPtr(true),
 	})
 	if err != nil {
 		logger.Error("failed to get all inhabitants", "error", err)
@@ -119,8 +120,9 @@ func (h *Handler) getWaitApproveInhabitants(c *gin.Context) {
 	}
 
 	inhabitants, err := h.Services.OSBB.ListInhabitants(userID, osbbID, services.UserFilter{
-		OSBBID:     &osbbID,
-		IsApproved: typecast.ToPtr(false),
+		OSBBID:         &osbbID,
+		IsApproved:     nil,
+		WithIsApproved: typecast.ToPtr(true),
 	})
 	if err != nil {
 		logger.Error("failed to get all inhabitants", "error", err)

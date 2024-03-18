@@ -73,6 +73,7 @@ type EventUserUpdatePayload struct {
 
 type EventApproveUser struct {
 	UserID uint64 `json:"userID" binding:"required"`
+	Answer *bool  `json:"answer" binding:"required"`
 }
 
 type EventAnnouncementUpdatePayload struct {

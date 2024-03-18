@@ -41,7 +41,7 @@ func (s *osbbService) AddOSBB(inputOSBB entity.EventOSBBPayload) (*entity.OSBB, 
 			Password:    GeneratePasswordHash(s.config.Salt, string(inputOSBB.Password)),
 			PhoneNumber: inputOSBB.PhoneNumber,
 			Role:        entity.UserRoleOSBBHead,
-			IsApproved:  true,
+			IsApproved:  typecast.ToPtr(true),
 		},
 		Name:   inputOSBB.Name,
 		EDRPOU: inputOSBB.EDRPOU,
@@ -913,7 +913,7 @@ func (s *osbbService) ApproveInhabitant(UserID, OSBBID uint64, inhabitant entity
 
 	err = s.businessStorage.User.ApproveUser(inhabitant.UserID, OSBBID, UserFilter{
 		OSBBID:     &OSBBID,
-		IsApproved: typecast.ToPtr(true),
+		IsApproved: inhabitant.Answer,
 	})
 	if err != nil {
 		logger.Error("failed to approve inhabitant", "error", err)

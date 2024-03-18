@@ -62,7 +62,8 @@ type UserFilter struct {
 	OSBBID *uint64
 	*entity.PhoneNumber
 	*entity.UserRole
-	IsApproved *bool
+	IsApproved     *bool
+	WithIsApproved *bool
 }
 
 type AnnouncementFilter struct {
