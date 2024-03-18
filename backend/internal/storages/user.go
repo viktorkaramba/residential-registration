@@ -64,8 +64,14 @@ func (s *userStorage) ListUsers(filter services.UserFilter) ([]entity.User, erro
 	if filter.OSBBID != nil {
 		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
 	}
-	if filter.IsApproved != nil {
-		stmt = stmt.Where("is_approved = ?", *filter.IsApproved)
+	if filter.WithIsApproved != nil {
+		if *filter.WithIsApproved {
+			if filter.IsApproved == nil {
+				stmt = stmt.Where("is_approved IS NULL")
+			} else {
+				stmt = stmt.Where("is_approved = ?", *filter.IsApproved)
+			}
+		}
 	}
 
 	var users []entity.User
@@ -119,7 +125,7 @@ func (s *userStorage) ApproveUser(UserID, OSBBID uint64, filter services.UserFil
 	}
 
 	if filter.IsApproved != nil {
-		user.IsApproved = *filter.IsApproved
+		user.IsApproved = filter.IsApproved
 	}
 
 	return stmt.Updates(user).Error
