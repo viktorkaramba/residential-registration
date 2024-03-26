@@ -1,12 +1,24 @@
-import React from "react";
-import config from "../../../config";
-import {useOSBBContext} from "../../OSBB/OSBBContext";
+import React, {useEffect, useState} from "react";
+import config from "../../../utils/config";
+import {useAppContext} from "../../../utils/AppContext";
+import err from "../../../utils/err";
+import {useNavigate} from "react-router-dom";
+import {IoEyeOffOutline, IoEyeOutline} from "react-icons/io5";
 
 const InhabitantForm = () =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext();
-    const handleSubmit = (event: any) => {
-        console.log('handleSubmit ran');
+    const {osbbID} = useAppContext();
+    const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
+    const [errorPassword, setErrorPassword] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // @ts-ignore
+    const {token, setToken} = useAppContext();
+    const [visiblePassword, setPasswordVisible] = useState(false);
+    const [visibleConfirmPassword, setConfirmVisible] = useState(false);
+    // @ts-ignore
+    const {setIsLogin} = useAppContext();
+    const navigate = useNavigate();
+    const addInhabitant = (event: any) => {
         event.preventDefault();
 
         // 👇️ access input values using name prop
@@ -14,6 +26,13 @@ const InhabitantForm = () =>{
         const surname = event.target.surname.value;
         const patronymic = event.target.patronymic.value;
         const password = event.target.password.value;
+        const confirm_password = event.target.confirm_password.value;
+        if(password!==confirm_password){
+            setErrorPassword(true)
+            return
+        }else {
+            setErrorPassword(false)
+        }
         const phone_number = event.target.phone_number.value;
         const apartment_number = parseInt(event.target.apartment_number.value);
         const apartment_area = parseInt(event.target.apartment_area.value);
@@ -28,43 +47,103 @@ const InhabitantForm = () =>{
         fetch(config.apiUrl+'osbb/' + osbbID + '/inhabitants', requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                const {error}:any = data;
+                if(error){
+                    err.HandleError({errorMsg:error, func:addInhabitant, navigate:navigate});
+                }else {
+                    if(data){
+                        const {token}:any = data
+                        setToken(token);
+                    }
+                }
             });
         // 👇️ clear all input values in the form
         event.target.reset();
     };
 
+    useEffect(() => {
+        if (token) {
+            localStorage.setItem("token", token);
+            setIsLogin(true);
+            setIsLoggedIn(true);
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/osbbs/profile');
+        }
+    }, [isLoggedIn]);
+
+
     return(
-        <form className='form' method='post' onSubmit={handleSubmit}>
-            <label form={'first_name'}>
-                Ім'я
-            </label>
-            <input maxLength={256} minLength={2} name="first_name" placeholder="" type='text' id='first_name' required={true}/>
-            <label form={'surname'}>
-                Прізвище
-            </label>
-            <input maxLength={256} minLength={2} name="surname" placeholder="" type='text' id='surname' required={true}/>
-            <label form={'patronymic'}>
-                По батькові
-            </label>
-            <input maxLength={256} minLength={2} name="patronymic" placeholder="" type='text' id='patronymic' required={true}/>
-            <label form={'password'}>
-                Пароль
-            </label>
-            <input name="password" minLength={8} placeholder="" type='password' id='password' required={true}/>
-            <label form={'phone_number'}>
-                Номер телефону
-            </label>
-            <input name="phone_number" placeholder="" type='tel' id='phone_number' required={true}/>
-            <label form={'apartment_number'}>
-                Номер квартири
-            </label>
-            <input name="apartment_number" min={1} placeholder="" type='number' id='apartment_number' required={true}/>
-            <label form={'apartment_area'}>
-                Площа квартири
-            </label>
-            <input name="apartment_area" min={1} placeholder="" type='number' id='apartment_area' required={true}/>
-            <button type="submit">Submit form</button>
+        <form method='post' onSubmit={addInhabitant}>
+            <div className={'flex flex-wrap align-items-start bg-dark-grey'}>
+                <div className="form">
+                    <div className="section"><span>1</span>ПІБ та Номер Телефону</div>
+                    <div className="inner-wrap">
+                        <label form={'first_name'}>Ім'я
+                            <input maxLength={256} minLength={2} required={true} name="first_name" placeholder="" type='text' id='first_name'/>
+                        </label>
+                        <label  form={'surname'}>Прізвище
+                            <input maxLength={256} minLength={2} required={true} name="surname" placeholder="" type='text' id='surname'/>
+                        </label>
+                        <label form={'patronymic'}>По Батькові
+                            <input maxLength={256} minLength={2} required={true} name="patronymic" placeholder="" type='text' id='patronymic'/>
+                        </label>
+                        <label form={'phone_number'}>Номер Телефону
+                            <input name="phone_number" required={true} placeholder="" type='tel' id='phone_number'/>
+                        </label>
+                        {errorPhoneNumber &&
+                            <div className={'error'}>
+                                Користувач з таким номером телефона уже зареєстрований!
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div className="form">
+                    <div className="section"><span>2</span>Інформація про квартиру</div>
+                    <div className="inner-wrap">
+                        <label form={'apartment_number'}>Номер квартири
+                            <input name="apartment_number" min={1} placeholder="" type='number' id='apartment_number' required={true}/>
+                        </label>
+                        <label form={'apartment_area'}>Площа квартири
+                            <input name="apartment_area" min={1} placeholder="" type='number' id='apartment_area' required={true}/>
+                        </label>
+                    </div>
+                    <div className={'flex flex-c'}>
+                        <button className='button add_osbb' type="submit" name="submit_osbb">
+                            <span className="button_content add_osbb_content">Додати ОСББ</span>
+                        </button>
+                    </div>
+                </div>
+                <div className="form">
+                    <div className="section"><span>3</span>Пароль</div>
+                    <div className="inner-wrap">
+                        <label form={'password'}>Пароль
+                            <div className={'flex'}>
+                                <input name="password" minLength={8} required={true} placeholder="" type={visiblePassword ? "text": "password"} id='password'/>
+                                <div className={'p-5'} onClick={()=>setPasswordVisible(!visiblePassword)}>
+                                    {visiblePassword ? <IoEyeOutline/>:<IoEyeOffOutline/>}
+                                </div>
+                            </div>
+                        </label>
+                        <label form={'confirm_password'}>Підтвердження пароля
+                            <div className={'flex'}>
+                                <input name="confirm_password" minLength={8} required={true} placeholder="" type={visibleConfirmPassword ? "text": "password"} id='confirm_password'/>
+                                <div className={'p-5'} onClick={()=>setConfirmVisible(!visibleConfirmPassword)}>
+                                    {visibleConfirmPassword ? <IoEyeOutline/>:<IoEyeOffOutline/>}
+                                </div>
+                            </div>
+                        </label>
+                        {errorPassword &&
+                            <div className={'error'}>
+                                Паролі не співпадають!
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
         </form>
     )
 }

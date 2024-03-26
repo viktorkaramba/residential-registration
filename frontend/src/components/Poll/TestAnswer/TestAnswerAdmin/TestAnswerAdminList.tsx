@@ -1,14 +1,16 @@
 import TestAnswerAdminItem from "./TestAnswerAdminItem";
-import config from "../../../../config";
+import config from "../../../../utils/config";
 import {useState} from "react";
-import {useOSBBContext} from "../../../OSBB/OSBBContext";
+import {useAppContext} from "../../../../utils/AppContext";
+import err from "../../../../utils/err";
 
-const TestAnswerAdminList = ({answers}:any) =>{
+const TestAnswerAdminList = ({answers, pollID}:any) =>{
     // @ts-ignore
-    const {osbbID} = useOSBBContext()
+    const {osbbID} = useAppContext()
     const [testAnswers, setTestAnswers] = useState(answers);
 
-    function updateTestAnswer(id:any, content:any){
+
+    function updateTestAnswer(id:any, content:any, setIsChecked:any){
 
         let body = null;
         if(content != null){
@@ -23,18 +25,24 @@ const TestAnswerAdminList = ({answers}:any) =>{
             body: body,
         }
 
-        fetch(config.apiUrl+'osbb/'+osbbID+'/polls-test/'+id, requestOptions)
+        fetch(config.apiUrl+'osbb/'+osbbID+'/polls/' + pollID +'/tests/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                setTestAnswers((currentAnswer: any[]) => {
-                    return currentAnswer.map((answer:any)=>{
-                        if(answer.id === id){
-                            return {...answer}
-                        }
-                        return answer
-                    })
-                })
+                const {error}:any = data;
+                if(error){
+                    err.HandleError({errorMsg:error, func:updateTestAnswer});
+                }else {
+                    setTestAnswers((currentAnswer: any[]) => {
+                        return currentAnswer.map((answer:any)=>{
+                            if(answer.id === id){
+                                return {...answer}
+                            }
+                            return answer
+                        })
+                    });
+                    setIsChecked(false);
+                }
             });
     }
 
@@ -44,24 +52,29 @@ const TestAnswerAdminList = ({answers}:any) =>{
             headers:config.headers,
         }
 
-        fetch(config.apiUrl+'osbb/'+osbbID+'/polls-test/'+id, requestOptions)
+        fetch(config.apiUrl+'osbb/'+osbbID+'/polls/' + pollID + '/tests/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                setTestAnswers((currentAnswer: any[]) => {
-                    return currentAnswer.filter(answer => answer.id !== id)
-                })
+                const {error}:any = data;
+                if(error){
+                    err.HandleError({errorMsg:error, func:deleteTestAnswer});
+                }else {
+                    setTestAnswers((currentAnswer: any[]) => {
+                        return currentAnswer.filter(answer => answer.id !== id)
+                    })
+                }
             });
     }
+
     return(
-        <ul>
-            {testAnswers.map((answer: {ID:any, content:any})=>{
+        <ul className={'test_answer_list'} >
+            {testAnswers.map((answer: {id:any, content:any})=>{
                 return(
                     <TestAnswerAdminItem
                         {...answer}
                         updateTestAnswer={updateTestAnswer}
                         deleteTestAnswer={deleteTestAnswer}
-                        key={answer.ID}
+                        key={answer.id}
                     />
                 )
             })}
