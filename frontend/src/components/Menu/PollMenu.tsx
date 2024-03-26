@@ -1,7 +1,7 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "./Menu.css"
 
-import {useAppContext} from "../../AppContext";
+import {useAppContext} from "../../utils/AppContext";
 import PollForm from "../Poll/PollForm/PollForm";
 import PollTestForm from "../Poll/PollForm/PollTestForm";
 import PollAdminList from "../Poll/PollAdmin/PollAdminList";
@@ -15,19 +15,26 @@ const PollMenu = () => {
         setActivePollElement(element);
     };
 
+    useEffect(()=>{
+        setActivePollElement('PollAdminList')
+    },[])
+
     return(
         <div>
-            <section className='menu'>
-                <div className='text-block' onClick={() => handleClick('PollForm')}>
+            <section className='menu flex flex-c'>
+                <button className='menu-text m-5' onClick={() => handleClick('PollAdminList')}>
+                    Опитування
+                </button>
+                <button className='menu-text m-5' onClick={() => handleClick('PollForm')}>
                     Додати опитування з відкритою відповідю
-                </div>
-                <div className='text-block' onClick={() => handleClick('PollTestForm')}>
+                </button>
+                <button className='menu-text m-5' onClick={() => handleClick('PollTestForm')}>
                     Додати опитування у вигляді тесту
-                </div>
+                </button>
             </section>
+            {activePollElement === 'PollAdminList' && <PollAdminList/>}
             {activePollElement === 'PollForm' && <PollForm/>}
             {activePollElement === 'PollTestForm' && <PollTestForm/>}
-            <PollAdminList/>
         </div>
     )
 }

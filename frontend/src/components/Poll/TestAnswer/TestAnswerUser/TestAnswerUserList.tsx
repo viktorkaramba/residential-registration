@@ -1,8 +1,8 @@
-import config from "../../../../config";
+import config from "../../../../utils/config";
 import React, {useState} from "react";
-import {useAppContext} from "../../../../AppContext";
+import {useAppContext} from "../../../../utils/AppContext";
 import TestAnswerUserItem from "./TestAnswerUserItem";
-import err from "../../../../err";
+import err from "../../../../utils/err";
 import {useNavigate} from "react-router-dom";
 
 const TestAnswerUserList = ({answers, pollID, userAnswer, deleteAnswer}:any) =>{
@@ -30,24 +30,15 @@ const TestAnswerUserList = ({answers, pollID, userAnswer, deleteAnswer}:any) =>{
             });
     }
 
-    function handleDelete(){
-        deleteAnswer(pollID)
-        setSelectedValue(undefined)
-    }
     return(
-        <ul>
+        <ul className={'test_answer_list'}>
             {testAnswers.map((answer: {id:any, content:any})=>{
                 return(
-                   <TestAnswerUserItem {...answer} key={answer.id} userAnswer={userAnswer} addTestAnswer={addTestAnswer}
+                   <TestAnswerUserItem {...answer} key={answer.id} pollID={pollID}userAnswer={userAnswer} addTestAnswer={addTestAnswer}
                                        selectedValue={selectedValue} setSelectedValue={setSelectedValue}
                                        deleteAnswer={deleteAnswer}/>
                 )
             })}
-            <button
-                onClick={()=>handleDelete()}
-            >
-                Delete
-            </button>
         </ul>
     )
 }

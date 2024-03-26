@@ -1,17 +1,20 @@
 import React, {useCallback, useEffect, useState} from "react";
-import config from "../../../config";
-import {useAppContext} from "../../../AppContext";
-import error from "../../../err";
-import err from "../../../err";
+import config from "../../../utils/config";
+import {useAppContext} from "../../../utils/AppContext";
+import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
 import AnnouncementAdminItem from "./AnnouncementAdminItem";
 import AnnouncementForm from "../AnnouncementForm/AnnouncementForm";
+import {MdAddCircle} from "react-icons/md";
+import {IoListCircleSharp} from "react-icons/io5";
 
 const AnnouncementAdminList = () =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
+
     const [announcements, setAnnouncements] = useState([]);
     const navigate = useNavigate();
+    const [isAddedChecked, setIsAddedChecked] = useState(false);
 
     const fetchAnnouncements = useCallback(async() => {
         try{
@@ -102,26 +105,44 @@ const AnnouncementAdminList = () =>{
             });
     }
 
+    function addAnnouncement (announcement: any){
+        // @ts-ignore
+        setAnnouncements(currentAnnouncement => {
+            return [
+                ...currentAnnouncement,
+                announcement,
+            ]
+        })
+    }
+
     useEffect(() => {
         fetchAnnouncements();
     }, [fetchAnnouncements]);
 
     return(
-        <div>
-            <ul>
-                {
-                    announcements.map((announcement:{ID:any, Title:any, Content:any})=> {
-                        return (
-                            <AnnouncementAdminItem key={announcement.ID}
-                                                   announcement={announcement}
-                                                   deleteAnnouncement={deleteAnnouncement}
-                                                   updateAnnouncement={updateAnnouncement}/>
-                        )
-                    })
-                }
-            </ul>
-            <AnnouncementForm/>
-        </div>
+        <section className='announcements-list'>
+            <div className='container'>
+                <div className={'flex flex-end m-5'}>
+                    {!isAddedChecked && <MdAddCircle fontSize={'40px'} style={{color:'var(--blue-color)'}} onClick={()=>setIsAddedChecked(!isAddedChecked)}/>}
+                    {isAddedChecked &&
+                        <IoListCircleSharp fontSize={'40px'} style={{color:'var(--blue-color)'}} onClick={()=>setIsAddedChecked(!isAddedChecked)}/>}
+
+                </div>
+                {isAddedChecked &&  <AnnouncementForm addAnnouncement={addAnnouncement}/>}
+                {!isAddedChecked &&  <div className='announcements-content grid'>
+                    {
+                        announcements.map((announcement:{ID:any, Title:any, Content:any})=> {
+                            return (
+                                <AnnouncementAdminItem key={announcement.ID}
+                                                       announcement={announcement}
+                                                       deleteAnnouncement={deleteAnnouncement}
+                                                       updateAnnouncement={updateAnnouncement}/>
+                            )
+                        })
+                    }
+                </div>}
+            </div>
+        </section>
     )
 }
 

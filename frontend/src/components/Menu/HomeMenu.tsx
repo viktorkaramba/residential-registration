@@ -1,12 +1,11 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "./Menu.css"
 
 import Header from "../Header/Header";
 import OSBBList from "../OSBB/OSBBList/OSBBList";
 import OSBBForm from "../OSBB/OSBBForm/OSBBForm";
 import InhabitantForm from "../Inhabitant/InhabitantForm/InhabitantForm";
-import {useAppContext} from "../../AppContext";
-import {Link} from "react-router-dom";
+import {useAppContext} from "../../utils/AppContext";
 import { useNavigate } from "react-router-dom"
 
 const HomeMenu = () =>{
@@ -24,21 +23,24 @@ const HomeMenu = () =>{
         }
     };
 
+    useEffect(()=>{
+        setActiveOSBBElement('OSBBList');
+    }, [])
     return(
         <div>
-            <Header/>
-            <section className='menu'>
-                <div className='text-block' onClick={() => handleClick('OSBBList')}>
+            <Header  withWelcomeBlock={true}/>
+            <section className='menu flex flex-c'>
+                <button className='menu-text m-5' onClick={() => handleClick('OSBBList')}>
                     Список ОСББ
-                </div>
+                </button>
                 {!isLogin &&
-                    <div className='text-block' onClick={() => handleClick('OSBBForm')}>
+                    <button className='menu-text m-5' onClick={() => handleClick('OSBBForm')}>
                         Додати ОСББ
-                    </div>}
+                    </button>}
                 {isLogin &&
-                    <div className='text-block' onClick={() => handleClick('OSBBProfile')}>
+                    <button className='menu-text m-5' onClick={() => handleClick('OSBBProfile')}>
                         Профіль ОСББ
-                    </div>}
+                    </button>}
             </section>
             {activeOSBBElement === 'OSBBList' && <OSBBList/>}
             {activeOSBBElement === 'OSBBForm' && <OSBBForm/>}

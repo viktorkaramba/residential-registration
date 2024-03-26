@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import config from "../../config";
+import config from "../../utils/config";
 import Header from "../../components/Header/Header";
-import err from "../../err";
-import {useAppContext} from "../../AppContext";
+import err from "../../utils/err";
+import {useAppContext} from "../../utils/AppContext";
 import {useNavigate} from "react-router-dom";
+import './Login.css'
 
 const LoginPage = () => {
 
     const [phone_number, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(false);
     // @ts-ignore
     const {token, setToken} = useAppContext();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,6 +32,7 @@ const LoginPage = () => {
                 const {error}:any = data;
                 if(error){
                     err.HandleError({errorMsg:error, func:handleLogin, navigate:navigate});
+                    setError(true)
                 }else {
                     if(data){
                         const { token } = data;
@@ -62,31 +65,49 @@ const LoginPage = () => {
     };
 
     return (
-        <div>
-            <Header/>
-            <h1>Логін</h1>
-            <form method={'post'} onSubmit={handleLogin}>
-                <label form={"phoneNumber"}>Номер телефону:</label>
-                <input
-                    type="tel"
-                    id="phoneNumber"
-                    value={phone_number}
-                    required={true}
-                    name="phoneNumber"
-                    onChange={handlePhoneNumberChange}
-                />
-                <label form={"password"}>Пароль:</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={password}
-                    required={true}
-                    onChange={handlePasswordChange}
-                />
-                <button type="submit">Увійти</button>
-            </form>
+        <div className={'login'}>
+            <div className={'box'}>
+                <form method={'post'} onSubmit={handleLogin}>
+                    <h2>Вхід</h2>
+                    <div className={'inputBox'}>
+                        <input
+                            type="tel"
+                            id="phoneNumber"
+                            value={phone_number}
+                            required={true}
+                            name="phoneNumber"
+                            onChange={handlePhoneNumberChange}
+                        />
+                        <span>Номер Телефону</span>
+                        <i></i>
+                    </div>
+                    <div className={'inputBox'}>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={password}
+                            required={true}
+                            onChange={handlePasswordChange}
+                        />
+                        <span>Пароль</span>
+                        <i></i>
+                    </div>
+                    <div className={'links'}>
+                        <a href={"#"}>Забули Пароль</a>
+                    </div>
+                    {error &&
+                        <div className={'error login_error'}>
+                            Невірний номер телефону або пароль!
+                        </div>
+                    }
+                    <button className='button login_button' type="submit" name="submit_osbb">
+                        <span className="button_content login_button_content">Увійти</span>
+                    </button>
+                </form>
+            </div>
         </div>
+
     );
 };
 

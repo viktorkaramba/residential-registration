@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from "react";
-import config from "../../../config";
-import {useAppContext} from "../../../AppContext";
-import err from "../../../err";
+import config from "../../../utils/config";
+import {useAppContext} from "../../../utils/AppContext";
+import err from "../../../utils/err";
+import Checkbox from "@mui/material/Checkbox";
+import './Answer.css'
 
 const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, deleteAnswer}:any) =>{
     // @ts-ignore
@@ -35,6 +37,7 @@ const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, dele
     useEffect(() => {
         if(userAnswer!=null){
             setNewAnswer(userAnswer.content)
+            setIsExist(true);
         }
     }, [userAnswer]);
 
@@ -51,12 +54,9 @@ const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, dele
 
 
     return(
-        <form className='form' method='post'  onSubmit={addOpenAnswer}>
-            <label form={'answer'}>
-                Відповідь
-            </label>
-            {!isExist &&
-                <div>
+        <form method='post'  onSubmit={addOpenAnswer}>
+            {!isExist && <div className="inner-wrap">
+                <label form={'answer'}>Відповідь
                     <input
                         maxLength={256}
                         minLength={2}
@@ -70,38 +70,69 @@ const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, dele
                             setNewAnswer(event.target.value)
                         }}
                     />
-                    <button type="submit">Add answer</button>
+                    <button className='button' style={{marginTop:'10px'}}>
+                        <span className="button_content" >Відповісти</span>
+                    </button>
+                </label>
+            </div>}
+                    {isExist && !isChecked &&
+                        <div className={'answer flex flex-sb'}>
+                            <label>
+                                <Checkbox
+                                    name="announcement_check_box"
+                                    id='announcement_check_box'
+                                    checked={isChecked}
+                                    size="medium"
+                                    style={{color:'var(--blue-color)'}}
+                                    onChange={e=>setIsChecked(!isChecked)}
+                                />
+                                {!isChecked && <span className={'m-5'}>{newAnswer}</span>}
+                            </label>
+                            <div className={'flex'}>
+                                <button className='button'>
+                                    <span className="button_content" onClick={()=>handleDelete()}>Видалити</span>
+                                </button>
+                            </div>
+                        </div>
+                      }
+            {isExist && isChecked &&
+                <div className={'answer flex flex-sb'}>
+                    <label>
+                        <Checkbox
+                            name="announcement_check_box"
+                            id='announcement_check_box'
+                            checked={isChecked}
+                            size="medium"
+                            style={{color:'var(--blue-color)'}}
+                            onChange={e=>setIsChecked(!isChecked)}
+                        />
+                        <div className={'poll_answer_update'}>
+                            <input maxLength={256}
+                                   minLength={2}
+                                   required={true}
+                                   name="poll_answer_update_content"
+                                   placeholder=""
+                                   type='text'
+                                   onChange={e=>setNewAnswer(e.target.value)}
+                                   value={newAnswer}
+                                   className='m-5'
+                                   id='poll__answer_update_content'/>
+                            <button className='button m-5' onClick={()=>handleUpdate()}>
+                                <span className="button_content">Оновити</span>
+                            </button>
+                        </div>
+                    </label>
+                    <div className={'flex'}>
+                        <button className='button'>
+                            <span className="button_content" onClick={()=>handleDelete()}>Видалити</span>
+                        </button>
+                    </div>
                 </div>
             }
-            {isExist && !isChecked && <div style={{background:"bisque"}}>
-                <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={e=>setIsChecked(!isChecked)}
-                />
-                {newAnswer}
-                <button onClick={()=>handleDelete()}>Delete answer</button>
-            </div>}
-            {isExist && isChecked && <div style={{background:"bisque"}}>
-                <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={e=>setIsChecked(!isChecked)}
-                />
-                <div>
-                    <input maxLength={256}
-                           minLength={2}
-                           required={true}
-                           name="answer_update_content"
-                           placeholder=""
-                           type='text'
-                           onChange={e=>setNewAnswer(e.target.value)}
-                           value={newAnswer}
-                           id='answer_update_content'/>
-                    <button onClick={()=>handleUpdate()}>Оновити</button>
-                </div>
-                <button onClick={()=>handleDelete()}>Delete answer</button>
-            </div>}
+                    {/*{isSuccess &&*/}
+                    {/*    <Stack sx={{margin: '10px'}} spacing={2}>*/}
+                    {/*        <Alert variant={'filled'} severity="success" style={{fontSize:'15px'}}>Оголошення успішно додане!</Alert>*/}
+                    {/*    </Stack>}*/}
         </form>
     )
 }

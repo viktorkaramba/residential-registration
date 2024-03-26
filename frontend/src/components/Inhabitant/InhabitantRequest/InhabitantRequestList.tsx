@@ -1,9 +1,10 @@
 import {useCallback, useEffect, useState} from "react";
-import config from "../../../config";
-import {useAppContext} from "../../../AppContext";
-import err from "../../../err";
+import config from "../../../utils/config";
+import {useAppContext} from "../../../utils/AppContext";
+import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
 import InhabitantRequestItem from "./InhabitantRequestItem";
+import AnnouncementUserItem from "../../Announcements/AnnouncementListUser/AnnouncementUserItem";
 
 const InhabitantRequestList = () =>{
     // @ts-ignore
@@ -28,8 +29,8 @@ const InhabitantRequestList = () =>{
                         if(data){
                             const inhabitantWaitApproveList = data.map(
                                 (inhabitantWaitApproveList: { id:any, osbbid: any; apartment: any; full_name: any; phone_number: any;
-                                    role: any; is_approved: any; }) => {
-                                    const {id, osbbid, apartment, full_name, phone_number, role, is_approved} = inhabitantWaitApproveList;
+                                    role: any; is_approved: any; createdAt: any}) => {
+                                    const {id, osbbid, apartment, full_name, phone_number, role, is_approved, createdAt} = inhabitantWaitApproveList;
                                     return {
                                         id: id,
                                         osbbid: osbbid,
@@ -37,7 +38,8 @@ const InhabitantRequestList = () =>{
                                         full_name: full_name,
                                         phone_number: phone_number,
                                         role: role,
-                                        is_approved: is_approved
+                                        is_approved: is_approved,
+                                        createdAt:createdAt
                                     }
                                 });
                             setInhabitantsWaitApprove(inhabitantWaitApproveList);
@@ -72,12 +74,7 @@ const InhabitantRequestList = () =>{
                         err.HandleError({errorMsg:error, func:updateStatus, navigate:navigate});
                     }else {
                         setInhabitantsWaitApprove((currentInhabitant:any) => {
-                            return currentInhabitant.map((inhabitant:any)=>{
-                                if(inhabitant.id === userID){
-                                    return {...inhabitant}
-                                }
-                                return inhabitant
-                            })
+                            return currentInhabitant.filter((inhabitant:any) => inhabitant.id !== userID)
                         })
                     }
                 }
@@ -85,20 +82,25 @@ const InhabitantRequestList = () =>{
     }
 
     return(
-        <ul>
-            {
-                inhabitantsWaitApprove.map((inhabitantWaitApprove:{id:any, osbbid:any, apartment:any, full_name:any,
-                    phone_number:any, role:any, is_approved:any}) => {
-                    return (
-                        <InhabitantRequestItem
-                            inhabitantWaitApprove={inhabitantWaitApprove}
-                            updateStatus={updateStatus}
-                            key={inhabitantWaitApprove.id}
-                        />
-                    )
-                })
-            }
-        </ul>
+        <section className='announcements-list'>
+            <div className='container'>
+                <div className='announcements-content grid'>
+                    {inhabitantsWaitApprove.length===0 && "Немає запитів"}
+                    {
+                        inhabitantsWaitApprove.map((inhabitantWaitApprove:{id:any, osbbid:any, apartment:any, full_name:any,
+                            phone_number:any, role:any, is_approved:any}) => {
+                            return (
+                                <InhabitantRequestItem
+                                    inhabitantWaitApprove={inhabitantWaitApprove}
+                                    updateStatus={updateStatus}
+                                    key={inhabitantWaitApprove.id}
+                                />
+                            )
+                        })
+                    }
+                </div>
+            </div>
+        </section>
     )
 }
 

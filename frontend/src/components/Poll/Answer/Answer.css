@@ -1,0 +1,9 @@
+.answer{
+    background: var(--white-color);
+    padding: 10px;
+    margin-bottom: 5px;
+    width: 100%;
+    background: var(--white-color);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+}

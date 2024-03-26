@@ -1,8 +1,9 @@
 import {useCallback, useEffect, useState} from "react";
 import OSBBListElement from "./OSBBListElement";
-import config from "../../../config";
-import err from "../../../err";
+import config from "../../../utils/config";
+import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
+import "../OSBB.css"
 
 const OSBBList = () =>{
     const [osbbs, setOSBBS] = useState([]);
@@ -30,6 +31,7 @@ const OSBBList = () =>{
                                     }
                                 });
                             setOSBBS(newOSBBS);
+                            console.log(newOSBBS)
                         }
                         else {
                             setOSBBS([]);
@@ -46,22 +48,20 @@ const OSBBList = () =>{
     }, [fetchOSBBS]);
 
     return(
-        <div>
-            <section className='booklist'>
-                <div className='container'>
-                    <div className='booklist-content grid'>
-                        {
-                            osbbs.map((item, index) => {
-                                return (
-                                    // @ts-ignore
-                                    <OSBBListElement key = {index}{...item}/>
-                                )
-                            })
-                        }
-                    </div>
+        <section className='osbblist'>
+            <div className='container'>
+                <div className='osbblist-content grid'>
+                    {
+                        osbbs.map((item, index) => {
+                            return (
+                                // @ts-ignore
+                                <OSBBListElement key = {index}{...item}/>
+                            )
+                        })
+                    }
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
     )
 }
 

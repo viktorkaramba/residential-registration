@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react";
 import TestAnswerUserList from "../TestAnswer/TestAnswerUser/TestAnswerUserList";
 import AnswerForm from "../Answer/AnswerForm";
-import config from "../../../config";
-import err from "../../../err";
-import {useAppContext} from "../../../AppContext";
+import config from "../../../utils/config";
+import err from "../../../utils/err";
+import {useAppContext} from "../../../utils/AppContext";
 import {useNavigate} from "react-router-dom";
-
+import {format} from "date-fns";
 
 const PollUserItem = ({poll}:any) => {
     // @ts-ignore
@@ -100,16 +100,28 @@ const PollUserItem = ({poll}:any) => {
     }, [userAnswer]);
 
     return(
-        <li>
-            <label>
-                {poll.question}
-            </label>
+        <div className='poll-item'>
+            <div className="inner-wrap">
+                <div className='flex flex-sb flex-wrap'>
+                    <div className='polls-item-info-item fw-7 fs-26'>
+                        <span>{poll.question}</span>
+                    </div>
+                    <div className='polls-item-info-item fw-6 fs-15'>
+                        <span> {format(poll.created_at, 'MMMM do yyyy, hh:mm:ss a')}</span>
+                    </div>
+                </div>
+                <div className='flex flex-sb flex-wrap'>
+                    <div className='polls-item-info-item fw-7 fs-15'>
+                        <span>Завершується - {format(poll.finished_at, 'MMMM do yyyy, hh:mm:ss a')}</span>
+                    </div>
+                </div>
+            </div>
             {poll.test_answer.length !== 0 && <TestAnswerUserList answers={poll.test_answer} pollID={poll.id}
-                                                                   userAnswer={userAnswer} deleteAnswer={deleteAnswer}/>}
+                                                                  userAnswer={userAnswer} deleteAnswer={deleteAnswer}/>}
             {poll.test_answer.length === 0 && <AnswerForm pollID={poll.id} userAnswer={userAnswer} isExist={isExist}
-                                                           setIsExist={setIsExist} deleteAnswer={deleteAnswer}
+                                                          setIsExist={setIsExist} deleteAnswer={deleteAnswer}
                                                           updateAnswer={updateAnswer}/>}
-        </li>
+        </div>
     )
 }
 

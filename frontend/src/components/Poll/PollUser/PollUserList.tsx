@@ -1,9 +1,10 @@
-import {useCallback, useEffect, useState} from "react";
-import config from "../../../config";
-import {useAppContext} from "../../../AppContext";
+import React, {useCallback, useEffect, useState} from "react";
+import config from "../../../utils/config";
+import {useAppContext} from "../../../utils/AppContext";
 import PollUserItem from "./PollUserItem";
-import err from "../../../err";
+import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
+import PollAdminItem from "../PollAdmin/PollAdminItem";
 
 const PollUserList = () =>{
     // @ts-ignore
@@ -56,21 +57,24 @@ const PollUserList = () =>{
         fetchPolls();
     }, []);
 
-
-
     return(
-        <ul>
-            {
-                polls.map((poll:{id:any, question:any, finished_at:any}) => {
-                    return (
-                        <PollUserItem
-                            poll={poll}
-                            key={poll.id}
-                        />
-                    )
-                })
-            }
-        </ul>
+        <section className='poll_list'>
+            <div className='container'>
+                <div className='poll_content grid'>
+                    {polls.length === 0 && "Немає опитувань"}
+                    {
+                        polls.map((poll:{id:any, question:any, finished_at:any}) => {
+                            return (
+                                <PollUserItem
+                                    poll={poll}
+                                    key={poll.id}
+                                />
+                            )
+                        })
+                    }
+                </div>
+            </div>
+        </section>
     )
 }
 

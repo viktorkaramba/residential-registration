@@ -1,10 +1,10 @@
 import {useCallback, useEffect, useState} from "react";
 import AnnouncementUserItem from "./AnnouncementUserItem";
-import config from "../../../config";
-import {useAppContext} from "../../../AppContext";
-import error from "../../../err";
-import err from "../../../err";
+import config from "../../../utils/config";
+import {useAppContext} from "../../../utils/AppContext";
+import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
+import "../Announcements.css"
 
 const AnnouncementUserList = () =>{
     // @ts-ignore
@@ -56,22 +56,20 @@ const AnnouncementUserList = () =>{
         fetchAnnouncements();
     }, [fetchAnnouncements]);
     return(
-        <div>
-            <section className='booklist'>
-                <div className='container'>
-                    <div className='booklist-content grid'>
-                        {
-                            announcements.slice(0, 30).map((item, index) => {
-                                return (
-                                    // @ts-ignore
-                                    <AnnouncementUserItem key = {index}{...item}/>
-                                )
-                            })
-                        }
-                    </div>
+        <section className='announcements-list'>
+            <div className='container'>
+                <div className='announcements-content grid'>
+                    {
+                        announcements.map((item, index) => {
+                            return (
+                                // @ts-ignore
+                                <AnnouncementUserItem key = {index}{...item}/>
+                            )
+                        })
+                    }
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
     )
 }
 

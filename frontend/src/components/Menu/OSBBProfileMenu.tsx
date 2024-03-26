@@ -1,15 +1,11 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "./Menu.css"
 
 import Header from "../Header/Header";
-import OSBBList from "../OSBB/OSBBList/OSBBList";
-import OSBBForm from "../OSBB/OSBBForm/OSBBForm";
-import InhabitantForm from "../Inhabitant/InhabitantForm/InhabitantForm";
-import {useAppContext} from "../../AppContext";
-import {Link} from "react-router-dom";
-import { useNavigate } from "react-router-dom"
+import {useAppContext} from "../../utils/AppContext";
 import AnnouncementUserList from "../Announcements/AnnouncementListUser/AnnouncementUserList";
 import PollUserList from "../Poll/PollUser/PollUserList";
+import OSBBDescription from "../OSBB/OSBBDescription";
 
 const OSBBProfileMenu = () => {
 
@@ -20,18 +16,25 @@ const OSBBProfileMenu = () => {
         setActiveOSBBElement(element);
     };
 
+    useEffect(()=>{
+        setActiveOSBBElement('OSBBDescription')
+    },[])
     return(
         <div>
-            <Header/>
-            <section className='menu'>
-                <div className='text-block' onClick={() => handleClick('AnnouncementList')}>
+            <Header  withWelcomeBlock={false}/>
+            <section className='menu flex flex-c flex-wrap'>
+                <button className='menu-text m-5' onClick={() => handleClick('OSBBDescription')}>
+                    Профіль
+                </button>
+                <button className='menu-text m-5' onClick={() => handleClick('AnnouncementUserList')}>
                     Оголошення
-                </div>
-                <div className='text-block' onClick={() => handleClick('PollUserList')}>
+                </button>
+                <button className='menu-text m-5' onClick={() => handleClick('PollUserList')}>
                     Опитування
-                </div>
+                </button>
             </section>
-            {activeOSBBElement === 'AnnouncementList' && <AnnouncementUserList/>}
+            {activeOSBBElement === 'OSBBDescription' && <OSBBDescription/>}
+            {activeOSBBElement === 'AnnouncementUserList' && <AnnouncementUserList/>}
             {activeOSBBElement === 'PollUserList' && <PollUserList/>}
         </div>
     )

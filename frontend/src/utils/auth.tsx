@@ -1,6 +1,8 @@
 import config from "./config";
 import err from "./err";
-import {useNavigate} from "react-router-dom";
+import {Navigate, useLocation, useNavigate} from "react-router-dom";
+import {useAppContext} from "./AppContext";
+import React from "react";
 
 function RefreshToken():any{
     let oldToken = localStorage.getItem('token') || '{}'
@@ -18,7 +20,6 @@ function RefreshToken():any{
 }
 
 function Logout(navigate:any):any{
-    console.log(config.headers)
     const requestOptions = {
         method: 'GET',
         headers: { 'Content-Type': 'application/json',
@@ -34,9 +35,21 @@ function Logout(navigate:any):any{
             }else {
                 if(data){
                     localStorage.removeItem("token");
-                    navigate('/');
                 }
             }
         });
 }
-export default {RefreshToken, Logout}
+
+function RequireAuth({ children }:any) {
+    // @ts-ignore
+    const { isLogin } = useAppContext();
+    const location = useLocation();
+
+    return isLogin === true ? (
+        children
+    ) : (
+        <Navigate to="/login" replace state={{ path: location.pathname }} />
+    );
+}
+
+export default {RefreshToken, Logout, RequireAuth}

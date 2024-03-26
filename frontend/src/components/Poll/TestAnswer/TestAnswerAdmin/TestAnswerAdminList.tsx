@@ -1,8 +1,8 @@
 import TestAnswerAdminItem from "./TestAnswerAdminItem";
-import config from "../../../../config";
+import config from "../../../../utils/config";
 import {useState} from "react";
-import {useAppContext} from "../../../../AppContext";
-import err from "../../../../err";
+import {useAppContext} from "../../../../utils/AppContext";
+import err from "../../../../utils/err";
 
 const TestAnswerAdminList = ({answers, pollID}:any) =>{
     // @ts-ignore
@@ -25,7 +25,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
             body: body,
         }
 
-        fetch(config.apiUrl+'osbb/'+osbbID+'/polls-test/'+id, requestOptions)
+        fetch(config.apiUrl+'osbb/'+osbbID+'/polls/' + pollID +'/tests/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -52,7 +52,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
             headers:config.headers,
         }
 
-        fetch(config.apiUrl+'osbb/'+osbbID+'/polls-test/'+id, requestOptions)
+        fetch(config.apiUrl+'osbb/'+osbbID+'/polls/' + pollID + '/tests/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
                 const {error}:any = data;
@@ -65,8 +65,9 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
                 }
             });
     }
+
     return(
-        <ul>
+        <ul className={'test_answer_list'} >
             {testAnswers.map((answer: {id:any, content:any})=>{
                 return(
                     <TestAnswerAdminItem

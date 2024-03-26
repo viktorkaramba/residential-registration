@@ -1,15 +1,18 @@
 import React, {useEffect, useState} from "react";
-import config from "../../../config";
-import {useAppContext} from "../../../AppContext";
+import config from "../../../utils/config";
+import {useAppContext} from "../../../utils/AppContext";
 import TestAnswerForm from "../TestAnswer/TestAnswerForm/TestAnswerForm";
 import TestAnswerFormList from "../TestAnswer/TestAnswerForm/TestAnswerFormList";
-import err from "../../../err";
+import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
+import {Stack} from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 const PollTestForm = () =>{
     // @ts-ignore
     const {osbbID} = useAppContext();
     const navigate = useNavigate();
+    const [isSuccess, setIsSuccess]= useState(false);
     const [answers, setAnswers] = useState(()=>{
         const localValue = localStorage.getItem("TestAnswers")
         if(localValue==null)return[]
@@ -29,6 +32,7 @@ const PollTestForm = () =>{
             ]
         })
     }
+
     function deleteTestAnswer(index:any){
         setAnswers((currentAnswer: any[]) => {
             return currentAnswer.filter((answer, i) => index !== i)
@@ -52,11 +56,13 @@ const PollTestForm = () =>{
                         navigate:navigate});
                 }else{
                     if(data){
+                        setIsSuccess(true);
                         localStorage.removeItem("TestAnswers")
                     }
                 }
             });
     }
+
     const handleAddPollTest = (event: any) => {
         console.log('handleSubmit ran');
         event.preventDefault();
@@ -73,24 +79,35 @@ const PollTestForm = () =>{
         // // 👇️ clear all input values in the form
         // event.target.reset();
     };
+
     return(
-        <div>
-        <form className='form' onSubmit={handleAddPollTest}>
-            <label form={'question'}>
-                Запитання
-            </label>
-            <input maxLength={256} minLength={2} required={true} name="question" placeholder="" type='text' id='question'/>
-            <label form={'finished_at'}>
-                Дата завершення
-            </label>
-            <input required={true} name="finished_at" placeholder="" type='datetime-local' step="1"
-                   id='finished_at'/>
-            <TestAnswerForm addTestAnswer={addTestAnswer}/>
-            <h1>Тестові відповіді</h1>
-            <TestAnswerFormList answers={answers} deleteTestAnswer={deleteTestAnswer}/>
-            <button>Add poll test</button>
+        <form method='post'  onSubmit={handleAddPollTest}>
+            <div className={'flex flex-wrap align-items-start bg-dark-grey'}>
+                <div className="form poll_form">
+                    <h1>Форма для додання відкритого опитування</h1>
+                    <div className="inner-wrap">
+                        <label form={'question'}>Запитання
+                            <input maxLength={256} minLength={2} required={true} name="question" placeholder="" type='text' id='question'/>
+                        </label>
+                        <label form={'finished_at'}>Дата завершення
+                            <input required={true} name="finished_at" placeholder="" type='datetime-local' step="1" id='finished_at'/>
+                        </label>
+                    </div>
+                    <div className="section">Тестові відповіді</div>
+                    <TestAnswerForm addTestAnswer={addTestAnswer}/>
+                    <TestAnswerFormList answers={answers} deleteTestAnswer={deleteTestAnswer}/>
+                    <div className={'flex flex-c'}>
+                        <button className='button poll_button' type="submit" name="submit_poll">
+                            <span className="button_content poll_button_content">Додати Опитування</span>
+                        </button>
+                    </div>
+                    {isSuccess &&
+                        <Stack sx={{margin: '10px'}} spacing={2}>
+                            <Alert variant={'filled'} severity="success" style={{fontSize:'15px'}}>Оголошення успішно додане!</Alert>
+                        </Stack>}
+                </div>
+            </div>
         </form>
-        </div>
     )
 }
 
