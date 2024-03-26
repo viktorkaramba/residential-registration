@@ -91,6 +91,7 @@ func (h *Handler) getAllInhabitants(c *gin.Context) {
 		OSBBID:         &osbbID,
 		IsApproved:     typecast.ToPtr(true),
 		WithIsApproved: typecast.ToPtr(true),
+		WithApartment:  typecast.ToPtr(true),
 	})
 	if err != nil {
 		logger.Error("failed to get all inhabitants", "error", err)
@@ -123,6 +124,7 @@ func (h *Handler) getWaitApproveInhabitants(c *gin.Context) {
 		OSBBID:         &osbbID,
 		IsApproved:     nil,
 		WithIsApproved: typecast.ToPtr(true),
+		WithApartment:  typecast.ToPtr(true),
 	})
 	if err != nil {
 		logger.Error("failed to get all inhabitants", "error", err)

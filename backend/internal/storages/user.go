@@ -73,7 +73,7 @@ func (s *userStorage) ListUsers(filter services.UserFilter) ([]entity.User, erro
 			}
 		}
 	}
-
+	stmt = stmt.Preload("Apartment")
 	var users []entity.User
 	return users, stmt.Find(&users).Error
 }

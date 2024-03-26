@@ -7,10 +7,11 @@ import (
 )
 
 type Storages struct {
-	User     UserStorage
-	Building BuildingStorage
-	OSBB     OSBBStorage
-	Token    TokenStorage
+	User      UserStorage
+	Building  BuildingStorage
+	Apartment ApartmentStorage
+	OSBB      OSBBStorage
+	Token     TokenStorage
 }
 
 type UserStorage interface {
@@ -23,6 +24,10 @@ type UserStorage interface {
 
 type BuildingStorage interface {
 	GetByOSBBID(OSBBID uint64) (*entity.Building, error)
+}
+
+type ApartmentStorage interface {
+	GetByUserID(UserID uint64) (*entity.Apartment, error)
 }
 
 type OSBBStorage interface {
@@ -64,6 +69,7 @@ type UserFilter struct {
 	*entity.UserRole
 	IsApproved     *bool
 	WithIsApproved *bool
+	WithApartment  *bool
 }
 
 type AnnouncementFilter struct {
