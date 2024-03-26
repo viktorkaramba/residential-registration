@@ -40,6 +40,7 @@ func (s *userStorage) GetUser(UserID uint64, filter services.UserFilter) (*entit
 	if filter.IsApproved != nil {
 		stmt = stmt.Where("is_approved = ?", *filter.IsApproved)
 	}
+	stmt = stmt.Preload("Apartment")
 	var user *entity.User
 	err := stmt.First(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -60,7 +61,7 @@ func (s *userStorage) GetUserByPhoneNumber(phoneNumber entity.PhoneNumber) (*ent
 func (s *userStorage) ListUsers(filter services.UserFilter) ([]entity.User, error) {
 	stmt := s.db.
 		Model(&entity.User{})
-
+	stmt = stmt.Preload("Apartment")
 	if filter.OSBBID != nil {
 		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
 	}
@@ -73,7 +74,7 @@ func (s *userStorage) ListUsers(filter services.UserFilter) ([]entity.User, erro
 			}
 		}
 	}
-	stmt = stmt.Preload("Apartment")
+
 	var users []entity.User
 	return users, stmt.Find(&users).Error
 }
