@@ -37,9 +37,11 @@ func (s *userStorage) GetUser(UserID uint64, filter services.UserFilter) (*entit
 	if filter.UserRole != nil {
 		stmt = stmt.Where("role = ?", *filter.UserRole)
 	}
+
 	if filter.IsApproved != nil {
 		stmt = stmt.Where("is_approved = ?", *filter.IsApproved)
 	}
+
 	stmt = stmt.Preload("Apartment")
 	var user *entity.User
 	err := stmt.First(&user).Error

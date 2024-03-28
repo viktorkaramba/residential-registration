@@ -32,8 +32,10 @@ type User struct {
 	PhoneNumber PhoneNumber `gorm:"uniqueIndex" json:"phone_number"`
 	Role        UserRole    `json:"role"`
 	IsApproved  *bool       `json:"is_approved"`
+
 	database.PostgreSQLModel
 }
+
 
 type Building struct {
 	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`

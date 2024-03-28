@@ -126,6 +126,7 @@ func (h *Handler) getWaitApproveInhabitants(c *gin.Context) {
 		WithIsApproved: typecast.ToPtr(true),
 		WithApartment:  typecast.ToPtr(true),
 	})
+  
 	if err != nil {
 		logger.Error("failed to get all inhabitants", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get all inhabitants: %w", err))
