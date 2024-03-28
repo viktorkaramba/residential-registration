@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+.login{
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    align-items: center;
+    min-height: 100vh;
+    background:  var(--dark-grey);
+    font-family: 'Poppins', sans-serif;
+}
+.box {
+    position: relative;
+    width: 380px;
+    height: 420px;
+    background: var(--white-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.borderline{
+    position: absolute;
+    top:0;
+    inset: 0;
+}
+
+.box form{
+    position: absolute;
+    inset: 4px;
+    background: var(--blue-color);
+    padding: 35px 40px;
+    border-radius: 8px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.box form h2{
+    color: var(--dark-grey);
+    font-weight: 500;
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+
+.box form .inputBox{
+    position: relative;
+    width: 300px;
+    margin-top: 35px;
+}
+
+.box form .inputBox input{
+    position: relative;
+    width: 100%;
+    padding: 20px 10px 10px;
+    background: transparent;
+    outline: none;
+    border: none;
+    box-shadow: none;
+    color:var(--blue-color);
+    font-size: 1em;
+    letter-spacing: 0.05em;
+    transition: 0.5s;
+    z-index: 10;
+}
+
+.box form .inputBox span{
+    position: absolute;
+    left: 0;
+    padding: 10px 10px 10px;
+    pointer-events: none;
+    color: var(--dark-grey);
+    font-size: 1em;
+    letter-spacing: 0.05em;
+    transition: 0.5s;
+}
+
+.box form .inputBox input:valid ~ span,
+.box form .inputBox input:focus ~ span {
+    color: var(--dark-grey);
+    font-size: 0.75em;
+    transform: translateY(-34px);
+}
+.box form .inputBox i{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--dark-grey);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: 0.5s;
+    pointer-events: none;
+}
+
+.box form .inputBox input:valid ~ i,
+.box form .inputBox input:focus ~ i {
+    height: 44px;
+}
+
+.box form .links {
+    display: flex;
+    justify-content: space-between;
+}
+
+.box form .links a{
+    margin: 10px 0;
+    font-size: 0.75em;
+    color: var(--dark-grey);
+    text-decoration: none;
+}
+
+.box form .links a:hover,
+.box form .links a:nth-child(2)
+{
+    color: #fff;
+    text-decoration: none;
+}
+
+.login_button{
+    height: 4rem;
+    width: 14rem;
+    color: var(--blue-color);
+}
+
+.login_button_content{
+    font-size: 16px;
+}
+
+.login_error{
+    align-self: center;
+    margin-bottom: 15px;
+}
+
+
+
+
+

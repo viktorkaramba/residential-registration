@@ -23,15 +23,27 @@ type Apartment struct {
 }
 
 type User struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"-"`
 	OSBBID uint64 `gorm:"index" json:"osbbid"`
 
 	Apartment   Apartment `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"apartment"`
 	FullName    `json:"full_name"`
 	Password    Password    `json:"-"`
-	PhoneNumber PhoneNumber `gorm:"uniqueIndex" json:"phone_number"`
+	PhoneNumber PhoneNumber `json:"phone_number"`
 	Role        UserRole    `json:"role"`
 	IsApproved  *bool       `json:"is_approved"`
+
+	database.PostgreSQLModel
+}
+
+type Apartment struct {
+	ID         uint64 `gorm:"primaryKey;autoIncrement:true"`
+	BuildingID uint64 `gorm:"index"`
+	UserID     uint64 `gorm:"index"`
+
+	Number ApartmentNumber
+	Area   ApartmentArea
+
 	database.PostgreSQLModel
 }
 
@@ -53,7 +65,7 @@ type OSBB struct {
 
 	OSBBHead User   `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"osbb_head"`
 	Name     Name   `json:"name"`
-	EDRPOU   EDRPOU `gorm:"uniqueIndex" json:"edrpou"`
+	EDRPOU   EDRPOU `gorm:"index" json:"edrpou"`
 	Rent     Rent   `json:"rent"`
 
 	database.PostgreSQLModel
@@ -72,7 +84,7 @@ type Announcement struct {
 }
 
 type Poll struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"-"`
 	UserID uint64 `gorm:"index" json:"-"`
 	OSBBID uint64 `gorm:"index" json:"-"`
 
@@ -82,15 +94,13 @@ type Poll struct {
 
 	Type PollType `json:"type"`
 
-	IsClosed bool `json:"is_closed"`
-
 	CreatedAt  time.Time `gorm:"index"  json:"created_at"`
 	FinishedAt time.Time `gorm:"index" json:"finished_at"`
 	database.PostgreSQLModel
 }
 
 type TestAnswer struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
+	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
 	PollID uint64 `gorm:"index" json:"-"`
 
 	Content Text `json:"content" binding:"required"`
@@ -99,12 +109,12 @@ type TestAnswer struct {
 }
 
 type Answer struct {
-	ID           uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
-	PollID       uint64 `gorm:"index" json:"pollID"`
-	UserID       uint64 `gorm:"index" json:"userID"`
-	TestAnswerID uint64 `gorm:"index" json:"test_answer_id"`
+	ID           uint64 `gorm:"primaryKey;autoIncrement:true"`
+	PollID       uint64 `gorm:"index" json:"-"`
+	UserID       uint64 `gorm:"index"`
+	TestAnswerID uint64 `gorm:"index"`
 
-	Content Text `json:"content"`
+	Content Text
 
 	CreatedAt time.Time `gorm:"index"  json:"created_at"`
 	UpdateAt  time.Time `gorm:"index" json:"updated_at"`

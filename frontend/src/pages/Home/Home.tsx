@@ -1,11 +1,11 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Menu from "../../components/Menu/Menu";
+import HomeMenu from "../../components/Menu/HomeMenu";
 
 const Home = () => {
     return(
         <main>
-            <Menu/>
+            <HomeMenu/>
             <Outlet/>
         </main>
     )

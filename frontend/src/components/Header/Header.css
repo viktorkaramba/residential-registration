@@ -1,0 +1,14 @@
+.header-content{
+    min-height: 55vh;
+    flex-direction: column;
+    background: var(--white-color);
+}
+.header-title{
+    font-size: 4.2rem;
+}
+.header-text{
+    margin-top: -1.8rem;
+    margin-bottom: 2.8rem;
+    opacity: 0.8;
+    max-width: 770px;
+}

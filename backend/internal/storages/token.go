@@ -4,6 +4,7 @@ import (
 	"errors"
 	"residential-registration/backend/internal/entity"
 
+	"github.com/a631807682/zerofield"
 	"gorm.io/gorm"
 )
 
@@ -33,6 +34,7 @@ func (s *tokenStorage) GetByToken(token string) (*entity.Token, error) {
 func (s *tokenStorage) Update(token *entity.Token) error {
 	return s.db.
 		Where(&entity.Token{Value: token.Value}).
+		Scopes(zerofield.UpdateScopes()).
 		Updates(token).
 		Error
 }
