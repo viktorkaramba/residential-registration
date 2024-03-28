@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 import AnnouncementListElement from "./AnnouncementListElement";
-import config from "../../../config";
-import {useOSBBContext} from "../../OSBB/OSBBContext";
+import config from "../../../utils/config";
 
 const AnnouncementList = () =>{
     // @ts-ignore

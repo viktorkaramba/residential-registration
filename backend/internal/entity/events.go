@@ -53,7 +53,7 @@ type EventPollAnswerPayload struct {
 }
 
 type EventPollAnswerTestPayload struct {
-	TestAnswerID uint64 `json:"test_answer_id"  binding:"required"`
+	TestAnswerID uint64 `json:"test-answer-id"  binding:"required"`
 }
 
 type EventPaymentPayload struct {
@@ -71,77 +71,12 @@ type EventUserUpdatePayload struct {
 	*PhoneNumber     `json:"phone_number"`
 }
 
-type EventApproveUser struct {
-	UserID uint64 `json:"userID" binding:"required"`
-	Answer *bool  `json:"answer" binding:"required"`
-}
-
-type EventAnnouncementUpdatePayload struct {
-	Title   *Text `json:"title"`
-	Content *Text `json:"content"`
-}
-
-type EventPollUpdatePayload struct {
-	Question   *Text      `json:"question"`
-	IsClosed   *bool      `json:"is_closed"`
-	FinishedAt *time.Time `json:"finished_at"`
-}
-
-type EventTestAnswerUpdatePayload struct {
-	Content *Text `json:"content"`
-}
-
-type EventUserAnswerUpdatePayload struct {
-	Content      *Text   `json:"content"`
-	TestAnswerID *uint64 `json:"test_answer_id"`
-}
-
 type EventTokenPayload struct {
 	TokenValue `json:"token" binding:"required"`
 }
 
-type EventUserAnswersResponse struct {
-	ID           uint64 `json:"id"`
-	PollID       uint64 `json:"pollID"`
-	UserID       uint64 `json:"userID"`
-	TestAnswerID uint64 `json:"test_answer_id"`
-
-	Content Text `json:"content"`
-
-	CreatedAt time.Time `json:"created_at"`
-	UpdateAt  time.Time `json:"updated_at"`
-}
-
 func (i EventUserUpdatePayload) Validate() error {
 	if i.ApartmentNumber == nil && i.ApartmentArea == nil && i.FirstName == nil && i.Surname == nil && i.Patronymic == nil && i.PhoneNumber == nil {
-		return errors.New("update structure has no value")
-	}
-	return nil
-}
-
-func (i EventAnnouncementUpdatePayload) Validate() error {
-	if i.Title == nil && i.Content == nil {
-		return errors.New("update structure has no value")
-	}
-	return nil
-}
-
-func (i EventPollUpdatePayload) Validate() error {
-	if i.Question == nil && i.FinishedAt == nil {
-		return errors.New("update structure has no value")
-	}
-	return nil
-}
-
-func (i EventTestAnswerUpdatePayload) Validate() error {
-	if i.Content == nil {
-		return errors.New("update structure has no value")
-	}
-	return nil
-}
-
-func (i EventUserAnswerUpdatePayload) Validate() error {
-	if i.Content == nil && i.TestAnswerID == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil

@@ -1,5 +1,6 @@
 .navbar{
     padding: 1.8rem 0;
+    background: var(--white-color);
     box-shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 }
 .navbar-brand{
@@ -67,7 +68,7 @@
     .nav-link{
         color: var(--black-color);
         font-size: 1.7rem;
-        font-weight: 500!important;
+        font-weight: 600!important;
         opacity: 0.8;
     }
     .navbar-nav{
