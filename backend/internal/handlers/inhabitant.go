@@ -49,23 +49,15 @@ func (h *Handler) registerInhabitant(c *gin.Context) {
 		return
 	}
 
-	inhabitant, err := h.Services.Auth.AddUser(osbbID, input)
+	_, err = h.Services.Auth.AddUser(osbbID, input)
 	if err != nil {
 		logger.Error("failed to add inhabitant", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to add inhabitant: %w", err))
 		return
 	}
 
-	token, err := h.Services.Token.GenerateToken(inhabitant.ID)
-	if err != nil {
-		logger.Error("failed to generate token", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to generate token: %w", err))
-		return
-	}
-
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id":    inhabitant.ID,
-		"token": token,
+		"status": "ok",
 	})
 }
 
@@ -126,7 +118,7 @@ func (h *Handler) getWaitApproveInhabitants(c *gin.Context) {
 		WithIsApproved: typecast.ToPtr(true),
 		WithApartment:  typecast.ToPtr(true),
 	})
-  
+
 	if err != nil {
 		logger.Error("failed to get all inhabitants", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get all inhabitants: %w", err))

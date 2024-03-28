@@ -76,6 +76,38 @@ func (s *OSBBStorage) GetOSBB(filter services.OSBBFilter) (*entity.OSBB, error) 
 	return osbb, err
 }
 
+func (s *OSBBStorage) UpdateOSBB(OSBBID uint64, opts *entity.EventOSBBUpdatePayload) error {
+	stmt := s.db.Model(&entity.OSBB{})
+	var osbb entity.OSBB
+
+	if OSBBID != 0 {
+		stmt = stmt.Where("id = ?", OSBBID)
+	}
+
+	if opts.Name != nil {
+		osbb.Name = *opts.Name
+	}
+	if opts.EDRPOU != nil {
+		osbb.EDRPOU = *opts.EDRPOU
+	}
+	if opts.Rent != nil {
+		osbb.Rent = *opts.Rent
+	}
+	if opts.Photo != nil {
+		osbb.Photo = opts.Photo
+	}
+	err := stmt.Updates(osbb).Error
+	pgErr, ok := err.(*pgconn.PgError)
+	if ok {
+		if pgErr.Code == "23505" {
+			if strings.Contains(err.Error(), "\"idx_name\"") {
+				return services.ErrEDRPOUDuplicate
+			}
+		}
+	}
+	return nil
+}
+
 func (s *OSBBStorage) CreateAnnouncement(announcement *entity.Announcement) error {
 	return s.db.Create(announcement).Error
 }

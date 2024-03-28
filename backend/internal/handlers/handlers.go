@@ -33,6 +33,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		osbb.POST("/", h.registerOSBB)
 		osbb.GET("/", h.getAllOSBB)
+		osbb.PUT("/profile", h.userIdentity, h.updateOSBB)
 		osbb.GET("/profile", h.userIdentity, h.getOSBBProfile)
 
 		osbb.POST("/:osbbID/inhabitants", h.registerInhabitant)
@@ -52,7 +53,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		osbb.PUT("/:osbbID/polls/:pollID", h.userIdentity, h.updatePoll)
 		osbb.DELETE("/:osbbID/polls/:pollID", h.userIdentity, h.deletePoll)
 
-		osbb.POST("/:osbbID/polls/:pollID/tests", h.userIdentity, h.addPollTest)
+		osbb.POST("/:osbbID/polls-tests", h.userIdentity, h.addPollTest)
 		osbb.PUT("/:osbbID/polls/:pollID/tests/:testAnswerID", h.userIdentity, h.updateTestAnswer)
 		osbb.DELETE("/:osbbID/polls/:pollID/tests/:testAnswerID", h.userIdentity, h.deleteTestAnswer)
 

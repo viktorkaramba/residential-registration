@@ -24,6 +24,7 @@ type UserStorage interface {
 
 type BuildingStorage interface {
 	GetByOSBBID(OSBBID uint64) (*entity.Building, error)
+	UpdateBuilding(BuildingID uint64, filter BuildingFilter) error
 }
 
 type ApartmentStorage interface {
@@ -34,6 +35,7 @@ type OSBBStorage interface {
 	CreateOSBB(OSBB *entity.OSBB) error
 	ListOSBBS(filter OSBBFilter) ([]entity.OSBB, error)
 	GetOSBB(filter OSBBFilter) (*entity.OSBB, error)
+	UpdateOSBB(OSBBID uint64, opts *entity.EventOSBBUpdatePayload) error
 	CreateAnnouncement(announcement *entity.Announcement) error
 	GetAnnouncement(AnnouncementID uint64, filter AnnouncementFilter) (*entity.Announcement, error)
 	ListAnnouncements(filter AnnouncementFilter) ([]entity.Announcement, error)
@@ -101,6 +103,11 @@ type OSBBFilter struct {
 	WithBuilding      bool
 	WithAnnouncements bool
 	WithOSBBHead      bool
+}
+
+type BuildingFilter struct {
+	OSBBID *uint64
+	*entity.Address
 }
 
 var (

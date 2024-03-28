@@ -49,6 +49,7 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 			Patronymic: inputUser.Patronymic,
 		},
 		Password:    GeneratePasswordHash(s.config.Salt, string(inputUser.Password)),
+		Photo:       inputUser.Photo,
 		PhoneNumber: inputUser.PhoneNumber,
 		Role:        entity.UserRoleInhabitant,
 		IsApproved:  nil,
@@ -77,27 +78,17 @@ func (s *authService) Login(inputLogin entity.EventLoginPayload) (*entity.User, 
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("User do not exist").Kind(errs.NotExist)
 	}
- 
+
 	if user.IsApproved == nil {
 		logger.Error("user wait approve", "error", err)
-		return nil, errs.M("user not approve").Code("Failed to login").Kind(errs.Private)
+		return nil, errs.M("user wait approve").Code("Failed to login").Kind(errs.Private)
 	}
 
 	if !*user.IsApproved {
 		logger.Error("user not approved", "error", err)
-		return nil, errs.M("user not approved").Code("Failed to login").Kind(errs.Private)
+		return nil, errs.M("user not approvedd").Code("Failed to login").Kind(errs.Private)
 	}
 
-	if user.IsApproved == nil {
-		logger.Error("user wait approve", "error", err)
-		return nil, errs.M("user not approve").Code("Failed to login").Kind(errs.Private)
-	}
-
-	if !*user.IsApproved {
-		logger.Error("user not approved", "error", err)
-		return nil, errs.M("user not approved").Code("Failed to login").Kind(errs.Private)
-	}
-  
 	if user.Password != GeneratePasswordHash(s.config.Salt, string(inputLogin.Password)) {
 		logger.Error("incorrect password", "error", err)
 		return nil, errs.M("incorrect password").Code("Failed to login").Kind(errs.Private)

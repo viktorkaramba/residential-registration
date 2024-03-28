@@ -3,6 +3,7 @@ package storages
 import (
 	"errors"
 	"residential-registration/backend/internal/entity"
+	"residential-registration/backend/internal/services"
 
 	"gorm.io/gorm"
 )
@@ -24,4 +25,21 @@ func (s *buildingStorage) GetByOSBBID(OSBBID uint64) (*entity.Building, error) {
 		return nil, nil
 	}
 	return building, err
+}
+
+func (s *buildingStorage) UpdateBuilding(BuildingID uint64, filter services.BuildingFilter) error {
+	stmt := s.db.Model(&entity.Building{})
+	var building entity.Building
+
+	if BuildingID != 0 {
+		stmt = stmt.Where("id = ?", BuildingID)
+	}
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
+	}
+	if filter.Address != nil {
+		building.Address = *filter.Address
+	}
+	return stmt.Updates(building).Error
 }

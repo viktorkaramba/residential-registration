@@ -28,6 +28,7 @@ type User struct {
 
 	Apartment   Apartment `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"apartment"`
 	FullName    `json:"full_name"`
+	Photo       *Photo      `json:"photo"`
 	Password    Password    `json:"-"`
 	PhoneNumber PhoneNumber `gorm:"uniqueIndex" json:"phone_number"`
 	Role        UserRole    `json:"role"`
@@ -35,7 +36,6 @@ type User struct {
 
 	database.PostgreSQLModel
 }
-
 
 type Building struct {
 	ID     uint64 `gorm:"primaryKey;autoIncrement:true"`
@@ -55,6 +55,7 @@ type OSBB struct {
 
 	OSBBHead User   `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"osbb_head"`
 	Name     Name   `json:"name"`
+	Photo    *Photo `json:"photo"`
 	EDRPOU   EDRPOU `gorm:"uniqueIndex" json:"edrpou"`
 	Rent     Rent   `json:"rent"`
 

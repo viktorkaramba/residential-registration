@@ -4,7 +4,9 @@ import (
 	"errors"
 	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/internal/services"
+	"strings"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 )
 
@@ -19,7 +21,16 @@ func NewUserStorage(db *gorm.DB) *userStorage {
 }
 
 func (s *userStorage) CreateUser(User *entity.User) error {
-	return s.db.Create(User).Error
+	err := s.db.Create(User).Error
+	pgErr, ok := err.(*pgconn.PgError)
+	if ok {
+		if pgErr.Code == "23505" {
+			if strings.Contains(err.Error(), "\"idx_users_phone_number\"") {
+				return services.ErrPhoneNumberDuplicate
+			}
+		}
+	}
+	return err
 }
 
 func (s *userStorage) GetUser(UserID uint64, filter services.UserFilter) (*entity.User, error) {
@@ -111,7 +122,18 @@ func (s *userStorage) UpdateUser(UserID, OSBBID uint64, opts *entity.EventUserUp
 	if opts.PhoneNumber != nil {
 		user.PhoneNumber = *opts.PhoneNumber
 	}
-
+	if opts.Photo != nil {
+		user.Photo = opts.Photo
+	}
+	err := stmt.Updates(user).Error
+	pgErr, ok := err.(*pgconn.PgError)
+	if ok {
+		if pgErr.Code == "23505" {
+			if strings.Contains(err.Error(), "\"idx_users_phone_number\"") {
+				return services.ErrPhoneNumberDuplicate
+			}
+		}
+	}
 	return stmt.Updates(user).Error
 }
 

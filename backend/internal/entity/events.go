@@ -9,6 +9,7 @@ type EventUserPayload struct {
 	FirstName       string `json:"first_name" binding:"required"`
 	Surname         string `json:"surname" binding:"required"`
 	Patronymic      string `json:"patronymic" binding:"required"`
+	*Photo          `json:"photo"`
 	Password        `json:"password" binding:"required"`
 	PhoneNumber     `json:"phone_number" binding:"required"`
 	ApartmentNumber `json:"apartment_number" binding:"required"`
@@ -24,6 +25,7 @@ type EventOSBBPayload struct {
 	FirstName   string `json:"first_name" binding:"required"`
 	Surname     string `json:"surname" binding:"required"`
 	Patronymic  string `json:"patronymic" binding:"required"`
+	*Photo      `json:"photo"`
 	Password    `json:"password" binding:"required"`
 	PhoneNumber `json:"phone_number" binding:"required"`
 	Name        `json:"name" binding:"required"`
@@ -68,7 +70,16 @@ type EventUserUpdatePayload struct {
 	FirstName        *string `json:"first_name"`
 	Surname          *string `json:"surname"`
 	Patronymic       *string `json:"patronymic"`
+	*Photo           `json:"photo"`
 	*PhoneNumber     `json:"phone_number"`
+}
+
+type EventOSBBUpdatePayload struct {
+	*Name    `json:"name"`
+	*EDRPOU  `json:"edrpou"`
+	*Rent    `json:"rent"`
+	*Address `json:"address"`
+	*Photo   `json:"photo"`
 }
 
 type EventApproveUser struct {
@@ -114,6 +125,13 @@ type EventUserAnswersResponse struct {
 
 func (i EventUserUpdatePayload) Validate() error {
 	if i.ApartmentNumber == nil && i.ApartmentArea == nil && i.FirstName == nil && i.Surname == nil && i.Patronymic == nil && i.PhoneNumber == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
+}
+
+func (i EventOSBBUpdatePayload) Validate() error {
+	if i.Name == nil && i.EDRPOU == nil && i.Rent == nil && i.Address == nil && i.Photo == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil

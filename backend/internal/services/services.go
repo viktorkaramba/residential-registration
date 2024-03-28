@@ -30,6 +30,7 @@ type OSBBService interface {
 	AddOSBB(inputOSSB entity.EventOSBBPayload) (*entity.OSBB, error)
 	GetOSBB(UserID uint64) (*entity.OSBB, error)
 	ListOSBBS() ([]entity.OSBB, error)
+	UpdateOSBB(UserID uint64, input entity.EventOSBBUpdatePayload) error
 	AddAnnouncement(UserID, OSBBID uint64, inputAnnouncement entity.EventAnnouncementPayload) (*entity.Announcement, error)
 	ListAnnouncements(UserID, OSBBID uint64) ([]entity.Announcement, error)
 	UpdateAnnouncement(UserID, OSBBID, AnnouncementID uint64, input entity.EventAnnouncementUpdatePayload) error

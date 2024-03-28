@@ -92,6 +92,52 @@ func (h *Handler) getOSBBProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, osbb)
 }
 
+func (h *Handler) updateOSBB(c *gin.Context) {
+	logger := h.Logger.Named("updateOSBB").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
+		return
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+	// Check if there are any additional fields in the JSON body
+	if err := h.validateJSONTags(body, entity.EventOSBBUpdatePayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
+		return
+	}
+
+	var input entity.EventOSBBUpdatePayload
+	if err := c.BindJSON(&input); err != nil {
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
+		return
+	}
+
+	err = h.Services.OSBB.UpdateOSBB(userID, input)
+	if err != nil {
+		logger.Error("failed to update announcement", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to update announcement: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
+}
+
 func (h *Handler) addAnnouncement(c *gin.Context) {
 	logger := h.Logger.Named("addAnnouncement").WithContext(c)
 
