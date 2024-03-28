@@ -26,16 +26,19 @@ func (s *userStorage) GetUser(UserID uint64, filter services.UserFilter) (*entit
 	stmt := s.db.
 		Model(&entity.User{})
 	if UserID != 0 {
-		stmt = stmt.Where(entity.User{ID: UserID})
+		stmt = stmt.Where("id = ?", UserID)
 	}
 	if filter.OSBBID != nil {
-		stmt = stmt.Where(entity.User{OSBBID: *filter.OSBBID})
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
 	}
 	if filter.PhoneNumber != nil {
-		stmt = stmt.Where(entity.User{PhoneNumber: *filter.PhoneNumber})
+		stmt = stmt.Where("phone_number = ?", *filter.PhoneNumber)
 	}
 	if filter.UserRole != nil {
-		stmt = stmt.Where(entity.User{Role: *filter.UserRole})
+		stmt = stmt.Where("role = ?", *filter.UserRole)
+	}
+	if filter.IsApproved != nil {
+		stmt = stmt.Where("is_approved = ?", *filter.IsApproved)
 	}
 	stmt = stmt.Preload("Apartment")
 	var user *entity.User
@@ -71,6 +74,7 @@ func (s *userStorage) ListUsers(filter services.UserFilter) ([]entity.User, erro
 			}
 		}
 	}
+
 	var users []entity.User
 	return users, stmt.Find(&users).Error
 }
@@ -81,10 +85,10 @@ func (s *userStorage) UpdateUser(UserID, OSBBID uint64, opts *entity.EventUserUp
 
 	if UserID != 0 {
 		user.ID = UserID
-		stmt = stmt.Where(entity.User{ID: UserID})
+		stmt = stmt.Where("id = ?", UserID)
 	}
 	if OSBBID != 0 {
-		stmt = stmt.Where(entity.User{OSBBID: OSBBID})
+		stmt = stmt.Where("osbb_id = ?", OSBBID)
 	}
 
 	if opts.FirstName != nil {
