@@ -38,7 +38,8 @@ func (s *osbbService) AddOSBB(inputOSBB entity.EventOSBBPayload) (*entity.OSBB, 
 			},
 			Password:    inputOSBB.Password,
 			PhoneNumber: inputOSBB.PhoneNumber,
-			Role:        entity.UserRoleOSBBHEad,
+			Role:        entity.UserRoleOSBBHead,
+			IsApproved:  typecast.ToPtr(true),
 		},
 		Name:   inputOSBB.Name,
 		EDRPOU: inputOSBB.EDRPOU,
@@ -462,6 +463,44 @@ func (s *osbbService) UpdateInhabitant(UserID, OSBBID uint64, inhabitant entity.
 	if err != nil {
 		logger.Error("failed to update inhabitant", "error", err)
 		return errs.Err(err).Code("Failed to update inhabitant").Kind(errs.Database)
+	}
+
+	return nil
+}
+
+func (s *osbbService) ApproveInhabitant(UserID, OSBBID uint64, inhabitant entity.EventApproveUser) error {
+	logger := s.logger.Named("ApproveInhabitant").
+		With("user_id", UserID).With("inhabitant", inhabitant)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	if user.Role != entity.UserRoleOSBBHead {
+		logger.Error("User can not delete an test answer", "error", err)
+		return errs.M("user not osbb head").Code("User can not delete a test answer").Kind(errs.Private)
+	}
+	approvedUser, err := s.businessStorage.User.GetUser(inhabitant.UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if approvedUser == nil {
+		logger.Error("approved user do not exist", "error", err)
+		return errs.M("approved user not found").Code("approved user do not exist").Kind(errs.Database)
+	}
+
+	err = s.businessStorage.User.ApproveUser(inhabitant.UserID, OSBBID, UserFilter{
+		OSBBID:     &OSBBID,
+		IsApproved: inhabitant.Answer,
+	})
+	if err != nil {
+		logger.Error("failed to approve inhabitant", "error", err)
+		return errs.Err(err).Code("Failed to approve inhabitant").Kind(errs.Database)
 	}
 
 	return nil

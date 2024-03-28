@@ -11,6 +11,17 @@ type FullName struct {
 	Patronymic string `json:"patronymic" binding:"required"`
 }
 
+type Apartment struct {
+	ID         uint64 `gorm:"primaryKey;autoIncrement:true" json:"id"`
+	BuildingID uint64 `gorm:"index" json:"buildingID"`
+	UserID     uint64 `gorm:"index" json:"userID"`
+
+	Number ApartmentNumber `json:"number"`
+	Area   ApartmentArea   `json:"area"`
+
+	database.PostgreSQLModel
+}
+
 type User struct {
 	ID     uint64 `gorm:"primaryKey;autoIncrement:true" json:"-"`
 	OSBBID uint64 `gorm:"index" json:"osbbid"`
@@ -20,6 +31,7 @@ type User struct {
 	Password    Password    `json:"-"`
 	PhoneNumber PhoneNumber `json:"phone_number"`
 	Role        UserRole    `json:"role"`
+	IsApproved  *bool       `json:"is_approved"`
 
 	database.PostgreSQLModel
 }

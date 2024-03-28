@@ -73,10 +73,11 @@ func Run() {
 	}
 
 	storage := services.Storages{
-		User:     storages.NewUserStorage(sql.DB),
-		Building: storages.NewBuildingStorage(sql.DB),
-		OSBB:     storages.NewOSBBStorage(sql.DB),
-		Token:    storages.NewTokenStorage(sql.DB),
+		User:      storages.NewUserStorage(sql.DB),
+		Building:  storages.NewBuildingStorage(sql.DB),
+		Apartment: storages.NewApartmentStorage(sql.DB),
+		OSBB:      storages.NewOSBBStorage(sql.DB),
+		Token:     storages.NewTokenStorage(sql.DB),
 	}
 	serviceOptions := services.Options{
 		Logger:   logger,

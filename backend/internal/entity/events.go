@@ -71,6 +71,31 @@ type EventUserUpdatePayload struct {
 	*PhoneNumber     `json:"phone_number"`
 }
 
+type EventApproveUser struct {
+	UserID uint64 `json:"userID" binding:"required"`
+	Answer *bool  `json:"answer" binding:"required"`
+}
+
+type EventAnnouncementUpdatePayload struct {
+	Title   *Text `json:"title"`
+	Content *Text `json:"content"`
+}
+
+type EventPollUpdatePayload struct {
+	Question   *Text      `json:"question"`
+	IsClosed   *bool      `json:"is_closed"`
+	FinishedAt *time.Time `json:"finished_at"`
+}
+
+type EventTestAnswerUpdatePayload struct {
+	Content *Text `json:"content"`
+}
+
+type EventUserAnswerUpdatePayload struct {
+	Content      *Text   `json:"content"`
+	TestAnswerID *uint64 `json:"test_answer_id"`
+}
+
 type EventTokenPayload struct {
 	TokenValue `json:"token" binding:"required"`
 }
