@@ -12,6 +12,8 @@ const Profile = ({profile_user}:any) => {
     // @ts-ignore
     const {osbbID} = useAppContext();
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
+    const {osbbID, setOsbbID} = useAppContext();
+
     const [isChecked, setIsChecked] = useState(false);
     const [newFirstName, setNewFirstName] = useState(profile_user?.full_name.first_name);
     const [newSurname, setNewSurname] = useState(profile_user?.full_name.surname);

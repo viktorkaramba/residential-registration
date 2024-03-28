@@ -102,7 +102,6 @@ const LoginPage = () => {
                             Невірний номер телефону або пароль!
                         </div>
                     }
-
                     <button className='button login_button' type="submit" name="submit_osbb">
                         <span className="button_content login_button_content">Увійти</span>
                     </button>

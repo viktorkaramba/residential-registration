@@ -20,7 +20,6 @@ const OSBBDescription = () => {
     const [newRent, setNewRent] = useState(osbb?.rent);
     const [newPostAddress, setNewPostAddress] = useState(osbb?.building.Address);
     const [newAddress, setNewAddress] = useState(osbb?.building.Address);
-
     const fetchOSBB = useCallback(async() => {
         try{
             const requestOptions = {
@@ -65,6 +64,7 @@ const OSBBDescription = () => {
             console.log(error);
         }
     }, [token]);
+  
     useEffect(() => {
         fetchOSBB();
     }, []);
@@ -236,7 +236,6 @@ const OSBBDescription = () => {
             </div>
             <div className={'flex'} style={{flexGrow:'1'}}>
             </div>
-        </div>
     )
 }
 

@@ -85,7 +85,46 @@ func (h *Handler) getAllInhabitants(c *gin.Context) {
 		return
 	}
 
-	inhabitants, err := h.Services.OSBB.ListInhabitants(userID, osbbID)
+	inhabitants, err := h.Services.OSBB.ListInhabitants(userID, osbbID, services.UserFilter{
+		OSBBID:         &osbbID,
+		IsApproved:     typecast.ToPtr(true),
+		WithIsApproved: typecast.ToPtr(true),
+		WithApartment:  typecast.ToPtr(true),
+	})
+	if err != nil {
+		logger.Error("failed to get all inhabitants", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get all inhabitants: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, inhabitants)
+}
+
+func (h *Handler) getWaitApproveInhabitants(c *gin.Context) {
+	logger := h.Logger.Named("getWaitApproveInhabitants").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	inhabitants, err := h.Services.OSBB.ListInhabitants(userID, osbbID, services.UserFilter{
+		OSBBID:         &osbbID,
+		IsApproved:     nil,
+		WithIsApproved: typecast.ToPtr(true),
+		WithApartment:  typecast.ToPtr(true),
+	})
+  
 	if err != nil {
 		logger.Error("failed to get all inhabitants", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get all inhabitants: %w", err))
