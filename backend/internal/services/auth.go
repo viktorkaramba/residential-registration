@@ -1,8 +1,6 @@
 package services
 
 import (
-	"crypto/sha1"
-	"fmt"
 	"residential-registration/backend/config"
 	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/pkg/errs"
@@ -38,7 +36,7 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 		return nil, errs.M("building not found").Code("Building do not exist").Kind(errs.Database)
 	}
 
-	User := &entity.User{
+	user := &entity.User{
 		Apartment: entity.Apartment{
 			BuildingID: building.ID,
 			Number:     inputUser.ApartmentNumber,
@@ -50,17 +48,18 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 			Surname:    inputUser.Surname,
 			Patronymic: inputUser.Patronymic,
 		},
-		Password:    s.generatePasswordHash(string(inputUser.Password)),
+		Password:    GeneratePasswordHash(s.config.Salt, string(inputUser.Password)),
+		Photo:       inputUser.Photo,
 		PhoneNumber: inputUser.PhoneNumber,
 		Role:        entity.UserRoleInhabitant,
 	}
-	err = s.businessStorage.User.CreateUser(User)
+	err = s.businessStorage.User.CreateUser(user)
 	if err != nil {
 		logger.Error("failed to сreate user", "error", err)
 		return nil, errs.Err(err).Code("Failed to сreate user").Kind(errs.Database)
 	}
 
-	return User, nil
+	return user, nil
 }
 
 func (s *authService) Login(inputLogin entity.EventLoginPayload) (*entity.User, error) {
@@ -81,12 +80,12 @@ func (s *authService) Login(inputLogin entity.EventLoginPayload) (*entity.User, 
 
 	if user.IsApproved == nil {
 		logger.Error("user wait approve", "error", err)
-		return nil, errs.M("user not approve").Code("Failed to login").Kind(errs.Private)
+		return nil, errs.M("user wait approve").Code("Failed to login").Kind(errs.Private)
 	}
 
 	if !*user.IsApproved {
 		logger.Error("user not approved", "error", err)
-		return nil, errs.M("user not approved").Code("Failed to login").Kind(errs.Private)
+		return nil, errs.M("user not approvedd").Code("Failed to login").Kind(errs.Private)
 	}
   
 	if user.Password != GeneratePasswordHash(s.config.Salt, string(inputLogin.Password)) {
@@ -121,10 +120,4 @@ func (s *authService) Logout(token entity.TokenValue) error {
 		return errs.Err(err).Code("Failed to revoke all users tokens").Kind(errs.Database)
 	}
 	return nil
-}
-
-func (s *authService) generatePasswordHash(password string) entity.Password {
-	hash := sha1.New()
-	hash.Write([]byte(password))
-	return entity.Password(fmt.Sprintf("%x", hash.Sum([]byte(s.config.Salt))))
 }

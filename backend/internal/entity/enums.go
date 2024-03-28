@@ -2,6 +2,8 @@ package entity
 
 type Password string
 
+type Photo string
+
 type PhoneNumber string
 
 type Name string

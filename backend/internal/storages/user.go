@@ -4,7 +4,9 @@ import (
 	"errors"
 	"residential-registration/backend/internal/entity"
 	"residential-registration/backend/internal/services"
+	"strings"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 )
 
@@ -19,20 +21,29 @@ func NewUserStorage(db *gorm.DB) *userStorage {
 }
 
 func (s *userStorage) CreateUser(User *entity.User) error {
-	return s.db.Create(User).Error
+	err := s.db.Create(User).Error
+	pgErr, ok := err.(*pgconn.PgError)
+	if ok {
+		if pgErr.Code == "23505" {
+			if strings.Contains(err.Error(), "\"idx_users_phone_number\"") {
+				return services.ErrPhoneNumberDuplicate
+			}
+		}
+	}
+	return err
 }
 
 func (s *userStorage) GetUser(UserID uint64, filter services.UserFilter) (*entity.User, error) {
 	stmt := s.db.
 		Model(&entity.User{})
 	if UserID != 0 {
-		stmt = stmt.Where(entity.User{ID: UserID})
+		stmt = stmt.Where("id = ?", UserID)
 	}
 	if filter.OSBBID != nil {
-		stmt = stmt.Where(entity.User{OSBBID: *filter.OSBBID})
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
 	}
 	if filter.PhoneNumber != nil {
-		stmt = stmt.Where(entity.User{PhoneNumber: *filter.PhoneNumber})
+		stmt = stmt.Where("phone_number = ?", *filter.PhoneNumber)
 	}
 	if filter.UserRole != nil {
 		stmt = stmt.Where("role = ?", *filter.UserRole)
@@ -67,6 +78,7 @@ func (s *userStorage) ListUsers(filter services.UserFilter) ([]entity.User, erro
 	if filter.OSBBID != nil {
 		stmt = stmt.Where(entity.User{OSBBID: *filter.OSBBID})
 	}
+
 	var users []entity.User
 	return users, stmt.Find(&users).Error
 }
@@ -77,10 +89,10 @@ func (s *userStorage) UpdateUser(UserID, OSBBID uint64, opts *entity.EventUserUp
 
 	if UserID != 0 {
 		user.ID = UserID
-		stmt = stmt.Where(entity.User{ID: UserID})
+		stmt = stmt.Where("id = ?", UserID)
 	}
 	if OSBBID != 0 {
-		stmt = stmt.Where(entity.User{OSBBID: OSBBID})
+		stmt = stmt.Where("osbb_id = ?", OSBBID)
 	}
 
 	if opts.FirstName != nil {
@@ -101,6 +113,17 @@ func (s *userStorage) UpdateUser(UserID, OSBBID uint64, opts *entity.EventUserUp
 	if opts.PhoneNumber != nil {
 		user.PhoneNumber = *opts.PhoneNumber
 	}
-
+	if opts.Photo != nil {
+		user.Photo = opts.Photo
+	}
+	err := stmt.Updates(user).Error
+	pgErr, ok := err.(*pgconn.PgError)
+	if ok {
+		if pgErr.Code == "23505" {
+			if strings.Contains(err.Error(), "\"idx_users_phone_number\"") {
+				return services.ErrPhoneNumberDuplicate
+			}
+		}
+	}
 	return stmt.Updates(user).Error
 }
