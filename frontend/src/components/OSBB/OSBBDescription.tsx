@@ -1,10 +1,8 @@
 import React, {useCallback, useEffect, useState} from "react";
 import config from "../../utils/config";
-import Header from "../../components/Header/Header";
 import {useAppContext} from "../../utils/AppContext";
 import err from "../../utils/err";
 import {useNavigate} from "react-router-dom";
-import OSBBProfileMenu from "../../components/Menu/OSBBProfileMenu";
 
 
 const OSBBDescription = () => {
@@ -24,8 +22,8 @@ const OSBBDescription = () => {
             fetch(config.apiUrl+'osbb/profile', requestOptions)
                 .then(response => response.json())
                 .then(data =>{
-                    console.log(data);
                     const {error}:any = data;
+                    console.log(data);
                     if(error){
                         err.HandleError({errorMsg:error, func:fetchOSBB, navigate:navigate});
                     }else {
