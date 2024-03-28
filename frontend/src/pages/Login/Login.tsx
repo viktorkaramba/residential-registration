@@ -10,7 +10,8 @@ const LoginPage = () => {
 
     const [phone_number, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(false);
+    const [errorIncorrectData, setIncorrectData] = useState(false);
+    const [errorNotApproved] = useState(false);
     // @ts-ignore
     const {token, setToken} = useAppContext();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -32,7 +33,7 @@ const LoginPage = () => {
                 const {error}:any = data;
                 if(error){
                     err.HandleError({errorMsg:error, func:handleLogin, navigate:navigate});
-                    setError(true)
+                    setIncorrectData(true)
                 }else {
                     if(data){
                         const { token } = data;
@@ -96,7 +97,7 @@ const LoginPage = () => {
                     <div className={'links'}>
                         <a href={"#"}>Забули Пароль</a>
                     </div>
-                    {error &&
+                    {errorIncorrectData &&
                         <div className={'error login_error'}>
                             Невірний номер телефону або пароль!
                         </div>

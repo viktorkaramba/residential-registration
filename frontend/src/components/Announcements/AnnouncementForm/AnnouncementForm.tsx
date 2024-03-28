@@ -48,7 +48,7 @@ const AnnouncementForm = ({addAnnouncement}:any) =>{
         <form method='post'  onSubmit={handleAddAnnouncement}>
             <div className={'flex flex-wrap align-items-start bg-dark-grey'}>
                     <div className="form announcement_form">
-                        <div className="section">Заголовок та вміст оголошення</div>
+                        <h1>Заголовок та вміст оголошення</h1>
                         <div className="inner-wrap">
                             <label form={'title'}>Заголовок оголошення
                                 <input maxLength={256} minLength={2} required={true} name="title" placeholder="" type='text' id='title'/>

@@ -6,9 +6,7 @@ import (
 	"io"
 	"net/http"
 	"residential-registration/backend/internal/entity"
-	"residential-registration/backend/internal/services"
 	"residential-registration/backend/pkg/errs"
-	"residential-registration/backend/pkg/typecast"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -62,7 +60,7 @@ func (h *Handler) registerInhabitant(c *gin.Context) {
 }
 
 func (h *Handler) getAllInhabitants(c *gin.Context) {
-	logger := h.Logger.Named("getAllInhabitants").WithContext(c)
+	logger := h.Logger.Named("getAllInhabitans").WithContext(c)
 
 	userID, err := h.getUserId(c)
 	if err != nil {
@@ -118,7 +116,7 @@ func (h *Handler) getWaitApproveInhabitants(c *gin.Context) {
 		WithIsApproved: typecast.ToPtr(true),
 		WithApartment:  typecast.ToPtr(true),
 	})
-
+  
 	if err != nil {
 		logger.Error("failed to get all inhabitants", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get all inhabitants: %w", err))

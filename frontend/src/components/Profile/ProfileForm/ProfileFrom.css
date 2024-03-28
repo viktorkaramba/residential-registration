@@ -1,0 +1,103 @@
+.profile {
+    padding: 20px;
+    background: var(--dark-grey);
+}
+.card {
+    border-radius: 30px;
+    padding: 25px;
+    flex-grow: 2;
+    box-shadow: rgba(0, 0, 0, 0.5) 0 5px 15px 0;
+    background: var(--blue-color);  /* fallback for old browsers */
+}
+
+.card:hover{
+    box-shadow: rgba(128, 223, 255, 0.35) 0 5px 15px 0;
+}
+
+.left-container {
+    background: var(--dark-grey);
+    flex-grow: 1;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5);
+}
+
+.right-container {
+    background: var(--dark-grey);
+    flex: 8;
+    padding: 10px;
+    margin: 10px;
+    border-radius:20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5);
+}
+
+.profile img {
+    width: 200px;
+    height: 200px;
+    max-width: 200px;
+    border-radius: 50%;
+    margin: 10px;
+    box-shadow: rgba(128, 223, 255, 0.35) 0 5px 15px 0;
+}
+
+.profile h2 {
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: var(--white-color);
+}
+.profile h3 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: var(--white-color);
+}
+
+.profile p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color:aliceblue
+}
+
+.profile table {
+    border-collapse: collapse;
+}
+
+.profile td {
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    color: white;
+}
+
+.profile td:first-child {
+    font-weight: bold;
+}
+.credit a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 800;
+}
+
+.credit {
+    color: #fff;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.add_apartment{
+    background: var(--blue-color);
+    height: 4rem;
+    padding: 0 1rem;
+}
+.add_apartment_content{
+    color: var(--dark-grey);
+    font-size: 18px;
+}
+.add_apartment::before {
+    background: linear-gradient(
+            82.3deg,
+            rgb(255, 255, 255) 10.8%,
+            var(--blue-color) 94.3%
+    );
+}

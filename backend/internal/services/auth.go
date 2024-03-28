@@ -52,7 +52,6 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 		Photo:       inputUser.Photo,
 		PhoneNumber: inputUser.PhoneNumber,
 		Role:        entity.UserRoleInhabitant,
-		IsApproved:  nil,
 	}
 	err = s.businessStorage.User.CreateUser(user)
 	if err != nil {
@@ -88,7 +87,7 @@ func (s *authService) Login(inputLogin entity.EventLoginPayload) (*entity.User, 
 		logger.Error("user not approved", "error", err)
 		return nil, errs.M("user not approvedd").Code("Failed to login").Kind(errs.Private)
 	}
-
+  
 	if user.Password != GeneratePasswordHash(s.config.Salt, string(inputLogin.Password)) {
 		logger.Error("incorrect password", "error", err)
 		return nil, errs.M("incorrect password").Code("Failed to login").Kind(errs.Private)

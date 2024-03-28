@@ -12,7 +12,7 @@ type UserRole string
 
 const (
 	UserRoleInhabitant UserRole = "inhabitant"
-	UserRoleOSBBHead   UserRole = "osbb_head"
+	UserRoleOSBBHEad   UserRole = "osbb_head"
 )
 
 type EDRPOU uint64

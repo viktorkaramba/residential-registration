@@ -19,7 +19,6 @@ type UserStorage interface {
 	GetUser(UserID uint64, filter UserFilter) (*entity.User, error)
 	ListUsers(filter UserFilter) ([]entity.User, error)
 	UpdateUser(UserID, OSBBID uint64, user *entity.EventUserUpdatePayload) error
-	ApproveUser(UserID, OSBBID uint64, filter UserFilter) error
 }
 
 type BuildingStorage interface {
