@@ -80,7 +80,7 @@ const ProfileMenu = () => {
         <div>
             <ProfileHeader/>
             {currentUser?.role === 'osbb_head'   &&
-                <section className='menu flex flex-c'>
+                <section className='menu flex flex-c flex-wrap'>
                     <button className='menu-text m-5' onClick={() => handleClick('ProfileForm')}>
                         Профіль
                     </button>

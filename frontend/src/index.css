@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Geologica:wght@100..900&family=Orelega+One&family=Patua+One&display=swap');
+
 :root{
   --dark-grey:#334d4d;
   --blue-color:#4db8ff;
@@ -18,7 +20,14 @@ html{
 body{
   font-size: 1.6rem;
   line-height: 1.7;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Geologica", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings:
+          "slnt" 0,
+          "CRSV" 0,
+          "SHRP" 0;
   color: var(--black-color);
   background: var(--dark-grey);
 }
@@ -111,17 +120,29 @@ input{
 .flex-sb{
   justify-content: space-between;
 }
+.flex-sc{
+  justify-content: stretch;
+}
 .flex-c{
   justify-content: center;
 }
 .flex-end{
   justify-content: end;
 }
+.align-items-center{
+  align-items: center;
+}
+.align-items-stretch{
+  align-items: stretch;
+}
 .align-items-start{
   align-items: flex-start;
 }
 .align-items-end{
   align-items: flex-end;
+}
+.align-self-center{
+  align-self: center;
 }
 .flex-wrap{
   flex-wrap: wrap;
@@ -206,18 +227,15 @@ input{
   border-radius: 10px 10px 0 0;
   color: #fff;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.12);
-  font: normal 30px 'Bitter', serif;
   box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.17);
   border: 1px solid #257C9E;
 }
 .form h1 > span{
   display: block;
   margin-top: 2px;
-  font: 13px Arial, Helvetica, sans-serif;
 }
 .form label{
   display: block;
-  font: 15px Arial, Helvetica, sans-serif;
   color: var(--dark-grey);
   margin-bottom: 15px;
 }
@@ -243,7 +261,6 @@ input{
   box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.33);
 }
 .form .section{
-  font: normal 20px 'Bitter', serif;
   color: var(--dark-grey);
   margin-bottom: 5px;
 }
