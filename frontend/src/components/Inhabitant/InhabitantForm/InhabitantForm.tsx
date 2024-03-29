@@ -4,6 +4,8 @@ import {useAppContext} from "../../../utils/AppContext";
 import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
 import {IoEyeOffOutline, IoEyeOutline} from "react-icons/io5";
+import {Stack} from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 const InhabitantForm = () =>{
     // @ts-ignore
@@ -25,6 +27,7 @@ const InhabitantForm = () =>{
         const firstName = event.target.first_name.value;
         const surname = event.target.surname.value;
         const patronymic = event.target.patronymic.value;
+        const photo =  event.target.photo.value;
         const password = event.target.password.value;
         const confirm_password = event.target.confirm_password.value;
         if(password!==confirm_password){
@@ -41,7 +44,7 @@ const InhabitantForm = () =>{
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ first_name: firstName, surname: surname, patronymic:patronymic,
                 password: password, phone_number:phone_number, apartment_number:apartment_number,
-                apartment_area:apartment_area
+                apartment_area:apartment_area, photo:photo
             })
         }
         fetch(config.apiUrl+'osbb/' + osbbID + '/inhabitants', requestOptions)
@@ -49,8 +52,12 @@ const InhabitantForm = () =>{
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    err.HandleError({errorMsg:error, func:addInhabitant, navigate:navigate});
-                }else {
+                    if(error.includes(err.errorsMessages.phoneNumberAlreadyExist)) {
+                        setErrorPhoneNumber(true);
+                    }else {
+                        err.HandleError({errorMsg:error, func:addInhabitant, navigate:navigate});
+                    }
+               }else {
                     if(data){
                         const {token}:any = data
                         setToken(token);
@@ -68,13 +75,6 @@ const InhabitantForm = () =>{
             setIsLoggedIn(true);
         }
     }, [token]);
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            navigate('/osbbs/profile');
-        }
-    }, [isLoggedIn]);
-
 
     return(
         <form method='post' onSubmit={addInhabitant}>
@@ -94,6 +94,9 @@ const InhabitantForm = () =>{
                         <label form={'phone_number'}>Номер Телефону
                             <input name="phone_number" required={true} placeholder="" type='tel' id='phone_number'/>
                         </label>
+                        <label form={'photo'}>Фото
+                            <input name="photo" placeholder="" type='url' id='photo'/>
+                        </label>
                         {errorPhoneNumber &&
                             <div className={'error'}>
                                 Користувач з таким номером телефона уже зареєстрований!
@@ -110,12 +113,16 @@ const InhabitantForm = () =>{
                         <label form={'apartment_area'}>Площа квартири
                             <input name="apartment_area" min={1} placeholder="" type='number' id='apartment_area' required={true}/>
                         </label>
+
                     </div>
                     <div className={'flex flex-c'}>
                         <button className='button add_osbb' type="submit" name="submit_osbb">
                             <span className="button_content add_osbb_content">Додати ОСББ</span>
                         </button>
                     </div>
+                    {isLoggedIn &&  <Stack sx={{margin: '10px'}} spacing={2}>
+                        <Alert variant={'filled'} severity="success" style={{fontSize:'15px'}}>Запита успішно надісланий, очікуйте підтвердження</Alert>
+                    </Stack>}
                 </div>
                 <div className="form">
                     <div className="section"><span>3</span>Пароль</div>

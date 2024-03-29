@@ -93,6 +93,7 @@
 .box form .inputBox input:valid ~ i,
 .box form .inputBox input:focus ~ i {
     height: 44px;
+    pointer-events: inherit;
 }
 
 .box form .links {

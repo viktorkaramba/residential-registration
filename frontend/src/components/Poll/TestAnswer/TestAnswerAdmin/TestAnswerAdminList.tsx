@@ -3,12 +3,13 @@ import config from "../../../../utils/config";
 import {useState} from "react";
 import {useAppContext} from "../../../../utils/AppContext";
 import err from "../../../../utils/err";
+import {useNavigate} from "react-router-dom";
 
 const TestAnswerAdminList = ({answers, pollID}:any) =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
     const [testAnswers, setTestAnswers] = useState(answers);
-
+    const navigate = useNavigate();
 
     function updateTestAnswer(id:any, content:any, setIsChecked:any){
 
@@ -21,7 +22,8 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
 
         const requestOptions = {
             method: 'PUT',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body: body,
         }
 
@@ -31,7 +33,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
                 console.log(data);
                 const {error}:any = data;
                 if(error){
-                    err.HandleError({errorMsg:error, func:updateTestAnswer});
+                    err.HandleError({errorMsg:error, func:updateTestAnswer, navigate:navigate});
                 }else {
                     setTestAnswers((currentAnswer: any[]) => {
                         return currentAnswer.map((answer:any)=>{
@@ -49,15 +51,17 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
     function deleteTestAnswer(id:any){
         const requestOptions = {
             method: 'DELETE',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls/' + pollID + '/tests/'+id, requestOptions)
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 const {error}:any = data;
                 if(error){
-                    err.HandleError({errorMsg:error, func:deleteTestAnswer});
+                    err.HandleError({errorMsg:error, func:deleteTestAnswer, navigate:navigate});
                 }else {
                     setTestAnswers((currentAnswer: any[]) => {
                         return currentAnswer.filter(answer => answer.id !== id)
@@ -72,6 +76,7 @@ const TestAnswerAdminList = ({answers, pollID}:any) =>{
                 return(
                     <TestAnswerAdminItem
                         {...answer}
+                        count_test_answers={testAnswers.length}
                         updateTestAnswer={updateTestAnswer}
                         deleteTestAnswer={deleteTestAnswer}
                         key={answer.id}

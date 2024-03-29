@@ -12,18 +12,18 @@ const Profile = ({profile_user}:any) => {
     // @ts-ignore
     const {osbbID} = useAppContext();
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
-    const {osbbID, setOsbbID} = useAppContext();
 
     const [isChecked, setIsChecked] = useState(false);
     const [newFirstName, setNewFirstName] = useState(profile_user?.full_name.first_name);
     const [newSurname, setNewSurname] = useState(profile_user?.full_name.surname);
     const [newPatronymic, setNewPatronymic] = useState(profile_user?.full_name.patronymic);
     const [newPhoneNumber, setNewPhoneNumber] = useState(profile_user?.phone_number);
+    const [newPhoto, setNewPhoto] = useState(profile_user?.photo);
     const [newApartmentNumber , setNewApartmentNumber ] = useState(profile_user?.apartment.number);
     const [newApartmentArea    , setNewApartmentArea    ] = useState(profile_user?.apartment.area);
 
 
-    function updateUserInfo({apartment_number, apartment_area, first_name, surname, patronymic, phone_number}:any){
+    function updateUserInfo({apartment_number, apartment_area, first_name, surname, patronymic, phone_number, photo}:any){
 
         let body = null;
         if(apartment_number != null){
@@ -44,9 +44,13 @@ const Profile = ({profile_user}:any) => {
         if(phone_number != null){
             body = JSON.stringify({phone_number: phone_number});
         }
+        if(photo != null){
+            body = JSON.stringify({photo: photo});
+        }
         const requestOptions = {
             method: 'PUT',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body: body,
         }
 
@@ -75,7 +79,7 @@ const Profile = ({profile_user}:any) => {
          </div>
         <div className="card flex align-items-stretch flex-wrap">
             <div className="left-container flex flex-column align-self-center">
-                <img src={"https://cdn.pixabay.com/photo/2015/01/08/18/29/entrepreneur-593358__480.jpg"}
+                <img src={newPhoto}
                      alt="Profile Image"/>
                     <h2>{newFirstName} {newSurname} {newPatronymic}</h2>
                 {profile_user?.role === "osbb_head" &&   <p>Голова ОСББ</p>}
@@ -117,7 +121,6 @@ const Profile = ({profile_user}:any) => {
                                 <div className="inner-wrap">
                                     <input maxLength={256}
                                            minLength={2}
-                                           required={true}
                                            name="first_name_update_content"
                                            placeholder=""
                                            type='text'
@@ -126,7 +129,6 @@ const Profile = ({profile_user}:any) => {
                                            id='first_name_update_content'/>
                                     <input maxLength={256}
                                            minLength={2}
-                                           required={true}
                                            name="surname_update_content"
                                            placeholder=""
                                            type='text'
@@ -135,7 +137,6 @@ const Profile = ({profile_user}:any) => {
                                            id='surname_update_content'/>
                                     <input maxLength={256}
                                            minLength={2}
-                                           required={true}
                                            name="patronymic_update_content"
                                            placeholder=""
                                            type='text'
@@ -153,7 +154,6 @@ const Profile = ({profile_user}:any) => {
                             <td className={'form'}>
                                 <div className="inner-wrap">
                                     <input
-                                        required={true}
                                         name="phone_number_update_content"
                                         placeholder=""
                                         type='tel'
@@ -171,13 +171,28 @@ const Profile = ({profile_user}:any) => {
                                 </div>
                             </td>
                         </tr>
+                        <tr >
+                            <td>Фото :</td>
+                            <td className={'form'}>
+                                <div className="inner-wrap">
+                                    <input name="photo_update_content"
+                                           type='url'
+                                           placeholder="Нове фото"
+                                           onChange={e=>setNewPhoto(e.target.value)}
+                                           value={newPhoto}
+                                           id='photo_update_content'/>
+                                    <button className='button' onClick={()=>updateUserInfo({photo:newPhoto})}>
+                                        <span className="button_content"> Оновити</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
                         {newApartmentNumber !== 0 && <>
                             <tr>
                                 <td>Номер квартири :</td>
                                 <td className={'form'}>
                                     <div className="inner-wrap">
                                         <input
-                                            required={true}
                                             name="apartment_number_update_content"
                                             placeholder=""
                                             type='number'
@@ -195,7 +210,6 @@ const Profile = ({profile_user}:any) => {
                                 <td className={'form'}>
                                     <div className="inner-wrap">
                                         <input
-                                            required={true}
                                             name="apartment_area_update_content"
                                             placeholder=""
                                             type='number'

@@ -41,12 +41,13 @@ const OSBBForm = () =>{
         const edrpou = parseInt(event.target.edrpou.value);
         const address = event.target.address.value;
         const rent = parseFloat(event.target.rent.value);
+        const photo =  event.target.photo.value;
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ first_name: firstName, surname: surname, patronymic:patronymic,
                 password: password, phone_number:phone_number, name:name,
-                edrpou:edrpou, address:address, rent:rent
+                edrpou:edrpou, address:address, rent:rent, photo:photo,
             })
         }
         fetch(config.apiUrl+'osbb/', requestOptions)
@@ -125,6 +126,9 @@ const OSBBForm = () =>{
                         </label>
                         <label form={'rent'}>Плата за м^2
                             <input name="rent" required={true} placeholder="" type='number' id='rent'/>
+                        </label>
+                        <label form={'photo'}>Фото
+                            <input name="photo" placeholder="" type='url' id='photo'/>
                         </label>
                         {errorEDRPOU &&
                             <div className={'error'}>

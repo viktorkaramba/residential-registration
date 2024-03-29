@@ -15,11 +15,13 @@ const PollAdminList = () =>{
         try{
             const requestOptions = {
                 method: 'GET',
-                headers: config.headers,
+                headers:{ 'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             }
            fetch(config.apiUrl+'osbb/'+ osbbID+ '/polls', requestOptions)
                .then(response => response.json())
                .then(data => {
+                   console.log(data)
                    const {error}:any = data;
                    if(error){
                        err.HandleError({errorMsg:error, func:fetchPolls, navigate:navigate});
