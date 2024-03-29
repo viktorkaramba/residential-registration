@@ -11,6 +11,9 @@ const errorsMessages ={
     incorrectPassword:'incorrect password',
     osbbAlreadyExist:'idx_osbbs_edrpou',
     phoneNumberAlreadyExist:'user with this number already exist',
+    userWaitApprove:'user wait approve',
+    userNotApproved:'user not approved',
+    userNotFound:'user not found'
 }
 
 const HandleError = ({errorMsg,  func, argument, navigate}:any) => {

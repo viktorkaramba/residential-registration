@@ -5,7 +5,6 @@ import {useAppContext} from "../../utils/AppContext";
 import err from "../../utils/err";
 import {useNavigate} from "react-router-dom";
 import OSBBProfileMenu from "../../components/Menu/OSBBProfileMenu";
-import OSBBDescription from "../../components/OSBB/OSBBDescription";
 
 
 const OSBBProfile = () => {

@@ -36,7 +36,8 @@ const Navbar = () =>{
                     </li>
                     <li className='nav-item'>
                         <Link to ={'/osbbs/profile'} className='nav-link text-uppercase text-white fs-22 fw-6'>Профіль ОСББ</Link>
-                    <li className='nav-item'>
+                    </li>
+                        <li className='nav-item'>
                         <Link to ={'/profile'} className='nav-link text-uppercase text-white fs-22 fw-6 ls-1'>Контакти</Link>
                     </li>
                     {isLogin &&
