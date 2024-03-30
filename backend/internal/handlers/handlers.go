@@ -43,6 +43,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		osbb.PUT("/:osbbID/inhabitants", h.userIdentity, h.updateInhabitant)
 		osbb.POST("/:osbbID/inhabitants/approve", h.userIdentity, h.approveInhabitant)
 
+		osbb.POST("/:osbbID/apartments", h.userIdentity, h.addApartment)
+
 		osbb.POST("/:osbbID/announcements", h.userIdentity, h.addAnnouncement)
 		osbb.GET("/:osbbID/announcements", h.userIdentity, h.getAllAnnouncement)
 		osbb.PUT("/:osbbID/announcements/:announcementID", h.userIdentity, h.updateAnnouncement)
