@@ -653,6 +653,7 @@ func (s *osbbService) DeleteTestAnswer(UserID, OSBBID, PollID, TestAnswerID uint
 	for _, answer := range poll.TestAnswers {
 		if answer.PollID == PollID && answer.ID == TestAnswerID {
 			isExist = true
+			break
 		}
 	}
 

@@ -955,7 +955,7 @@ func (h *Handler) deleteTestAnswer(c *gin.Context) {
 		return
 	}
 
-	err = h.Services.OSBB.DeleteTestAnswer(userID, osbbID, pollID, -testAnswerID)
+	err = h.Services.OSBB.DeleteTestAnswer(userID, osbbID, pollID, testAnswerID)
 	if err != nil {
 		logger.Error("failed to delete test answer", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to delete test answer: %w", err))
