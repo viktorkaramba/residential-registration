@@ -108,6 +108,10 @@ func (s *OSBBStorage) UpdateOSBB(OSBBID uint64, opts *entity.EventOSBBUpdatePayl
 	return nil
 }
 
+func (s *OSBBStorage) CreateApartment(apartment *entity.Apartment) error {
+	return s.db.Create(apartment).Error
+}
+
 func (s *OSBBStorage) CreateAnnouncement(announcement *entity.Announcement) error {
 	return s.db.Create(announcement).Error
 }

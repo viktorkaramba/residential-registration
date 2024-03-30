@@ -34,6 +34,11 @@ type EventOSBBPayload struct {
 	Rent        `json:"rent" binding:"required"`
 }
 
+type EventApartmentPayload struct {
+	Number ApartmentNumber `json:"number"  binding:"required"`
+	Area   ApartmentArea   `json:"area"  binding:"required"`
+}
+
 type EventAnnouncementPayload struct {
 	Title   Text `json:"title" binding:"required"`
 	Content Text `json:"content" binding:"required"`

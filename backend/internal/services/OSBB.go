@@ -147,6 +147,41 @@ func (s *osbbService) UpdateOSBB(UserID uint64, input entity.EventOSBBUpdatePayl
 	return nil
 }
 
+func (s *osbbService) AddApartment(UserID, OSBBID uint64, inputApartment entity.EventApartmentPayload) (*entity.Apartment, error) {
+	logger := s.logger.Named("AddApartment").
+		With("user_id", UserID).With("osbb_id", OSBBID).With("input_apartment", inputApartment)
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	if user.Role != entity.UserRoleOSBBHead {
+		logger.Error("User can not create an announcement", "error", err)
+		return nil, errs.M("user not osbb head").Code("User can not create an announcement").Kind(errs.Private)
+	}
+	osbb, err := s.businessStorage.OSBB.GetOSBB(OSBBFilter{OSBBID: &OSBBID})
+	if osbb == nil {
+		logger.Error("osbb do not exist", "error", err)
+		return nil, errs.M("osbb not found").Code("Osbb do not exist").Kind(errs.Database)
+	}
+	apartment := &entity.Apartment{
+		BuildingID: OSBBID,
+		UserID:     UserID,
+		Number:     inputApartment.Number,
+		Area:       inputApartment.Area,
+	}
+	err = s.businessStorage.OSBB.CreateApartment(apartment)
+	if err != nil {
+		logger.Error("failed to сreate apartment", "error", err)
+		return nil, errs.Err(err).Code("Failed to сreate apartment").Kind(errs.Database)
+	}
+	return apartment, nil
+}
+
 func (s *osbbService) AddAnnouncement(UserID, OSBBID uint64, inputAnnouncement entity.EventAnnouncementPayload) (*entity.Announcement, error) {
 	logger := s.logger.Named("AddAnnouncement").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("input_announcement", inputAnnouncement)
@@ -653,6 +688,7 @@ func (s *osbbService) DeleteTestAnswer(UserID, OSBBID, PollID, TestAnswerID uint
 	for _, answer := range poll.TestAnswers {
 		if answer.PollID == PollID && answer.ID == TestAnswerID {
 			isExist = true
+			break
 		}
 	}
 
