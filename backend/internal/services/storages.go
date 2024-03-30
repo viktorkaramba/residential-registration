@@ -36,6 +36,7 @@ type OSBBStorage interface {
 	ListOSBBS(filter OSBBFilter) ([]entity.OSBB, error)
 	GetOSBB(filter OSBBFilter) (*entity.OSBB, error)
 	UpdateOSBB(OSBBID uint64, opts *entity.EventOSBBUpdatePayload) error
+	CreateApartment(apartment *entity.Apartment) error
 	CreateAnnouncement(announcement *entity.Announcement) error
 	GetAnnouncement(AnnouncementID uint64, filter AnnouncementFilter) (*entity.Announcement, error)
 	ListAnnouncements(filter AnnouncementFilter) ([]entity.Announcement, error)
