@@ -3,6 +3,7 @@ import TestAnswerAdminList from "../TestAnswer/TestAnswerAdmin/TestAnswerAdminLi
 import Checkbox from "@mui/material/Checkbox";
 import {format} from "date-fns";
 import '../Poll.css';
+import {useAppContext} from "../../../utils/AppContext";
 
 
 const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
@@ -10,6 +11,8 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
     const [newQuestion, setNewQuestion] = useState(poll.question);
     const [newFinished, setNewFinished] = useState(poll.finished_at);
     const [newIsClosed, setNewIsClosed] = useState(poll.is_closed);
+    // @ts-ignore
+    const {setPoll, setActivePollElement} = useAppContext();
 
     function handleDelete(){
         deletePoll(poll.id);
@@ -17,6 +20,11 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
 
     function handleUpdate(){
         updatePoll(poll.id, newQuestion, newFinished, newIsClosed, setIsPollChecked)
+    }
+
+    function toResult(){
+        setActivePollElement('PollResultItem')
+        setPoll(poll)
     }
 
     return(
@@ -90,11 +98,14 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
                     </div>
                 }
                 {isPollChecked &&
-                    <button className='button poll_button_form' type="submit" onClick={()=>handleUpdate()} name="update_annpuncement">
+                    <button className='button poll_button_form' style={{marginRight:'5px'}} type="submit" onClick={()=>handleUpdate()} name="update_annpuncement">
                         <span className="button_content poll_button_content_form">Оновити</span>
                     </button>
                 }
                 {poll.test_answer.length !== 0 &&  <TestAnswerAdminList answers={poll.test_answer} pollID={poll.id}/>}
+                <button className='button poll_button_form' style={{marginRight:'5px'}} type="submit" onClick={()=>toResult()} name="to_result">
+                    <span className="button_content poll_button_content_form">Результати</span>
+                </button>
                 <button className='button announcement_button' type="submit" onClick={()=>handleDelete()} name="update_annpuncement">
                     <span className="button_content announcement_button_content">Видалити</span>
                 </button>

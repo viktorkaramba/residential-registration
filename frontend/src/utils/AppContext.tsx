@@ -22,12 +22,12 @@ const AppProvider = ({children}: { children?: React.ReactNode }) => {
         }
     });
     const [osbbID, setOsbbID] = useState(0);
-
+    const [poll, setPoll] = useState<any>(null);
     return (
         // @ts-ignore
         <AppContext.Provider value = {{
             activeOSBBElement, setActiveOSBBElement, activePollElement, setActivePollElement,
-            osbbID, setOsbbID, isLogin, setIsLogin, token, setToken
+            osbbID, setOsbbID, isLogin, setIsLogin, token, setToken, poll, setPoll
         }}>
             {children}
         </AppContext.Provider>

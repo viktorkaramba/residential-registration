@@ -129,10 +129,6 @@ const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, dele
                     </div>
                 </div>
             }
-                    {/*{isSuccess &&*/}
-                    {/*    <Stack sx={{margin: '10px'}} spacing={2}>*/}
-                    {/*        <Alert variant={'filled'} severity="success" style={{fontSize:'15px'}}>Оголошення успішно додане!</Alert>*/}
-                    {/*    </Stack>}*/}
         </form>
     )
 }

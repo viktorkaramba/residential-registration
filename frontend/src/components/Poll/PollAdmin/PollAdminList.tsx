@@ -79,7 +79,8 @@ const PollAdminList = () =>{
         let body = {...questionJSON, ...finishedAtJSON, ...isClosedJSON};
         const requestOptions = {
             method: 'PUT',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body:  JSON.stringify(body),
         }
 
@@ -107,7 +108,8 @@ const PollAdminList = () =>{
     function deletePoll(id:any){
         const requestOptions = {
             method: 'DELETE',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+id, requestOptions)
