@@ -20,6 +20,7 @@ const OSBBDescription = () => {
     const [newRent, setNewRent] = useState(osbb?.rent);
     const [newPostAddress, setNewPostAddress] = useState(osbb?.building.Address);
     const [newAddress, setNewAddress] = useState(osbb?.building.Address);
+    const [newPhoto, setNewPhoto] = useState(osbb?.photo);
     const fetchOSBB = useCallback(async() => {
         try{
             const requestOptions = {
@@ -36,7 +37,7 @@ const OSBBDescription = () => {
                         err.HandleError({errorMsg:error, func:fetchOSBB, navigate:navigate});
                     }else {
                         if(data){
-                            const {announcements, building, createdAt, edrpou, id, name, osbb_head, rent, updatedAt}:any = data;
+                            const {announcements, building, createdAt, edrpou, id, name, osbb_head, rent, photo, updatedAt}:any = data;
                             const newOSBB = {
                                 announcements: announcements,
                                 building: building,
@@ -46,6 +47,7 @@ const OSBBDescription = () => {
                                 name: name,
                                 osbb_head: osbb_head,
                                 rent: rent,
+                                photo:photo,
                                 updatedAt: updatedAt
                             };
                             setOSBB(newOSBB);
@@ -55,6 +57,7 @@ const OSBBDescription = () => {
                             setNewRent(newOSBB.rent);
                             setNewAddress(newOSBB.building.Address)
                             setNewPostAddress(newOSBB.building.Address)
+                            setNewPhoto(newOSBB.photo)
                         }else {
                             setOSBB(null);
                         }
@@ -69,7 +72,7 @@ const OSBBDescription = () => {
         fetchOSBB();
     }, []);
 
-    function updateOSBBInfo({name, edrpou, rent,address}:any){
+    function updateOSBBInfo({name, edrpou, rent,address, photo}:any){
 
         let body = null;
         if(name != null){
@@ -84,17 +87,19 @@ const OSBBDescription = () => {
         if(address != null){
             body = JSON.stringify({address: address});
         }
-
+        if(photo != null){
+            body = JSON.stringify({photo: photo});
+        }
         const requestOptions = {
             method: 'PUT',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body: body,
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID, requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 const {error}:any = data;
                 if(error){
                     if(error.includes(err.errorsMessages.osbbAlreadyExist)) {
@@ -111,13 +116,12 @@ const OSBBDescription = () => {
     }
 
     return (
-
         <div className={'profile flex flex-c align-items-center'}>
             <div className={'flex bg-light-black'} style={{flexGrow:'1'}}>
             </div>
             <div className="card flex align-items-stretch flex-wrap">
                 <div className="left-container flex flex-column align-items-center  align-self-center">
-                    <img src={"https://cdn.pixabay.com/photo/2015/01/08/18/29/entrepreneur-593358__480.jpg"}
+                    <img src={newPhoto}
                          alt="Profile Image"/>
                     <h2>{newName}</h2>
                     <p>{newPostAddress}</p>
@@ -166,7 +170,7 @@ const OSBBDescription = () => {
                                 <td>ЕДРПОУ :</td>
                                 <td className={'form'}>
                                     <div className="inner-wrap">
-                                        <input required={true}
+                                        <input
                                                name="edrpou_update_content"
                                                placeholder="Новий ЕДРПОУ"
                                                type='number'
@@ -188,7 +192,7 @@ const OSBBDescription = () => {
                                 <td>Ціна за м^2 :</td>
                                 <td className={'form'}>
                                     <div className="inner-wrap">
-                                        <input required={true}
+                                        <input
                                                name="rent_update_content"
                                                type='number'
                                                placeholder="Нова ціна"
@@ -205,8 +209,7 @@ const OSBBDescription = () => {
                                 <td>Адреса :</td>
                                 <td className={'form'}>
                                     <div className="inner-wrap">
-                                        <input required={true}
-                                               maxLength={256}
+                                        <input maxLength={256}
                                                minLength={2}
                                                name="adress_update_content"
                                                type='text'
@@ -215,6 +218,22 @@ const OSBBDescription = () => {
                                                value={newAddress}
                                                id='adress_update_content'/>
                                         <button className='button' onClick={()=>updateOSBBInfo({address:newAddress})}>
+                                            <span className="button_content"> Оновити</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr >
+                                <td>Фото :</td>
+                                <td className={'form'}>
+                                    <div className="inner-wrap">
+                                        <input name="photo_update_content"
+                                               type='url'
+                                               placeholder="Нове фото"
+                                               onChange={e=>setNewPhoto(e.target.value)}
+                                               value={newPhoto}
+                                               id='photo_update_content'/>
+                                        <button className='button' onClick={()=>updateOSBBInfo({photo:newPhoto})}>
                                             <span className="button_content"> Оновити</span>
                                         </button>
                                     </div>
@@ -236,6 +255,7 @@ const OSBBDescription = () => {
             </div>
             <div className={'flex'} style={{flexGrow:'1'}}>
             </div>
+        </div>
     )
 }
 
