@@ -5,6 +5,7 @@ import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
 import './ProfileFrom.css'
 import Checkbox from "@mui/material/Checkbox";
+import ApartmentForm from "../../Apartments/ApartmentForm";
 
 const Profile = ({profile_user}:any) => {
     // @ts-ignore
@@ -14,6 +15,7 @@ const Profile = ({profile_user}:any) => {
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
 
     const [isChecked, setIsChecked] = useState(false);
+    const [isAddApartment, setIsAddApartment] = useState(false);
     const [newFirstName, setNewFirstName] = useState(profile_user?.full_name.first_name);
     const [newSurname, setNewSurname] = useState(profile_user?.full_name.surname);
     const [newPatronymic, setNewPatronymic] = useState(profile_user?.full_name.patronymic);
@@ -22,6 +24,11 @@ const Profile = ({profile_user}:any) => {
     const [newApartmentNumber , setNewApartmentNumber ] = useState(profile_user?.apartment.number);
     const [newApartmentArea    , setNewApartmentArea    ] = useState(profile_user?.apartment.area);
 
+    function addApartment (apartment: any){
+        setNewApartmentNumber(apartment.number)
+        setNewApartmentArea(apartment.area)
+        setIsAddApartment(false)
+    }
 
     function updateUserInfo({apartment_number, apartment_area, first_name, surname, patronymic, phone_number, photo}:any){
 
@@ -73,6 +80,10 @@ const Profile = ({profile_user}:any) => {
             });
     }
 
+    function handle(){
+        console.log('add')
+        setIsAddApartment(true)
+    }
     return (
         <div className={'profile flex flex-c align-items-center'}>
          <div className={'flex bg-light-black'} style={{flexGrow:'1'}}>
@@ -108,12 +119,20 @@ const Profile = ({profile_user}:any) => {
                             </tr></>}
                         {newApartmentNumber === 0 && <tr>
                             <td>
-                                <button className='button add_apartment'>
+                                {!isAddApartment && <button className='button add_apartment' onClick={()=>handle()}>
                                     <span className="button_content add_apartment_content">Додати квартиру</span>
-                                </button>
+                                </button>}
+                                {isAddApartment && <button className='button add_apartment' onClick={()=>setIsAddApartment(false)}>
+                                    <span className="button_content add_apartment_content">Закрити</span>
+                                </button>}
                             </td>
                         </tr>}
+                        <tr>
+                            <td>
+                            </td>
+                        </tr>
                     </table>}
+                    {isAddApartment && <ApartmentForm addApartment={addApartment}/>}
                     {isChecked && <table>
                         <tr>
                             <td>ПІБ :</td>
