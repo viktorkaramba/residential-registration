@@ -11,6 +11,7 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
     const [newQuestion, setNewQuestion] = useState(poll.question);
     const [newFinished, setNewFinished] = useState(poll.finished_at);
     const [newIsClosed, setNewIsClosed] = useState(poll.is_closed);
+    const [errorDate, setErrorDate]= useState(false);
     // @ts-ignore
     const {setPoll, setActivePollElement} = useAppContext();
 
@@ -19,6 +20,14 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
     }
 
     function handleUpdate(){
+        if(newFinished!==""){
+            if (new Date(newFinished) < new Date()){
+                setErrorDate(true);
+                return
+            }
+        }else {
+            setNewFinished(null);
+        }
         updatePoll(poll.id, newQuestion, newFinished, newIsClosed, setIsPollChecked)
     }
 
@@ -95,6 +104,11 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
                                 Завершити
                             </label>
                         </div>
+                        {errorDate &&
+                            <div className={'error'}>
+                                Дата завершення опитування повинна бути більша за поточну
+                            </div>
+                        }
                     </div>
                 }
                 {isPollChecked &&

@@ -13,6 +13,8 @@ const PollTestForm = () =>{
     const {osbbID} = useAppContext();
     const navigate = useNavigate();
     const [isSuccess, setIsSuccess]= useState(false);
+    const [errorDate, setErrorDate]= useState(false);
+    const [errorCount, setErrorCount]= useState(false);
     const [answers, setAnswers] = useState(()=>{
         const localValue = localStorage.getItem("TestAnswers")
         if(localValue==null)return[]
@@ -24,6 +26,7 @@ const PollTestForm = () =>{
     }, [answers])
 
     function addTestAnswer(content:any){
+        setErrorCount(false)
         // @ts-ignore
         setAnswers(currentAnswer => {
             return [
@@ -40,6 +43,10 @@ const PollTestForm = () =>{
     }
 
     function makeRequest({question,finished_at }:any){
+        if(finished_at < new Date()){
+            setErrorDate(!errorDate);
+            return
+        }
         const requestOptions = {
             method: 'POST',
             headers:config.headers,
@@ -68,7 +75,7 @@ const PollTestForm = () =>{
         event.preventDefault();
 
         if(answers.length < 2){
-            console.log("<2")
+            setErrorCount(true)
             return
         }
         // 👇️ access input values using name prop
@@ -92,10 +99,20 @@ const PollTestForm = () =>{
                         <label form={'finished_at'}>Дата завершення
                             <input required={true} name="finished_at" placeholder="" type='datetime-local' step="1" id='finished_at'/>
                         </label>
+                        {errorDate &&
+                            <div className={'error'}>
+                                Дата завершення опитування повинна бути більша за поточну
+                            </div>
+                        }
                     </div>
                     <div className="section">Тестові відповіді</div>
                     <TestAnswerForm addTestAnswer={addTestAnswer}/>
                     <TestAnswerFormList answers={answers} deleteTestAnswer={deleteTestAnswer}/>
+                    {errorCount &&
+                        <div className={'error'} style={{marginBottom:'10px'}}>
+                            Тестових відповідей повинно бут 2 або більше
+                        </div>
+                    }
                     <div className={'flex flex-c'}>
                         <button className='button poll_button' type="submit" name="submit_poll">
                             <span className="button_content poll_button_content">Додати Опитування</span>

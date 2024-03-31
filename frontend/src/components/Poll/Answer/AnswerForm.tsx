@@ -16,7 +16,8 @@ const AnswerForm = ({pollID, userAnswer, isExist, setIsExist, updateAnswer, dele
         const content = event.target.answer.value;
         const requestOptions = {
             method: 'POST',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body: JSON.stringify({ content: content})
         }
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+ pollID + '/answers', requestOptions)

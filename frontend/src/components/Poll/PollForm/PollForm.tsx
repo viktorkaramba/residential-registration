@@ -12,6 +12,7 @@ const PollForm = () =>{
     const {osbbID} = useAppContext()
     const navigate = useNavigate();
     const [isSuccess, setIsSuccess]= useState(false);
+    const [errorDate, setErrorDate]= useState(false);
     const addPoll = (event: any) => {
         console.log('handleSubmit ran');
         event.preventDefault();
@@ -19,14 +20,20 @@ const PollForm = () =>{
         // 👇️ access input values using name prop
         const question = event.target.question.value;
         const finished_at = new Date(event.target.finished_at.value);
+        if(finished_at < new Date()){
+            setErrorDate(!errorDate);
+            return
+        }
         const requestOptions = {
             method: 'POST',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body: JSON.stringify({ question: question, finished_at: finished_at.toISOString()})
         }
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls', requestOptions)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 const {error}:any = data;
                 if(error){
                     err.HandleError({errorMsg:error, func:addPoll, navigate:navigate});
@@ -57,12 +64,19 @@ const PollForm = () =>{
                         <label form={'finished_at'}>Дата завершення
                             <input required={true} name="finished_at" placeholder="" type='datetime-local' step="1" id='finished_at'/>
                         </label>
+                        {errorDate &&
+                            <div className={'error'}>
+                                Дата завершення опитування повинна бути більша за поточну
+                            </div>
+                        }
                     </div>
+
                     <div className={'flex flex-c'}>
                         <button className='button poll_button' type="submit" name="submit_poll">
                             <span className="button_content poll_button_content">Додати Опитування</span>
                         </button>
                     </div>
+
                     {isSuccess &&
                         <Stack sx={{margin: '10px'}} spacing={2}>
                             <Alert variant={'filled'} severity="success" style={{fontSize:'15px'}}>Оголошення успішно додане!</Alert>
