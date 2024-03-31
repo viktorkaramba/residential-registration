@@ -4,6 +4,7 @@ import {useAppContext} from "../../utils/AppContext";
 import err from "../../utils/err";
 import {useNavigate} from "react-router-dom";
 import Checkbox from "@mui/material/Checkbox";
+import logo from "../../images/photo.png";
 
 
 const OSBBDescription = () => {
@@ -120,8 +121,8 @@ const OSBBDescription = () => {
             </div>
             <div className="card flex align-items-stretch flex-wrap">
                 <div className="left-container flex flex-column align-items-center  align-self-center">
-                    <img src={newPhoto}
-                         alt="Profile Image"/>
+                    <img src={newPhoto !== undefined ? newPhoto: logo}
+                         alt="OSBB Profile Image"/>
                     <h2>{newName}</h2>
                     <p>{newPostAddress}</p>
                 </div>

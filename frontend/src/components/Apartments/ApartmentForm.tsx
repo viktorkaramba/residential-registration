@@ -45,8 +45,8 @@ const ApartmentForm = ({addApartment}:any) =>{
 
     return(
         <form method='post'  onSubmit={handleAddApartment}>
-            <div className={'flex flex-wrap align-items-start bg-dark-grey m-5'}>
-                <div className="form announcement_form">
+            <div className={'flex flex-wrap m-5'}>
+                <div className="form announcement_form" style={{width:'100%'}}>
                     <h1>Номер та площа квартири</h1>
                     <div className="inner-wrap">
                         <label form={'number'}>Номер квартири

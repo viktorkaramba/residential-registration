@@ -10,6 +10,7 @@ const AppContext = React.createContext('light');
 const AppProvider = ({children}: { children?: React.ReactNode }) => {
     const [activeOSBBElement, setActiveOSBBElement] = useState("OSBBList");
     const [activePollElement, setActivePollElement] = useState("1");
+    const [prevPage, setPrevPage] = useState("1");
     const [token, setToken] = useState("");
     const [isLogin, setIsLogin] = useState(()=>{
         let token = localStorage.getItem('token') || '';
@@ -68,13 +69,14 @@ const AppProvider = ({children}: { children?: React.ReactNode }) => {
         if(user === null) {
             fetchUserProfile();
         }
-    }, []);
+    }, [fetchUserProfile]);
 
     return (
         // @ts-ignore
         <AppContext.Provider value = {{
             activeOSBBElement, setActiveOSBBElement, activePollElement, setActivePollElement,
-            osbbID, setOsbbID, isLogin, setIsLogin, token, setToken, poll, setPoll, user, setUser
+            osbbID, setOsbbID, isLogin, setIsLogin, token, setToken, poll, setPoll, user, setUser,
+            prevPage, setPrevPage
         }}>
             {children}
         </AppContext.Provider>

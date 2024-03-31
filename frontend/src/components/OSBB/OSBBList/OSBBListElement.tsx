@@ -1,6 +1,7 @@
 import React from "react";
 import {useAppContext} from "../../../utils/AppContext";
 import "../OSBB.css"
+import logo from "../../../images/photo.png";
 const OSBBListElement = ((osbb:any) => {
 
     // @ts-ignore
@@ -12,6 +13,10 @@ const OSBBListElement = ((osbb:any) => {
     return(
         <div className='osbb-item flex flex-column flex-sb flex-wrap'>
             <div className='osbb-item-info text-center'>
+                <div className='osbb-item-img'>
+                    <img src={osbb.photo !== undefined ? osbb.photo: logo}
+                         alt="OSBB Profile Image"/>
+                </div>
                 <div className='osbb-item-info-item fw-7 fs-18'>
                     <span>{osbb.name}</span>
                 </div>

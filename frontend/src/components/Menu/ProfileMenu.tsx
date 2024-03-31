@@ -16,8 +16,7 @@ const ProfileMenu = () => {
     // @ts-ignore
     const {activeOSBBElement, setActiveOSBBElement, setOsbbID, user} = useAppContext();
     const [is, setIS] = useState<any>(false);
-
-    console.log(user)
+    
     useEffect(()=>{
         setActiveOSBBElement('ProfileForm')
     },[])
