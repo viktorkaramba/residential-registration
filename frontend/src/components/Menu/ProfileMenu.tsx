@@ -14,61 +14,21 @@ import err from "../../utils/err";
 const ProfileMenu = () => {
 
     // @ts-ignore
-    const {activeOSBBElement, setActiveOSBBElement} = useAppContext();
-    // @ts-ignore
-    const {token} = useAppContext();
-    const navigate = useNavigate();
-    // @ts-ignore
-    const {osbbID, setOsbbID} = useAppContext()
-    const [currentUser, setCurrentUser] = useState<any>(null);
+    const {activeOSBBElement, setActiveOSBBElement, setOsbbID, user} = useAppContext();
     const [is, setIS] = useState<any>(false);
-    const fetchUserProfile = useCallback(async() => {
-        try{
-            const requestOptions = {
-                method: 'GET',
-                headers:{ 'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
-            };
-            fetch(config.apiUrl+'osbb/' + osbbID + '/inhabitants/profile', requestOptions)
-                .then(response => response.json())
-                .then(data =>{
-                    const {error}:any = data;
-                    if(error){
-                        err.HandleError({errorMsg:error, func:fetchUserProfile, navigate:navigate});
-                    }else {
-                        if(data){
-                            const {osbbid, apartment, full_name, phone_number, role}:any = data;
-                            const userInfo = {
-                                osbbid: osbbid,
-                                apartment: apartment,
-                                full_name: full_name,
-                                phone_number: phone_number,
-                                role : role,
-                            };
-                            setCurrentUser(userInfo);
 
-                        }else {
-                            setCurrentUser(null);
-                        }
-                    }
-                });
-        } catch(error){
-            console.log(error);
-        }
-    }, [token]);
-
+    console.log(user)
     useEffect(()=>{
         setActiveOSBBElement('ProfileForm')
-        fetchUserProfile();
     },[])
 
     useEffect(()=>{
-        if(currentUser!=null){
+        if(user!=null){
             setIS(true)
-            setOsbbID(currentUser.osbbid)
+            setOsbbID(user.osbbid)
             setActiveOSBBElement('ProfileForm')
         }
-    },[currentUser])
+    },[user])
 
     const handleClick = (element: React.SetStateAction<string>) => {
         setActiveOSBBElement(element);
@@ -79,7 +39,7 @@ const ProfileMenu = () => {
     return(
         <div>
             <ProfileHeader/>
-            {currentUser?.role === 'osbb_head'   &&
+            {user?.role === 'osbb_head'   &&
                 <section className='menu flex flex-c flex-wrap'>
                     <button className='menu-text m-5' onClick={() => handleClick('ProfileForm')}>
                         Профіль
@@ -95,7 +55,7 @@ const ProfileMenu = () => {
                     </button>
                 </section>
             }
-            {activeOSBBElement === 'ProfileForm' && is && <ProfileForm profile_user={currentUser}/>}
+            {activeOSBBElement === 'ProfileForm' && is && <ProfileForm profile_user={user}/>}
             {activeOSBBElement === 'AnnouncementAdminList' && <AnnouncementAdminList/>}
             {activeOSBBElement === 'PollMenu' && <PollMenu/>}
             {activeOSBBElement === 'InhabitantRequestList' && <InhabitantRequestList/>}

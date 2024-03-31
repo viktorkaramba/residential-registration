@@ -4,7 +4,7 @@ import "../OSBB.css"
 const OSBBListElement = ((osbb:any) => {
 
     // @ts-ignore
-    const {isLogin, setOsbbID, setActiveOSBBElement} = useAppContext();
+    const {isLogin, setOsbbID, setActiveOSBBElement, user} = useAppContext();
     const handleConnectOSBB = (id:number, element: React.SetStateAction<string>) => {
         setActiveOSBBElement(element);
         setOsbbID(id);
@@ -26,7 +26,7 @@ const OSBBListElement = ((osbb:any) => {
                     <span>{osbb.building.Address}</span>
                 </div>
             </div>
-            {!isLogin &&
+            {(!isLogin || !user.is_approved) &&
                 <button className='button' onClick={() => handleConnectOSBB(osbb.id, 'InhabitantForm')}>
                     <span className="button_content">Приєднатися до ОСББ</span>
             </button>}

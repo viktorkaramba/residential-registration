@@ -8,7 +8,7 @@ import Checkbox from "@mui/material/Checkbox";
 
 const OSBBDescription = () => {
     // @ts-ignore
-    const {osbbID, setOsbbID} = useAppContext();
+    const {osbbID, setOsbbID, user} = useAppContext();
     // @ts-ignore
     const {token} = useAppContext();
     const navigate = useNavigate();
@@ -32,7 +32,6 @@ const OSBBDescription = () => {
                 .then(response => response.json())
                 .then(data =>{
                     const {error}:any = data;
-                    console.log(data);
                     if(error){
                         err.HandleError({errorMsg:error, func:fetchOSBB, navigate:navigate});
                     }else {
@@ -242,14 +241,14 @@ const OSBBDescription = () => {
                         </table>}
                     </div>
                     <div>
-                        <Checkbox
+                        {user.role === "osbb_head" &&  <Checkbox
                             name="profile_check_box"
                             id='profile_check_box'
                             checked={isChecked}
                             size="large"
                             style={{color:'var(--blue-color)'}}
                             onChange={()=>{setIsChecked(!isChecked)}}
-                        />
+                        />}
                     </div>
                 </div>
             </div>
