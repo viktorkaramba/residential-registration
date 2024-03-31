@@ -316,3 +316,7 @@ input{
   border-radius: 15px;
   background-color: #e6e6e6;
 }
+
+.profile-avatar {
+  background-image: url(./images/person.512x512.png);
+}

@@ -5,11 +5,12 @@ import {useAppContext} from "../../utils/AppContext";
 import PollForm from "../Poll/PollForm/PollForm";
 import PollTestForm from "../Poll/PollForm/PollTestForm";
 import PollAdminList from "../Poll/PollAdmin/PollAdminList";
+import PollResultItem from "../Poll/PollAdmin/PollResult/PollResultItem";
 
 const PollMenu = () => {
 
     // @ts-ignore
-    const {activePollElement, setActivePollElement} = useAppContext();
+    const {activePollElement, poll, setActivePollElement} = useAppContext();
 
     const handleClick = (element: React.SetStateAction<string>) => {
         setActivePollElement(element);
@@ -32,6 +33,7 @@ const PollMenu = () => {
                     Додати опитування у вигляді тесту
                 </button>
             </section>
+            {activePollElement === 'PollResultItem' && <PollResultItem/>}
             {activePollElement === 'PollAdminList' && <PollAdminList/>}
             {activePollElement === 'PollForm' && <PollForm/>}
             {activePollElement === 'PollTestForm' && <PollTestForm/>}

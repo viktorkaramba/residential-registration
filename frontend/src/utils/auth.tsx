@@ -42,9 +42,9 @@ function Logout(navigate:any):any{
 
 function RequireAuth({ children }:any) {
     // @ts-ignore
-    const { isLogin } = useAppContext();
+    const { isLogin, setPrevPage } = useAppContext();
     const location = useLocation();
-
+    setPrevPage(location.pathname)
     return isLogin === true ? (
         children
     ) : (
