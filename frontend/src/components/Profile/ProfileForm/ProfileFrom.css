@@ -37,6 +37,8 @@
     height: 200px;
     max-width: 200px;
     border-radius: 50%;
+    background: var(--blue-color);
+    color: #717171;
     margin: 10px;
     box-shadow: rgba(128, 223, 255, 0.35) 0 5px 15px 0;
 }

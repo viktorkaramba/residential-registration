@@ -56,6 +56,7 @@ const AnnouncementUserList = () =>{
         fetchAnnouncements();
     }, [fetchAnnouncements]);
     return(
+
         <section className='announcements-list'>
             <div className='container'>
                 <div className='announcements-content grid'>

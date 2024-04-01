@@ -5,6 +5,8 @@ import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
 import './ProfileFrom.css'
 import Checkbox from "@mui/material/Checkbox";
+import ApartmentForm from "../../Apartments/ApartmentForm";
+import logo from '../../../images/person.512x512.png';
 
 const Profile = ({profile_user}:any) => {
     // @ts-ignore
@@ -12,8 +14,8 @@ const Profile = ({profile_user}:any) => {
     // @ts-ignore
     const {osbbID} = useAppContext();
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
-
     const [isChecked, setIsChecked] = useState(false);
+    const [isAddApartment, setIsAddApartment] = useState(false);
     const [newFirstName, setNewFirstName] = useState(profile_user?.full_name.first_name);
     const [newSurname, setNewSurname] = useState(profile_user?.full_name.surname);
     const [newPatronymic, setNewPatronymic] = useState(profile_user?.full_name.patronymic);
@@ -21,37 +23,48 @@ const Profile = ({profile_user}:any) => {
     const [newPhoto, setNewPhoto] = useState(profile_user?.photo);
     const [newApartmentNumber , setNewApartmentNumber ] = useState(profile_user?.apartment.number);
     const [newApartmentArea    , setNewApartmentArea    ] = useState(profile_user?.apartment.area);
-
+    function addApartment (apartment: any){
+        setNewApartmentNumber(apartment.number)
+        setNewApartmentArea(apartment.area)
+        setIsAddApartment(false)
+    }
 
     function updateUserInfo({apartment_number, apartment_area, first_name, surname, patronymic, phone_number, photo}:any){
-
-        let body = null;
+        let apartmentNumberJSON = null
+        let apartmentAreaJSON = null
+        let firstNameJSON = null
+        let surnameJSON = null
+        let patronymicJSON = null
+        let phoneNumberJSON = null
+        let photoJSON = null
         if(apartment_number != null){
-            body = JSON.stringify({apartment_number: apartment_number});
+            apartmentNumberJSON = {apartment_number: apartment_number};
         }
         if(apartment_area != null){
-            body = JSON.stringify({apartment_area: apartment_area});
+            apartmentAreaJSON = {apartment_area: apartment_area};
         }
         if(first_name != null){
-            body = JSON.stringify({first_name: first_name});
+            firstNameJSON = {first_name: first_name};
         }
         if(surname != null){
-            body = JSON.stringify({surname: surname});
+            surnameJSON = {surname: surname};
         }
         if(patronymic != null){
-            body = JSON.stringify({patronymic: patronymic});
+            patronymicJSON = {patronymic: patronymic};
         }
         if(phone_number != null){
-            body = JSON.stringify({phone_number: phone_number});
+            phoneNumberJSON ={phone_number: phone_number};
         }
         if(photo != null){
-            body = JSON.stringify({photo: photo});
+            photoJSON = {photo: photo};
         }
+        let body = {...apartmentNumberJSON, ...apartmentAreaJSON, ...firstNameJSON, ...surnameJSON, ...patronymicJSON,
+            ...phoneNumberJSON, ...photoJSON};
         const requestOptions = {
             method: 'PUT',
             headers:{ 'Content-Type': 'application/json',
                 'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
-            body: body,
+            body: JSON.stringify(body),
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID+'/inhabitants', requestOptions)
@@ -68,25 +81,31 @@ const Profile = ({profile_user}:any) => {
                 }else {
                     if(data){
                         setIsChecked(false);
+                        profile_user.full_name.first_name = first_name
+                        profile_user.full_name.surname = surname
+                        profile_user.full_name.patronymic = patronymic
                     }
                 }
             });
     }
 
+    function handleAddApartment(){
+        setIsAddApartment(true)
+    }
     return (
         <div className={'profile flex flex-c align-items-center'}>
          <div className={'flex bg-light-black'} style={{flexGrow:'1'}}>
          </div>
         <div className="card flex align-items-stretch flex-wrap">
             <div className="left-container flex flex-column align-self-center">
-                <img src={newPhoto}
+                <img src={newPhoto !== undefined ? newPhoto: logo}
                      alt="Profile Image"/>
-                    <h2>{newFirstName} {newSurname} {newPatronymic}</h2>
+                    <h2>{profile_user?.full_name.first_name} {profile_user?.full_name.surname} {profile_user?.full_name.patronymic}</h2>
                 {profile_user?.role === "osbb_head" &&   <p>Голова ОСББ</p>}
                 {profile_user?.role === "inhabitant" &&   <p>Мешканець</p>}
             </div>
             <div className="right-container flex flex-sb align-items-start">
-                <div className={'flex flex-column align-items-center align-self-center'} style={{flexGrow:'1'}}>
+                <div className={'flex flex-column align-items-center align-self-center'} style={{flexGrow:'2'}}>
                     <h3>Профіль</h3>
                     {!isChecked && <table>
                         <tr>
@@ -108,12 +127,20 @@ const Profile = ({profile_user}:any) => {
                             </tr></>}
                         {newApartmentNumber === 0 && <tr>
                             <td>
-                                <button className='button add_apartment'>
+                                {!isAddApartment && <button className='button add_apartment' onClick={()=>handleAddApartment()}>
                                     <span className="button_content add_apartment_content">Додати квартиру</span>
-                                </button>
+                                </button>}
+                                {isAddApartment && <button className='button add_apartment' onClick={()=>setIsAddApartment(false)}>
+                                    <span className="button_content add_apartment_content">Закрити</span>
+                                </button>}
                             </td>
                         </tr>}
+                        <tr>
+                            <td>
+                            </td>
+                        </tr>
                     </table>}
+                    {isAddApartment && <ApartmentForm addApartment={addApartment}/>}
                     {isChecked && <table>
                         <tr>
                             <td>ПІБ :</td>
@@ -223,7 +250,7 @@ const Profile = ({profile_user}:any) => {
                                 </td>
                             </tr>
                         </>}
-                        {newApartmentNumber === 0 && <tr>
+                        {newApartmentNumber === 0 && !isChecked && <tr>
                             <td>
                                 <button className='button add_apartment'>
                                     <span className="button_content add_apartment_content">Додати квартиру</span>

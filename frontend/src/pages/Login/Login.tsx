@@ -18,7 +18,7 @@ const LoginPage = () => {
     const [visiblePassword, setPasswordVisible] = useState(false);
 
     // @ts-ignore
-    const {token, setToken} = useAppContext();
+    const {token, setToken, prevPage} = useAppContext();
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     // @ts-ignore
@@ -78,7 +78,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/osbbs/profile');
+            navigate(prevPage);
         }
     }, [isLoggedIn]);
 

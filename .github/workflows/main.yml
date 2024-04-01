@@ -32,7 +32,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    if: ((github.event_name == 'push' || github.event_name == 'pull_request') && ${GITHUB_REF##*/} == 'feature/frontend')
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     needs: build_and_push
     steps:
       - name: Deploy to Azure VM

@@ -19,15 +19,16 @@ const OSBBList = () =>{
                     }else {
                         if(data){
                             const newOSBBS = data.slice(0, 20).map(
-                                (osbbSingle: { id: any; building: any; announcements: any; osbb_head: any; name: any; edrpou: any; }) => {
-                                    const {id, building, announcements, osbb_head, name, edrpou} = osbbSingle;
+                                (osbbSingle: { id: any; building: any; announcements: any; osbb_head: any; name: any; edrpou: any; photo: any}) => {
+                                    const {id, building, announcements, osbb_head, name, edrpou, photo} = osbbSingle;
                                     return {
                                         id: id,
                                         building: building,
                                         announcements: announcements,
                                         osbb_head: osbb_head,
                                         name: name,
-                                        edrpou: edrpou
+                                        edrpou: edrpou,
+                                        photo:photo
                                     }
                                 });
                             setOSBBS(newOSBBS);

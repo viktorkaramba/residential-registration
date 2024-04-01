@@ -59,11 +59,7 @@ const PollAdminList = () =>{
     }, []);
 
     function updatePoll(id:any, question:any, finished_at:any, isClosed:any, setIsPollChecked:any){
-        if(finished_at!==""){
-            finished_at = new Date(finished_at);
-        }else {
-            finished_at = null;
-        }
+        finished_at = new Date(finished_at);
         let questionJSON = null
         let finishedAtJSON = null
         let isClosedJSON = null
@@ -79,7 +75,8 @@ const PollAdminList = () =>{
         let body = {...questionJSON, ...finishedAtJSON, ...isClosedJSON};
         const requestOptions = {
             method: 'PUT',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body:  JSON.stringify(body),
         }
 
@@ -107,7 +104,8 @@ const PollAdminList = () =>{
     function deletePoll(id:any){
         const requestOptions = {
             method: 'DELETE',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID+'/polls/'+id, requestOptions)
@@ -141,6 +139,7 @@ const PollAdminList = () =>{
                             )
                         })
                     }
+
                 </div>
             </div>
         </section>

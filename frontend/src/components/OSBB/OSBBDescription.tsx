@@ -4,11 +4,12 @@ import {useAppContext} from "../../utils/AppContext";
 import err from "../../utils/err";
 import {useNavigate} from "react-router-dom";
 import Checkbox from "@mui/material/Checkbox";
+import logo from "../../images/photo.png";
 
 
 const OSBBDescription = () => {
     // @ts-ignore
-    const {osbbID, setOsbbID} = useAppContext();
+    const {osbbID, setOsbbID, user} = useAppContext();
     // @ts-ignore
     const {token} = useAppContext();
     const navigate = useNavigate();
@@ -32,7 +33,6 @@ const OSBBDescription = () => {
                 .then(response => response.json())
                 .then(data =>{
                     const {error}:any = data;
-                    console.log(data);
                     if(error){
                         err.HandleError({errorMsg:error, func:fetchOSBB, navigate:navigate});
                     }else {
@@ -121,8 +121,8 @@ const OSBBDescription = () => {
             </div>
             <div className="card flex align-items-stretch flex-wrap">
                 <div className="left-container flex flex-column align-items-center  align-self-center">
-                    <img src={newPhoto}
-                         alt="Profile Image"/>
+                    <img src={newPhoto !== undefined ? newPhoto: logo}
+                         alt="OSBB Profile Image"/>
                     <h2>{newName}</h2>
                     <p>{newPostAddress}</p>
                 </div>
@@ -242,14 +242,14 @@ const OSBBDescription = () => {
                         </table>}
                     </div>
                     <div>
-                        <Checkbox
+                        {user.role === "osbb_head" &&  <Checkbox
                             name="profile_check_box"
                             id='profile_check_box'
                             checked={isChecked}
                             size="large"
                             style={{color:'var(--blue-color)'}}
                             onChange={()=>{setIsChecked(!isChecked)}}
-                        />
+                        />}
                     </div>
                 </div>
             </div>
