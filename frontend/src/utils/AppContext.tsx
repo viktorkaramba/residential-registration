@@ -69,7 +69,7 @@ const AppProvider = ({children}: { children?: React.ReactNode }) => {
         if(user === null && isLogin) {
             fetchUserProfile();
         }
-    }, [fetchUserProfile]);
+    }, [fetchUserProfile, isLogin]);
 
     return (
         // @ts-ignore
