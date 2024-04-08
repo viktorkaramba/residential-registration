@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import config from "../../../utils/config";
 import {useAppContext} from "../../../utils/AppContext";
 import err from "../../../utils/err";
@@ -11,6 +11,11 @@ const AnnouncementForm = ({addAnnouncement}:any) =>{
     const {osbbID} = useAppContext()
     const [isSuccess, setIsSuccess]= useState(false);
     const navigate = useNavigate();
+    const focusRef = useRef(null);
+    useEffect(() => {
+        // @ts-ignore
+        focusRef.current.scrollIntoView({behavior: 'smooth'});
+    }, []);
     const handleAddAnnouncement = (event: any) => {
         event.preventDefault();
 
@@ -45,8 +50,8 @@ const AnnouncementForm = ({addAnnouncement}:any) =>{
     };
 
     return(
-        <form method='post'  onSubmit={handleAddAnnouncement}>
-            <div className={'flex flex-wrap align-items-start bg-dark-grey'}>
+        <form method='post'  onSubmit={handleAddAnnouncement} ref={focusRef}>
+            <div className={'flex flex-wrap align-items-start'}>
                     <div className="form announcement_form">
                         <h1>Заголовок та вміст оголошення</h1>
                         <div className="inner-wrap">

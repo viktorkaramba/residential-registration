@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import config from "../../../utils/config";
 import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
@@ -14,6 +14,7 @@ const OSBBForm = () =>{
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [visiblePassword, setPasswordVisible] = useState(false);
     const [visibleConfirmPassword, setConfirmVisible] = useState(false);
+    const focusRef = useRef(null);
     // @ts-ignore
     const {token, setToken} = useAppContext();
     // @ts-ignore
@@ -82,13 +83,18 @@ const OSBBForm = () =>{
     }, [token]);
 
     useEffect(() => {
+        // @ts-ignore
+        focusRef.current.scrollIntoView({ behavior: 'smooth' });
+    }, []);
+
+    useEffect(() => {
         if (isLoggedIn) {
             navigate('/osbbs/profile');
         }
     }, [isLoggedIn]);
 
     return(
-        <form method='post'  onSubmit={addOSBB}>
+        <form method='post'  onSubmit={addOSBB} ref={focusRef}>
             <div className={'flex flex-wrap align-items-start bg-dark-grey'}>
                 <div className="form">
                     <div className="section"><span>1</span>ПІБ та Номер Телефону</div>

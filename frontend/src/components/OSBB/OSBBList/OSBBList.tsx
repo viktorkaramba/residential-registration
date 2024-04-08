@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import OSBBListElement from "./OSBBListElement";
 import config from "../../../utils/config";
 import err from "../../../utils/err";
@@ -8,6 +8,7 @@ import "../OSBB.css"
 const OSBBList = () =>{
     const [osbbs, setOSBBS] = useState([]);
     const navigate = useNavigate();
+
     const fetchOSBBS = useCallback(async() => {
         try{
             fetch(config.apiUrl+'osbb/')
@@ -48,15 +49,21 @@ const OSBBList = () =>{
         fetchOSBBS();
     }, [fetchOSBBS]);
 
+    const focusRef = useRef(null);
+    useEffect(() => {
+        // @ts-ignore
+        focusRef.current.scrollIntoView({behavior: 'smooth'});
+    }, [osbbs]);
+
     return(
-        <section className='osbblist'>
-            <div className='container'>
-                <div className='osbblist-content grid'>
+        <section className='osbblist' ref={focusRef}>
+            <div className='container' >
+                <div className='osbblist-content grid' >
                     {
                         osbbs.map((item, index) => {
                             return (
                                 // @ts-ignore
-                                <OSBBListElement key = {index}{...item}/>
+                                <OSBBListElement key = {index}{...item} />
                             )
                         })
                     }

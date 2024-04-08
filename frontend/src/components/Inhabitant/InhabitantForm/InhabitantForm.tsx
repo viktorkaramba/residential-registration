@@ -12,6 +12,8 @@ const InhabitantForm = () =>{
     const {osbbID} = useAppContext();
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
+    const [errorUserAlreadyExist, setErrorUserAlreadyExist] = useState(false);
+    const [errorWaitApprove, setWaitApprove] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     // @ts-ignore
     const {token, setToken} = useAppContext();
@@ -54,7 +56,11 @@ const InhabitantForm = () =>{
                 if(error){
                     if(error.includes(err.errorsMessages.phoneNumberAlreadyExist)) {
                         setErrorPhoneNumber(true);
-                    }else {
+                    }else if(error.includes(err.errorsMessages.userWaitApprove)){
+                        setWaitApprove(true);
+                    }else if(error.includes(err.errorsMessages.userAlreadyExist)){
+                        setErrorUserAlreadyExist(true);
+                    } else {
                         err.HandleError({errorMsg:error, func:addInhabitant, navigate:navigate});
                     }
                }else {
@@ -119,7 +125,18 @@ const InhabitantForm = () =>{
                         <button className='button add_osbb' type="submit" name="submit_osbb">
                             <span className="button_content add_osbb_content">Додати ОСББ</span>
                         </button>
+
                     </div>
+                    {errorWaitApprove &&
+                        <div className={'error login_error m-15 text-center'}>
+                            Ви вже відправили запит на приєднання
+                        </div>
+                    }
+                    {errorUserAlreadyExist &&
+                        <div className={'error login_error m-15 text-center'}>
+                            Ви вже приєднанні до ОСББ
+                        </div>
+                    }
                     {isLoggedIn &&  <Stack sx={{margin: '10px'}} spacing={2}>
                         <Alert variant={'filled'} severity="success" style={{fontSize:'15px'}}>Запита успішно надісланий, очікуйте підтвердження</Alert>
                     </Stack>}

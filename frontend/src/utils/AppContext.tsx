@@ -41,7 +41,7 @@ const AppProvider = ({children}: { children?: React.ReactNode }) => {
                     console.log(data)
                     const {error}:any = data;
                     if(error){
-                        err.HandleError({errorMsg:error, func:fetchUserProfile});
+                        err.HandleError({errorMsg:error, func:fetchUserProfile, navigate:null});
                     }else {
                         if(data){
                             const {osbbid, apartment, full_name, phone_number, role, is_approved}:any = data;
@@ -66,10 +66,10 @@ const AppProvider = ({children}: { children?: React.ReactNode }) => {
 
 
     useEffect(() => {
-        if(user === null) {
+        if(user === null && isLogin) {
             fetchUserProfile();
         }
-    }, [fetchUserProfile]);
+    }, [fetchUserProfile, isLogin]);
 
     return (
         // @ts-ignore
@@ -83,7 +83,7 @@ const AppProvider = ({children}: { children?: React.ReactNode }) => {
     )
 }
 
-export const    useAppContext = () => {
+export const useAppContext = () => {
     return useContext(AppContext);
 }
 

@@ -13,7 +13,8 @@ const errorsMessages ={
     phoneNumberAlreadyExist:'user with this number already exist',
     userWaitApprove:'user wait approve',
     userNotApproved:'user not approved',
-    userNotFound:'user not found'
+    userNotFound:'user not found',
+    userAlreadyExist:'user already exist'
 }
 
 const HandleError = ({errorMsg,  func, argument, navigate}:any) => {
