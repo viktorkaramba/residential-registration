@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import config from "../../../utils/config";
 import {useAppContext} from "../../../utils/AppContext";
 import err from "../../../utils/err";
@@ -28,7 +28,24 @@ const Profile = ({profile_user}:any) => {
         setNewApartmentArea(apartment.area)
         setIsAddApartment(false)
     }
-
+    const focusRef = useRef(null);
+    useEffect(() => {
+        if(isAddApartment){
+            if(focusRef.current){
+                // @ts-ignore
+                focusRef.current.scrollIntoView({behavior: 'smooth'});
+            }
+        }
+    }, [isAddApartment]);
+    useEffect(() => {
+        if(isChecked){
+            if(focusRef.current){
+                // @ts-ignore
+                focusRef.current.scrollIntoView({behavior: 'smooth'});
+            }
+            setIsAddApartment(false);
+        }
+    }, [isChecked]);
     function updateUserInfo({apartment_number, apartment_area, first_name, surname, patronymic, phone_number, photo}:any){
         let apartmentNumberJSON = null
         let apartmentAreaJSON = null
@@ -140,8 +157,10 @@ const Profile = ({profile_user}:any) => {
                             </td>
                         </tr>
                     </table>}
-                    {isAddApartment && <ApartmentForm addApartment={addApartment}/>}
-                    {isChecked && <table>
+                    {isAddApartment && <div ref={focusRef}>
+                        <ApartmentForm addApartment={addApartment}/>
+                    </div>}
+                    {isChecked && <table ref={focusRef}>
                         <tr>
                             <td>ПІБ :</td>
                             <td className={'form'}>

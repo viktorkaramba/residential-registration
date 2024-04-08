@@ -33,8 +33,6 @@ const ProfileMenu = () => {
         setActiveOSBBElement(element);
     };
 
-
-
     return(
         <div>
             <ProfileHeader/>

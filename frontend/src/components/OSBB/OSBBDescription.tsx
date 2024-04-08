@@ -32,6 +32,7 @@ const OSBBDescription = () => {
             fetch(config.apiUrl+'osbb/profile', requestOptions)
                 .then(response => response.json())
                 .then(data =>{
+
                     const {error}:any = data;
                     if(error){
                         err.HandleError({errorMsg:error, func:fetchOSBB, navigate:navigate});
@@ -121,7 +122,7 @@ const OSBBDescription = () => {
             </div>
             <div className="card flex align-items-stretch flex-wrap">
                 <div className="left-container flex flex-column align-items-center  align-self-center">
-                    <img src={newPhoto !== undefined ? newPhoto: logo}
+                    <img src={newPhoto !== null ? newPhoto: logo}
                          alt="OSBB Profile Image"/>
                     <h2>{newName}</h2>
                     <p>{newPostAddress}</p>
