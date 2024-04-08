@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import config from "../../../utils/config";
 import {useAppContext} from "../../../utils/AppContext";
 import err from "../../../utils/err";
@@ -13,6 +13,7 @@ const PollForm = () =>{
     const navigate = useNavigate();
     const [isSuccess, setIsSuccess]= useState(false);
     const [errorDate, setErrorDate]= useState(false);
+
     const addPoll = (event: any) => {
         console.log('handleSubmit ran');
         event.preventDefault();
@@ -52,8 +53,15 @@ const PollForm = () =>{
         // // 👇️ clear all input values in the form
         // event.target.reset();
     };
+
+    const focusRef = useRef(null);
+    useEffect(() => {
+        // @ts-ignore
+        focusRef.current.scrollIntoView({behavior: 'smooth'});
+    }, []);
+
     return(
-        <form method='post'  onSubmit={addPoll}>
+        <form method='post'  onSubmit={addPoll} ref={focusRef}>
             <div className={'flex flex-wrap align-items-start bg-dark-grey'}>
                 <div className="form poll_form">
                   <h1>Форма для додання відкритого опитування</h1>

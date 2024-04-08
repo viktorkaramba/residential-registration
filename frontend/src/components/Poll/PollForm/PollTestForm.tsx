@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import config from "../../../utils/config";
 import {useAppContext} from "../../../utils/AppContext";
 import TestAnswerForm from "../TestAnswer/TestAnswerForm/TestAnswerForm";
@@ -20,6 +20,12 @@ const PollTestForm = () =>{
         if(localValue==null)return[]
         return JSON.parse(localValue)
     });
+
+    const focusRef = useRef(null);
+    useEffect(() => {
+        // @ts-ignore
+        focusRef.current.scrollIntoView({behavior: 'smooth'});
+    }, []);
 
     useEffect(()=>{
         localStorage.setItem("TestAnswers", JSON.stringify(answers));
@@ -89,8 +95,8 @@ const PollTestForm = () =>{
 
     return(
         <form method='post'  onSubmit={handleAddPollTest}>
-            <div className={'flex flex-wrap align-items-start bg-dark-grey'}>
-                <div className="form poll_form">
+            <div className={'flex flex-wrap align-items-start bg-dark-grey'} >
+                <div className="form poll_form"  ref={focusRef} >
                     <h1>Форма для додання відкритого опитування</h1>
                     <div className="inner-wrap">
                         <label form={'question'}>Запитання

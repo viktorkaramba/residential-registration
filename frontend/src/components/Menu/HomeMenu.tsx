@@ -29,7 +29,7 @@ const HomeMenu = () =>{
     return(
         <div>
             <Header  withWelcomeBlock={true}/>
-            <section className='menu flex flex-c'>
+          <section className='menu flex flex-c'>
                 <button className='menu-text m-5' onClick={() => handleClick('OSBBList')}>
                     Список ОСББ
                 </button>
@@ -44,7 +44,7 @@ const HomeMenu = () =>{
             </section>
             {activeOSBBElement === 'OSBBList' && <OSBBList/>}
             {activeOSBBElement === 'OSBBForm' && <OSBBForm/>}
-            {activeOSBBElement === 'InhabitantForm' && <InhabitantForm/>}
+          {activeOSBBElement === 'InhabitantForm' && <InhabitantForm/>}
         </div>
     )
 }
