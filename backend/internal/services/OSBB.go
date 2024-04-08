@@ -324,6 +324,10 @@ func (s *osbbService) DeleteAnnouncement(UserID, OSBBID, AnnouncementID uint64) 
 func (s *osbbService) AddPoll(UserID, OSBBID uint64, inputPoll entity.EventPollPayload) (*entity.Poll, error) {
 	logger := s.logger.Named("AddPoll").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("input_poll", inputPoll)
+	if inputPoll.FinishedAt.Compare(time.Now()) == -1 {
+		logger.Error("failed to update poll", "error", errors.New("finished at must be after current time"))
+		return nil, errs.M("finished at must be after current time").Code("Failed to update poll ").Kind(errs.Database)
+	}
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
@@ -367,7 +371,10 @@ func (s *osbbService) AddPollTest(UserID, OSBBID uint64, inputPollTest entity.Ev
 		logger.Error("failed to add poll test", "error", errors.New("count of test answers must be greater than 2"))
 		return nil, errs.M("count of test answers must be greater than 1").Code("Failed to add poll test").Kind(errs.Database)
 	}
-
+	if inputPollTest.FinishedAt.Compare(time.Now()) == -1 {
+		logger.Error("failed to update poll", "error", errors.New("finished at must be after current time"))
+		return nil, errs.M("finished at must be after current time").Code("Failed to update poll ").Kind(errs.Database)
+	}
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
@@ -436,6 +443,10 @@ func (s *osbbService) UpdatePoll(UserID, OSBBID, PollID uint64, input entity.Eve
 	if err := input.Validate(); err != nil {
 		logger.Error("failed to validate update poll data", "error", err)
 		return errs.Err(err).Code("failed to validate update poll data").Kind(errs.Validation)
+	}
+	if input.FinishedAt.Compare(time.Now()) == -1 {
+		logger.Error("failed to update poll", "error", errors.New("finished at must be after current time"))
+		return errs.M("finished at must be after current time").Code("Failed to update poll ").Kind(errs.Database)
 	}
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
@@ -634,6 +645,7 @@ func (s *osbbService) UpdateTestAnswer(UserID, OSBBID, PollID, TestAnswerID uint
 		logger.Error("poll do not exist", "error", err)
 		return errs.M("poll not found").Code("Poll do not exist").Kind(errs.Database)
 	}
+
 	var isExist bool
 	for _, answer := range poll.TestAnswers {
 		if answer.PollID == PollID && answer.ID == TestAnswerID {
