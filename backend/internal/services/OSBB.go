@@ -46,6 +46,7 @@ func (s *osbbService) AddOSBB(inputOSBB entity.EventOSBBPayload) (*entity.OSBB, 
 		Name:   inputOSBB.Name,
 		Photo:  inputOSBB.Photo,
 		EDRPOU: inputOSBB.EDRPOU,
+		IBAN:   inputOSBB.IBAN,
 		Rent:   inputOSBB.Rent,
 	}
 	err := s.businessStorage.OSBB.CreateOSBB(osbb)
@@ -111,8 +112,8 @@ func (s *osbbService) UpdateOSBB(UserID uint64, input entity.EventOSBBUpdatePayl
 	logger := s.logger.Named("UpdateOSBB").
 		With("user_id", UserID).With("input", input)
 	if err := input.Validate(); err != nil {
-		logger.Error("failed to validate update announcement data", "error", err)
-		return errs.Err(err).Code("failed to validate update announcement data").Kind(errs.Validation)
+		logger.Error("failed to validate update osbb profile data", "error", err)
+		return errs.Err(err).Code("failed to validate update osbb profile data").Kind(errs.Validation)
 	}
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{})
 	if err != nil {
@@ -124,8 +125,8 @@ func (s *osbbService) UpdateOSBB(UserID uint64, input entity.EventOSBBUpdatePayl
 		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	if user.Role != entity.UserRoleOSBBHead {
-		logger.Error("User can not update an announcement", "error", err)
-		return errs.M("user not osbb head").Code("User can not update an announcement").Kind(errs.Private)
+		logger.Error("User can not update an osbb profile", "error", err)
+		return errs.M("user not osbb head").Code("User can not update an osbb profile").Kind(errs.Private)
 	}
 
 	err = s.businessStorage.OSBB.UpdateOSBB(user.OSBBID, &input)

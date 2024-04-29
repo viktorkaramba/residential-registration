@@ -57,6 +57,7 @@ type OSBB struct {
 	Name     Name   `json:"name"`
 	Photo    *Photo `json:"photo"`
 	EDRPOU   EDRPOU `gorm:"uniqueIndex" json:"edrpou"`
+	IBAN     IBAN   `gorm:"uniqueIndex" json:"iban"`
 	Rent     Rent   `json:"rent"`
 
 	database.PostgreSQLModel

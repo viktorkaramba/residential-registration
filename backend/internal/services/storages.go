@@ -113,5 +113,6 @@ type BuildingFilter struct {
 
 var (
 	ErrPhoneNumberDuplicate = errs.M("user with this number already exist").Code("duplicate_phone_number")
-	ErrEDRPOUDuplicate      = errs.M("osbb with this edrpou already exist").Code("duplicate_edrpou")
+	ErrEDRPOUDuplicate      = errs.M("osbb with this EDRPOU already exist").Code("duplicate_edrpou")
+	ErrIBANDuplicate        = errs.M("osbb with this IBAN already exist").Code("duplicate_iban")
 )

@@ -128,8 +128,8 @@ func (h *Handler) updateOSBB(c *gin.Context) {
 
 	err = h.Services.OSBB.UpdateOSBB(userID, input)
 	if err != nil {
-		logger.Error("failed to update announcement", "error", err)
-		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to update announcement: %w", err))
+		logger.Error("failed to update osbb profile", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to update osbb profile: %w", err))
 		return
 	}
 

@@ -30,6 +30,7 @@ type EventOSBBPayload struct {
 	PhoneNumber `json:"phone_number" binding:"required"`
 	Name        `json:"name" binding:"required"`
 	EDRPOU      `json:"edrpou" binding:"required"`
+	IBAN        `json:"iban" binding:"required"`
 	Address     `json:"address" binding:"required"`
 	Rent        `json:"rent" binding:"required"`
 }
@@ -82,6 +83,7 @@ type EventUserUpdatePayload struct {
 type EventOSBBUpdatePayload struct {
 	*Name    `json:"name"`
 	*EDRPOU  `json:"edrpou"`
+	*IBAN    `json:"iban"`
 	*Rent    `json:"rent"`
 	*Address `json:"address"`
 	*Photo   `json:"photo"`
@@ -136,7 +138,7 @@ func (i EventUserUpdatePayload) Validate() error {
 }
 
 func (i EventOSBBUpdatePayload) Validate() error {
-	if i.Name == nil && i.EDRPOU == nil && i.Rent == nil && i.Address == nil && i.Photo == nil {
+	if i.Name == nil && i.EDRPOU == nil && i.IBAN == nil && i.Rent == nil && i.Address == nil && i.Photo == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil

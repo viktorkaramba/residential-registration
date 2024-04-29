@@ -29,6 +29,8 @@ func (s *OSBBStorage) CreateOSBB(OSBB *entity.OSBB) error {
 				return services.ErrPhoneNumberDuplicate
 			} else if strings.Contains(err.Error(), "\"idx_name\"") {
 				return services.ErrEDRPOUDuplicate
+			} else if strings.Contains(err.Error(), "\"idx_osbbs_iban\"") {
+				return services.ErrIBANDuplicate
 			}
 		}
 	}
@@ -90,6 +92,9 @@ func (s *OSBBStorage) UpdateOSBB(OSBBID uint64, opts *entity.EventOSBBUpdatePayl
 	if opts.EDRPOU != nil {
 		osbb.EDRPOU = *opts.EDRPOU
 	}
+	if opts.IBAN != nil {
+		osbb.IBAN = *opts.IBAN
+	}
 	if opts.Rent != nil {
 		osbb.Rent = *opts.Rent
 	}
@@ -102,6 +107,8 @@ func (s *OSBBStorage) UpdateOSBB(OSBBID uint64, opts *entity.EventOSBBUpdatePayl
 		if pgErr.Code == "23505" {
 			if strings.Contains(err.Error(), "\"idx_name\"") {
 				return services.ErrEDRPOUDuplicate
+			} else if strings.Contains(err.Error(), "\"idx_osbbs_iban\"") {
+				return services.ErrIBANDuplicate
 			}
 		}
 	}
