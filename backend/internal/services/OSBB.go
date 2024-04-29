@@ -876,7 +876,6 @@ func (s *osbbService) AddPayment(UserID, OSBBID uint64, inputPayment entity.Even
 	payment := &entity.Payment{
 		OSBBID:      OSBBID,
 		CreatedAt:   time.Now().UTC(),
-		Deadline:    inputPayment.Deadline,
 		Amount:      inputPayment.Amount,
 		Appointment: inputPayment.Appointment,
 	}
@@ -885,38 +884,126 @@ func (s *osbbService) AddPayment(UserID, OSBBID uint64, inputPayment entity.Even
 		logger.Error("failed to create payment", "error", err)
 		return nil, errs.Err(err).Code("Failed to create payment").Kind(errs.Database)
 	}
+	users, err := s.businessStorage.User.ListUsers(UserFilter{
+		OSBBID:         &OSBBID,
+		IsApproved:     typecast.ToPtr(true),
+		WithIsApproved: typecast.ToPtr(true),
+		WithApartment:  nil,
+	})
+	for _, osbbUser := range users {
+		userPayment := &entity.Purchase{
+			OSBBID:          OSBBID,
+			PaymentID:       payment.ID,
+			UserID:          osbbUser.ID,
+			PaymentStatus:   entity.NotPaid,
+			PostgreSQLModel: database.PostgreSQLModel{},
+		}
+		err = s.businessStorage.OSBB.CreateUserPurchase(userPayment)
+		if err != nil {
+			logger.Error("failed to create payment", "error", err)
+			return nil, errs.Err(err).Code("Failed to create payment").Kind(errs.Database)
+		}
+	}
 	return payment, nil
 }
 
-func (s *osbbService) AddPurchase(UserID, PaymentID uint64) (*entity.Purchase, error) {
-	logger := s.logger.Named("AddPayment").
-		With("user_id", UserID).With("payment_id", PaymentID)
+func (s *osbbService) UpdatePayment(UserID, OSBBID, PaymentID uint64, inputPayment entity.EventPaymentUpdatePayload) error {
+	logger := s.logger.Named("UpdatePayment").
+		With("user_id", UserID).With("osbb_id", OSBBID).With("payment_id", PaymentID)
 
-	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{})
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
-		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
 	}
 	if user == nil {
 		logger.Error("user do not exist", "error", err)
-		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	payment, err := s.businessStorage.OSBB.GetPayment(PaymentID,
+		PaymentFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get purchase", "error", err)
+		return errs.Err(err).Code("Failed to get purchase").Kind(errs.Database)
+	}
+	if payment == nil {
+		logger.Error("purchase do not exist in current osbb", "error", err)
+		return errs.M("purchase not found in current osbb").Code("purchase do not exist").Kind(errs.Database)
+	}
+	err = s.businessStorage.OSBB.UpdatePayment(payment.ID, &inputPayment)
+	if err != nil {
+		logger.Error("failed to update purchase", "error", err)
+		return errs.Err(err).Code("Failed to update purchase").Kind(errs.Database)
+	}
+	return nil
+}
+
+func (s *osbbService) UserUpdatePurchase(UserID, OSBBID, PaymentID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error {
+	logger := s.logger.Named("UserUpdatePurchase").
+		With("user_id", UserID).With("osbb_id", OSBBID).With("purchase_id", PaymentID)
+
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	purchase, err := s.businessStorage.OSBB.GetPurchase(0,
+		PurchaseFilter{OSBBID: &OSBBID, PaymentID: &PaymentID, UserID: &UserID})
+	if err != nil {
+		logger.Error("failed to get purchase", "error", err)
+		return errs.Err(err).Code("Failed to get purchase").Kind(errs.Database)
+	}
+	if purchase == nil {
+		logger.Error("purchase do not exist in current osbb", "error", err)
+		return errs.M("purchase not found in current osbb").Code("purchase do not exist").Kind(errs.Database)
+	}
+	err = s.businessStorage.OSBB.UpdatePurchase(purchase.ID, &inputPurchase)
+	if err != nil {
+		logger.Error("failed to update purchase", "error", err)
+		return errs.Err(err).Code("Failed to update purchase").Kind(errs.Database)
+	}
+	return nil
+}
+
+func (s *osbbService) UpdatePurchase(UserID, OSBBID, PaymentID, PurchaseID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error {
+	logger := s.logger.Named("AddPayment").
+		With("user_id", UserID).With("osbb_id", OSBBID).
+		With("payment_id", PaymentID).With("purchase_id")
+
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
 	if user.Role != entity.UserRoleOSBBHead {
 		logger.Error("User can not create a poll answer", "error", err)
-		return nil, errs.M("user not osbb head").Code("User can not create a poll answer").Kind(errs.Private)
+		return errs.M("user not osbb head").Code("User can not create a poll answer").Kind(errs.Private)
 	}
-	userPayment := &entity.Purchase{
-		PaymentID:       PaymentID,
-		UserID:          UserID,
-		PaymentStatus:   entity.Paid,
-		PostgreSQLModel: database.PostgreSQLModel{},
-	}
-	err = s.businessStorage.OSBB.CreateUserPayment(userPayment)
+	purchase, err := s.businessStorage.OSBB.GetPurchase(PurchaseID,
+		PurchaseFilter{OSBBID: &OSBBID, PaymentID: &PaymentID, UserID: &UserID})
 	if err != nil {
-		logger.Error("failed to create payment", "error", err)
-		return nil, errs.Err(err).Code("Failed to create payment").Kind(errs.Database)
+		logger.Error("failed to get purchase", "error", err)
+		return errs.Err(err).Code("Failed to get purchase").Kind(errs.Database)
 	}
-	return userPayment, nil
+	if purchase == nil {
+		logger.Error("purchase do not exist in current osbb", "error", err)
+		return errs.M("purchase not found in current osbb").Code("purchase do not exist").Kind(errs.Database)
+	}
+	err = s.businessStorage.OSBB.UpdatePurchase(purchase.ID, &inputPurchase)
+	if err != nil {
+		logger.Error("failed to update purchase", "error", err)
+		return errs.Err(err).Code("Failed to update purchase").Kind(errs.Database)
+	}
+
+	return nil
 }
 
 func (s *osbbService) GetInhabitant(UserID uint64) (*entity.User, error) {

@@ -56,7 +56,11 @@ type OSBBStorage interface {
 	UpdateAnswer(AnswerID, PollID uint64, answer *entity.EventUserAnswerUpdatePayload) error
 	DeleteAnswer(AnswerID uint64, filter AnswerFilter) error
 	CreatePayment(payment *entity.Payment) error
-	CreateUserPayment(userPayment *entity.Purchase) error
+	GetPayment(PaymentID uint64, filter PaymentFilter) (*entity.Payment, error)
+	UpdatePayment(paymentID uint64, opts *entity.EventPaymentUpdatePayload) error
+	CreateUserPurchase(userPayment *entity.Purchase) error
+	GetPurchase(PurchaseID uint64, filter PurchaseFilter) (*entity.Purchase, error)
+	UpdatePurchase(PurchaseID uint64, opts *entity.EventUserPurchaseUpdatePayload) error
 }
 
 type TokenStorage interface {
@@ -109,6 +113,19 @@ type OSBBFilter struct {
 type BuildingFilter struct {
 	OSBBID *uint64
 	*entity.Address
+}
+
+type PaymentFilter struct {
+	OSBBID *uint64
+	*entity.Amount
+	*entity.Appointment
+}
+
+type PurchaseFilter struct {
+	OSBBID    *uint64
+	PaymentID *uint64
+	UserID    *uint64
+	*entity.PaymentStatus
 }
 
 var (

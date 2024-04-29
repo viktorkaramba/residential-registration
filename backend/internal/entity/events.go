@@ -65,7 +65,6 @@ type EventPollAnswerTestPayload struct {
 }
 
 type EventPaymentPayload struct {
-	Deadline    time.Time `json:"deadline" binding:"required"`
 	Amount      `json:"amount" binding:"required"`
 	Appointment `json:"appointment" binding:"required"`
 }
@@ -112,6 +111,15 @@ type EventTestAnswerUpdatePayload struct {
 type EventUserAnswerUpdatePayload struct {
 	Content      *Text   `json:"content"`
 	TestAnswerID *uint64 `json:"test_answer_id"`
+}
+
+type EventPaymentUpdatePayload struct {
+	*Amount      `json:" "`
+	*Appointment `json:"appointment"`
+}
+
+type EventUserPurchaseUpdatePayload struct {
+	*PaymentStatus `json:"payment_status" binding:"required"`
 }
 
 type EventTokenPayload struct {
@@ -167,6 +175,13 @@ func (i EventTestAnswerUpdatePayload) Validate() error {
 
 func (i EventUserAnswerUpdatePayload) Validate() error {
 	if i.Content == nil && i.TestAnswerID == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
+}
+
+func (i EventPaymentUpdatePayload) Validate() error {
+	if i.Appointment == nil && i.Amount == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil
