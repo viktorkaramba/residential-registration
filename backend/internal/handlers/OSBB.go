@@ -1075,6 +1075,34 @@ func (h *Handler) addPayment(c *gin.Context) {
 	})
 }
 
+func (h *Handler) getAllPayments(c *gin.Context) {
+	logger := h.Logger.Named("getAllPayment").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	payments, err := h.Services.OSBB.ListPayments(userID, osbbID)
+	if err != nil {
+		logger.Error("failed to get list payments", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get list payments: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, payments)
+}
+
 func (h *Handler) updatePayment(c *gin.Context) {
 	logger := h.Logger.Named("updatePayment").WithContext(c)
 
@@ -1197,6 +1225,110 @@ func (h *Handler) makePurchase(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"status": "ok",
 	})
+}
+
+func (h *Handler) getAllPurchasesByUser(c *gin.Context) {
+	logger := h.Logger.Named("getAllPurchasesByUser").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
+		return
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+	// Check if there are any additional fields in the JSON body
+	if err := h.validateJSONTags(body, entity.EventPurchaseFilterPayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
+		return
+	}
+
+	var input entity.EventPurchaseFilterPayload
+	if err := c.BindJSON(&input); err != nil {
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
+		return
+	}
+
+	purchases, err := h.Services.OSBB.ListPurchasesByUser(userID, osbbID, input)
+	if err != nil {
+		logger.Error("failed to get list purchases", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get list purchases: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, purchases)
+}
+
+func (h *Handler) getAllPurchasesByOSBBHead(c *gin.Context) {
+	logger := h.Logger.Named("getAllPurchasesByOSBBHead").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		logger.Error("failed to read body request", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to read body request: %w", err)).Code("Failed body validation").Kind(errs.Validation))
+		return
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+	// Check if there are any additional fields in the JSON body
+	if err := h.validateJSONTags(body, entity.EventPurchaseOSBBHeadFilterPayload{}); err != nil {
+		logger.Error("failed to validate JSON tags", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to validate JSON tags: %w", err))
+		return
+	}
+
+	var input entity.EventPurchaseOSBBHeadFilterPayload
+	if err := c.BindJSON(&input); err != nil {
+		logger.Error("failed to bind JSON", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to bind JSON: %w", err)).Code("Failed bind JSON").Kind(errs.Validation))
+		return
+	}
+
+	purchases, err := h.Services.OSBB.ListPurchasesByOSBBHead(userID, osbbID, input)
+	if err != nil {
+		logger.Error("failed to get list purchases", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get list purchases: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, purchases)
 }
 
 func (h *Handler) updatePurchase(c *gin.Context) {

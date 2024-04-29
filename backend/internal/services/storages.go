@@ -56,9 +56,11 @@ type OSBBStorage interface {
 	UpdateAnswer(AnswerID, PollID uint64, answer *entity.EventUserAnswerUpdatePayload) error
 	DeleteAnswer(AnswerID uint64, filter AnswerFilter) error
 	CreatePayment(payment *entity.Payment) error
+	ListPayments(filter PaymentFilter) ([]entity.Payment, error)
 	GetPayment(PaymentID uint64, filter PaymentFilter) (*entity.Payment, error)
 	UpdatePayment(paymentID uint64, opts *entity.EventPaymentUpdatePayload) error
 	CreateUserPurchase(userPayment *entity.Purchase) error
+	ListPurchases(filter PurchaseFilter) ([]entity.Purchase, error)
 	GetPurchase(PurchaseID uint64, filter PurchaseFilter) (*entity.Purchase, error)
 	UpdatePurchase(PurchaseID uint64, opts *entity.EventUserPurchaseUpdatePayload) error
 }

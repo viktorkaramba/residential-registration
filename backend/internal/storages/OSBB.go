@@ -420,6 +420,25 @@ func (s *OSBBStorage) DeleteAnswer(AnswerID uint64, filter services.AnswerFilter
 func (s *OSBBStorage) CreatePayment(payment *entity.Payment) error {
 	return s.db.Create(payment).Error
 }
+
+func (s *OSBBStorage) ListPayments(filter services.PaymentFilter) ([]entity.Payment, error) {
+	stmt := s.db.
+		Model(&entity.Payment{})
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
+	}
+	if filter.Amount != nil {
+		stmt = stmt.Where("amount = ?", *filter.Amount)
+	}
+	if filter.Appointment != nil {
+		stmt = stmt.Where("appointment = ?", *filter.Appointment)
+	}
+
+	var payments []entity.Payment
+	return payments, stmt.Order("created_at DESC").Find(&payments).Error
+}
+
 func (s *OSBBStorage) GetPayment(PaymentID uint64, filter services.PaymentFilter) (*entity.Payment, error) {
 	payment := &entity.Payment{}
 	stmt := s.db.
@@ -462,6 +481,27 @@ func (s *OSBBStorage) UpdatePayment(PaymentID uint64, opts *entity.EventPaymentU
 
 func (s *OSBBStorage) CreateUserPurchase(userPayment *entity.Purchase) error {
 	return s.db.Create(userPayment).Error
+}
+
+func (s *OSBBStorage) ListPurchases(filter services.PurchaseFilter) ([]entity.Purchase, error) {
+	stmt := s.db.
+		Model(&entity.Purchase{})
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
+	}
+	if filter.UserID != nil {
+		stmt = stmt.Where("user_id = ?", *filter.UserID)
+	}
+	if filter.PaymentID != nil {
+		stmt = stmt.Where("payment_id = ?", *filter.PaymentID)
+	}
+	if filter.PaymentStatus != nil {
+		stmt = stmt.Where("payment_status = ?", *filter.PaymentStatus)
+	}
+
+	var purchases []entity.Purchase
+	return purchases, stmt.Order("created_at DESC").Find(&purchases).Error
 }
 
 func (s *OSBBStorage) GetPurchase(PurchaseID uint64, filter services.PurchaseFilter) (*entity.Purchase, error) {

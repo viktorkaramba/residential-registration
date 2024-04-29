@@ -907,6 +907,33 @@ func (s *osbbService) AddPayment(UserID, OSBBID uint64, inputPayment entity.Even
 	return payment, nil
 }
 
+func (s *osbbService) ListPayments(UserID, OSBBID uint64) ([]entity.Payment, error) {
+	logger := s.logger.Named("ListPayments").
+		With("user_id", UserID).With("osbb_id", OSBBID)
+
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	if user.Role != entity.UserRoleOSBBHead {
+		logger.Error("User can not get a list of payments", "error", err)
+		return nil, errs.M("user not osbb head").Code("User can not create a poll answer").Kind(errs.Private)
+	}
+	payments, err := s.businessStorage.OSBB.ListPayments(PaymentFilter{
+		OSBBID: &OSBBID,
+	})
+	if err != nil {
+		logger.Error("failed to get list users", "error", err)
+		return nil, errs.Err(err).Code("Failed to get list users").Kind(errs.Database)
+	}
+	return payments, nil
+}
+
 func (s *osbbService) UpdatePayment(UserID, OSBBID, PaymentID uint64, inputPayment entity.EventPaymentUpdatePayload) error {
 	logger := s.logger.Named("UpdatePayment").
 		With("user_id", UserID).With("osbb_id", OSBBID).With("payment_id", PaymentID)
@@ -967,6 +994,63 @@ func (s *osbbService) UserUpdatePurchase(UserID, OSBBID, PaymentID uint64, input
 		return errs.Err(err).Code("Failed to update purchase").Kind(errs.Database)
 	}
 	return nil
+}
+
+func (s *osbbService) ListPurchasesByUser(UserID, OSBBID uint64, filter entity.EventPurchaseFilterPayload) ([]entity.Purchase, error) {
+	logger := s.logger.Named("ListPurchasesByUser").
+		With("user_id", UserID).With("osbb_id", OSBBID)
+
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+
+	payments, err := s.businessStorage.OSBB.ListPurchases(PurchaseFilter{
+		OSBBID:        &OSBBID,
+		PaymentID:     filter.PaymentID,
+		UserID:        &UserID,
+		PaymentStatus: filter.PaymentStatus,
+	})
+	if err != nil {
+		logger.Error("failed to get list users", "error", err)
+		return nil, errs.Err(err).Code("Failed to get list users").Kind(errs.Database)
+	}
+	return payments, nil
+}
+
+func (s *osbbService) ListPurchasesByOSBBHead(UserID, OSBBID uint64, filter entity.EventPurchaseOSBBHeadFilterPayload) ([]entity.Purchase, error) {
+	logger := s.logger.Named("ListPurchasesByOSBBHead").
+		With("user_id", UserID).With("osbb_id", OSBBID)
+
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	if user.Role != entity.UserRoleOSBBHead {
+		logger.Error("User can not get list of purchase", "error", err)
+		return nil, errs.M("user not osbb head").Code("User can not get list of purchase").Kind(errs.Private)
+	}
+	payments, err := s.businessStorage.OSBB.ListPurchases(PurchaseFilter{
+		OSBBID:        &OSBBID,
+		PaymentID:     filter.PaymentID,
+		UserID:        &UserID,
+		PaymentStatus: filter.PaymentStatus,
+	})
+	if err != nil {
+		logger.Error("failed to get list users", "error", err)
+		return nil, errs.Err(err).Code("Failed to get list users").Kind(errs.Database)
+	}
+	return payments, nil
 }
 
 func (s *osbbService) UpdatePurchase(UserID, OSBBID, PaymentID, PurchaseID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error {

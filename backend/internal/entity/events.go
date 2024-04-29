@@ -114,8 +114,19 @@ type EventUserAnswerUpdatePayload struct {
 }
 
 type EventPaymentUpdatePayload struct {
-	*Amount      `json:" "`
+	*Amount      `json:"amount"`
 	*Appointment `json:"appointment"`
+}
+
+type EventPurchaseFilterPayload struct {
+	PaymentID      *uint64 `json:"payment_id"`
+	*PaymentStatus `json:"payment_status"`
+}
+
+type EventPurchaseOSBBHeadFilterPayload struct {
+	UserID         *uint64 `json:"user_id"`
+	PaymentID      *uint64 `json:"payment_id"`
+	*PaymentStatus `json:"payment_status"`
 }
 
 type EventUserPurchaseUpdatePayload struct {
@@ -182,6 +193,13 @@ func (i EventUserAnswerUpdatePayload) Validate() error {
 
 func (i EventPaymentUpdatePayload) Validate() error {
 	if i.Appointment == nil && i.Amount == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
+}
+
+func (i EventPurchaseFilterPayload) Validate() error {
+	if i.PaymentID == nil && i.PaymentStatus == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil
