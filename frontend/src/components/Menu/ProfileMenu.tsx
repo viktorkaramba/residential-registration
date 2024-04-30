@@ -10,6 +10,8 @@ import ProfileForm from "../Profile/ProfileForm/ProfileForm";
 import {useNavigate} from "react-router-dom";
 import config from "../../utils/config";
 import err from "../../utils/err";
+import PaymentMenu from "./PaymentMenu";
+import PaymentAdminList from "../Payment/PaymentAdmin/PaymentAdminList";
 
 const ProfileMenu = () => {
 
@@ -47,6 +49,9 @@ const ProfileMenu = () => {
                     <button className='menu-text m-5' onClick={() => handleClick('PollMenu')}>
                         Опитування
                     </button>
+                    <button className='menu-text m-5' onClick={() => handleClick('PaymentAdminList')}>
+                        Платежі
+                    </button>
                     <button className='menu-text m-5' onClick={() => handleClick('InhabitantRequestList')}>
                         Запити мешканців
                     </button>
@@ -55,6 +60,7 @@ const ProfileMenu = () => {
             {activeOSBBElement === 'ProfileForm' && is && <ProfileForm profile_user={user}/>}
             {activeOSBBElement === 'AnnouncementAdminList' && <AnnouncementAdminList/>}
             {activeOSBBElement === 'PollMenu' && <PollMenu/>}
+            {activeOSBBElement === 'PaymentAdminList' && <PaymentAdminList/>}
             {activeOSBBElement === 'InhabitantRequestList' && <InhabitantRequestList/>}
         </div>
     )

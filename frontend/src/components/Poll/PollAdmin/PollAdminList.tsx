@@ -126,7 +126,7 @@ const PollAdminList = () =>{
         <section className='poll_list'>
             <div className='container'>
                 <div className='poll_content grid'>
-                    {polls.length === 0 && "Немає опитувань"}
+                    {polls.length === 0 && <h1 style={{color:"white"}}>Немає опитувань</h1>}
                     {
                         polls.map((poll:{id:any, question:any, finished_at:any, is_closed:any}) => {
                             return (

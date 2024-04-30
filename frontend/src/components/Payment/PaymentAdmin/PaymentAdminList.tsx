@@ -3,51 +3,50 @@ import config from "../../../utils/config";
 import {useAppContext} from "../../../utils/AppContext";
 import err from "../../../utils/err";
 import {useNavigate} from "react-router-dom";
-import AnnouncementAdminItem from "./AnnouncementAdminItem";
-import AnnouncementForm from "../AnnouncementForm/AnnouncementForm";
 import {MdAddCircle} from "react-icons/md";
 import {IoListCircleSharp} from "react-icons/io5";
+import PaymentForm from "../PaymentForm/PaymentForm";
+import PaymentAdminItem from "./PaymentAdminItem";
 
-const AnnouncementAdminList = () =>{
+const PaymentAdminList = () =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
 
-    const [announcements, setAnnouncements] = useState([]);
+    const [payments, setPayments] = useState([]);
     const navigate = useNavigate();
     const [isAddedChecked, setIsAddedChecked] = useState(false);
 
-    const fetchAnnouncements = useCallback(async() => {
+    const fetchPayments = useCallback(async() => {
         try{
             const requestOptions = {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json',
                     'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             }
-            fetch(config.apiUrl+'osbb/'+ osbbID+ '/announcements', requestOptions)
+            fetch(config.apiUrl+'osbb/'+ osbbID+ '/payments', requestOptions)
                 .then(response => response.json())
                 .then(data=>{
                     const {error}:any = data;
                     if(error){
-                        err.HandleError({errorMsg:error, func:fetchAnnouncements,
+                        err.HandleError({errorMsg:error, func:fetchPayments,
                             navigate:navigate});
                     }else {
                         if(data){
-                            const announcements = data.map(
-                                (announcementSingle: { ID: any; UserID: any; OSBBID: any; Title: any; Content: any; CreatedAt: any; updatedAt: any }) => {
-                                    const {ID, UserID, OSBBID, Title, Content, CreatedAt, updatedAt} = announcementSingle;
+                            const payments = data.map(
+                                (paymentSingle: { ID: any; OSBBID: any; Amount: any; Appointment : any; CreatedAt: any; updatedAt: any}) => {
+                                    const {ID, OSBBID, Amount, Appointment, CreatedAt, updatedAt} = paymentSingle;
                                     return {
                                         ID: ID,
-                                        UserID: UserID,
                                         OSBBID: OSBBID,
-                                        Title: Title,
-                                        Content: Content,
+                                        Amount: Amount,
+                                        Appointment: Appointment,
                                         CreatedAt: CreatedAt,
                                         updatedAt: updatedAt
                                     }
                                 });
-                            setAnnouncements(announcements);
+                            setPayments(payments);
                         }else {
-                            setAnnouncements([]);
+                            setPayments([]);
                         }
                     }
                 });
@@ -56,68 +55,77 @@ const AnnouncementAdminList = () =>{
         }
     }, []);
 
-    function updateAnnouncement(announcementID:any, title:any, content:any, setIsAnnouncementChecked:any){
+    function updatePayment(paymentID:any, amount:any, appointment:any, setIsAppointmentChecked:any){
+        let amountJSON = null
+        let appointmentJSON = null
+        if(amount !== "" ){
+            amountJSON = {amount: amount};
+        }
+        if(appointment != null){
+            appointmentJSON={appointment:appointment};
+        }
+        let body = {...amountJSON, ...appointmentJSON};
         const requestOptions = {
             method: 'PUT',
             headers:config.headers,
-            body: JSON.stringify({ title:title, content: content})
+            body: JSON.stringify(body)
         }
 
-        fetch(config.apiUrl+'osbb/'+osbbID+'/announcements/'+announcementID, requestOptions)
+        fetch(config.apiUrl+'osbb/'+osbbID+'/payments/'+paymentID, requestOptions)
             .then(response => response.json())
             .then(data => {
                 if(data){
                     const {error}:any = data;
                     if(error){
-                        err.HandleError({errorMsg:error, func:updateAnnouncement, navigate:navigate});
+                        err.HandleError({errorMsg:error, func:updatePayment, navigate:navigate});
                     }else {
-                        setAnnouncements((currentAnnouncement:any) => {
-                            return currentAnnouncement.map((announcement:any)=>{
-                                if(announcement.ID === announcementID){
-                                    return {...announcement, title, content}
+                        setPayments((currentPayment:any) => {
+                            return currentPayment.map((payment:any)=>{
+                                if(payment.ID === paymentID){
+                                    return {...payment, amount, appointment}
                                 }
-                                return announcement
+                                return payment
                             })
                         })
-                        setIsAnnouncementChecked(false);
+                        setIsAppointmentChecked(false);
                     }
                 }
             });
     }
 
-    function deleteAnnouncement(announcementID:any){
+    function deletePayment(paymentID:any){
         const requestOptions = {
             method: 'DELETE',
             headers:config.headers,
         }
 
-        fetch(config.apiUrl+'osbb/'+osbbID+'/announcements/'+announcementID, requestOptions)
+        fetch(config.apiUrl+'osbb/'+osbbID+'/payments/'+paymentID, requestOptions)
             .then(response => response.json())
             .then(data => {
                 const {error}:any = data;
                 if(error){
-                    err.HandleError({errorMsg:error, func:deleteAnnouncement, navigate:navigate});
+                    err.HandleError({errorMsg:error, func:deletePayment, navigate:navigate});
                 }else {
-                    setAnnouncements((currentAnnouncements: any) => {
-                        return currentAnnouncements.filter((announcement:any) => announcement.ID !== announcementID)
+                    setPayments((currentPayments: any) => {
+                        return currentPayments.filter((payment:any) => payment.ID !== paymentID)
                     })
                 }
             });
     }
 
-    function addAnnouncement (announcement: any){
+    function addPayment (payment: any){
         // @ts-ignore
-        setAnnouncements(currentAnnouncement => {
+        setPayments(currentPayment => {
             return [
-                ...currentAnnouncement,
-                announcement,
+                ...currentPayment,
+                payment,
             ]
         })
     }
 
     useEffect(() => {
-        fetchAnnouncements();
-    }, [fetchAnnouncements]);
+        fetchPayments();
+    }, [fetchPayments]);
 
     return(
         <section className='announcements-list'>
@@ -128,16 +136,16 @@ const AnnouncementAdminList = () =>{
                         <IoListCircleSharp fontSize={'40px'} style={{color:'var(--blue-color)'}} onClick={()=>setIsAddedChecked(!isAddedChecked)}/>}
 
                 </div>
-                {isAddedChecked &&  <AnnouncementForm addAnnouncement={addAnnouncement}/>}
+                {isAddedChecked &&  <PaymentForm addPayment={addPayment}/>}
                 {!isAddedChecked &&  <div className='announcements-content grid'>
-                    {announcements.length === 0 && <h1 style={{color:"white"}}>Немає оголошень</h1>}
+                    {payments.length === 0 && <h1 style={{color:"white"}}>Немає платежів</h1>}
                     {
-                        announcements.map((announcement:{ID:any, Title:any, Content:any})=> {
+                        payments.map((payment:{ID:any, Amount:any, Appointment:any})=> {
                             return (
-                                <AnnouncementAdminItem key={announcement.ID}
-                                                       announcement={announcement}
-                                                       deleteAnnouncement={deleteAnnouncement}
-                                                       updateAnnouncement={updateAnnouncement}/>
+                                <PaymentAdminItem key={payment.ID}
+                                                       payment={payment}
+                                                  deletePayment={deletePayment}
+                                                  updatePayment={updatePayment}/>
                             )
                         })
                     }
@@ -147,4 +155,4 @@ const AnnouncementAdminList = () =>{
     )
 }
 
-export default AnnouncementAdminList
+export default PaymentAdminList
