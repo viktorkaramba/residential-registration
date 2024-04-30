@@ -16,6 +16,7 @@ const (
 )
 
 type EDRPOU uint64
+type IBAN string
 
 type Address string
 

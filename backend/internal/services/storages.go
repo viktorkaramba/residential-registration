@@ -56,7 +56,13 @@ type OSBBStorage interface {
 	UpdateAnswer(AnswerID, PollID uint64, answer *entity.EventUserAnswerUpdatePayload) error
 	DeleteAnswer(AnswerID uint64, filter AnswerFilter) error
 	CreatePayment(payment *entity.Payment) error
-	CreateUserPayment(userPayment *entity.Purchase) error
+	ListPayments(filter PaymentFilter) ([]entity.Payment, error)
+	GetPayment(PaymentID uint64, filter PaymentFilter) (*entity.Payment, error)
+	UpdatePayment(paymentID uint64, opts *entity.EventPaymentUpdatePayload) error
+	CreateUserPurchase(userPayment *entity.Purchase) error
+	ListPurchases(filter PurchaseFilter) ([]entity.Purchase, error)
+	GetPurchase(PurchaseID uint64, filter PurchaseFilter) (*entity.Purchase, error)
+	UpdatePurchase(PurchaseID uint64, opts *entity.EventUserPurchaseUpdatePayload) error
 }
 
 type TokenStorage interface {
@@ -111,7 +117,21 @@ type BuildingFilter struct {
 	*entity.Address
 }
 
+type PaymentFilter struct {
+	OSBBID *uint64
+	*entity.Amount
+	*entity.Appointment
+}
+
+type PurchaseFilter struct {
+	OSBBID    *uint64
+	PaymentID *uint64
+	UserID    *uint64
+	*entity.PaymentStatus
+}
+
 var (
 	ErrPhoneNumberDuplicate = errs.M("user with this number already exist").Code("duplicate_phone_number")
-	ErrEDRPOUDuplicate      = errs.M("osbb with this edrpou already exist").Code("duplicate_edrpou")
+	ErrEDRPOUDuplicate      = errs.M("osbb with this EDRPOU already exist").Code("duplicate_edrpou")
+	ErrIBANDuplicate        = errs.M("osbb with this IBAN already exist").Code("duplicate_iban")
 )

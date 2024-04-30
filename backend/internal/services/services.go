@@ -50,7 +50,12 @@ type OSBBService interface {
 	DeleteAnswer(UserID, OSBBID, PollID uint64) error
 	GetPollResult(UserID, OSBBID, PollID uint64) (*entity.PollResult, error)
 	AddPayment(UserID, OSBBID uint64, inputPayment entity.EventPaymentPayload) (*entity.Payment, error)
-	AddPurchase(UserID, PaymentID uint64) (*entity.Purchase, error)
+	ListPayments(UserID, OSBBID uint64) ([]entity.Payment, error)
+	UpdatePayment(UserID, OSBBID, PaymentID uint64, inputPayment entity.EventPaymentUpdatePayload) error
+	UserUpdatePurchase(UserID, OSBBID, PaymentID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error
+	ListPurchasesByUser(UserID, OSBBID uint64, filter entity.EventPurchaseFilterPayload) ([]entity.Purchase, error)
+	ListPurchasesByOSBBHead(UserID, OSBBID uint64, filter entity.EventPurchaseOSBBHeadFilterPayload) ([]entity.Purchase, error)
+	UpdatePurchase(UserID, OSBBID, PaymentID, PurchaseID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error
 	GetInhabitant(UserID uint64) (*entity.User, error)
 	ListInhabitants(UserID, OSBBID uint64, filter UserFilter) ([]entity.User, error)
 	UpdateInhabitant(UserID, OSBBID uint64, inhabitant entity.EventUserUpdatePayload) error
