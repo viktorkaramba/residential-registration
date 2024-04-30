@@ -6,6 +6,7 @@ import {useAppContext} from "../../utils/AppContext";
 import AnnouncementUserList from "../Announcements/AnnouncementListUser/AnnouncementUserList";
 import PollUserList from "../Poll/PollUser/PollUserList";
 import OSBBDescription from "../OSBB/OSBBDescription";
+import PaymentUserList from "../Payment/PaymentUser/PaymentUserList";
 
 const OSBBProfileMenu = () => {
 
@@ -32,10 +33,14 @@ const OSBBProfileMenu = () => {
                 <button className='menu-text m-5' onClick={() => handleClick('PollUserList')}>
                     Опитування
                 </button>
+                <button className='menu-text m-5' onClick={() => handleClick('PaymentUserList')}>
+                    Платежі
+                </button>
             </section>
             {activeOSBBElement === 'OSBBDescription' && <OSBBDescription/>}
             {activeOSBBElement === 'AnnouncementUserList' && <AnnouncementUserList/>}
             {activeOSBBElement === 'PollUserList' && <PollUserList/>}
+            {activeOSBBElement === 'PaymentUserList' && <PaymentUserList/>}
         </div>
     )
 }
