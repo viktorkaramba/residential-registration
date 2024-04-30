@@ -483,25 +483,66 @@ func (s *OSBBStorage) CreateUserPurchase(userPayment *entity.Purchase) error {
 	return s.db.Create(userPayment).Error
 }
 
-func (s *OSBBStorage) ListPurchases(filter services.PurchaseFilter) ([]entity.Purchase, error) {
-	stmt := s.db.
-		Model(&entity.Purchase{})
-
-	if filter.OSBBID != nil {
-		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
-	}
-	if filter.UserID != nil {
-		stmt = stmt.Where("user_id = ?", *filter.UserID)
-	}
-	if filter.PaymentID != nil {
-		stmt = stmt.Where("payment_id = ?", *filter.PaymentID)
+func (s *OSBBStorage) ListPurchases(filter services.PurchaseFilter) ([]entity.EventUserPurchasesResponse, error) {
+	var userPurchase []entity.EventUserPurchasesResponse
+	if filter.PaymentStatus == nil {
+		filter.PaymentStatus = new(entity.PaymentStatus)
+		*filter.PaymentStatus = entity.All
 	}
 	if filter.PaymentStatus != nil {
-		stmt = stmt.Where("payment_status = ?", *filter.PaymentStatus)
+		if *filter.PaymentStatus == entity.All && filter.PaymentID != nil {
+			err := s.db.Raw(`
+					SELECT pt.id as payment_id, pr.id as purchase_id,
+							pt.amount as amount, pr.payment_status as payment_status, pt.appointment as appointment, 
+							pr.created_at as created_at, pr.updated_at as updated_at
+					FROM payments pt
+					LEFT JOIN purchases pr ON pt.id = pr.payment_id
+					WHERE pr.user_id = ? and pt.id = ?
+					GROUP BY pt.id, pr.id;`, filter.UserID, filter.PaymentID).Scan(&userPurchase).Error
+			if err != nil {
+				return nil, err
+			}
+		} else if *filter.PaymentStatus == entity.All && filter.PaymentID == nil {
+			err := s.db.Raw(`
+					SELECT pt.id as payment_id, pr.id as purchase_id,
+							pt.amount as amount, pr.payment_status as payment_status, pt.appointment as appointment, 
+							pr.created_at as created_at, pr.updated_at as updated_at
+					FROM payments pt
+					LEFT JOIN purchases pr ON pt.id = pr.payment_id
+					WHERE pr.user_id = ?
+					GROUP BY pt.id, pr.id;`, filter.UserID).Scan(&userPurchase).Error
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			if filter.PaymentID == nil {
+				err := s.db.Raw(`
+					SELECT pt.id as payment_id, pr.id as purchase_id,
+							pt.amount as amount, pr.payment_status as payment_status, pt.appointment as appointment, 
+							pr.created_at as created_at, pr.updated_at as updated_at
+					FROM payments pt
+					LEFT JOIN purchases pr ON pt.id = pr.payment_id
+					WHERE pr.user_id = ? and pr.payment_status=?
+					GROUP BY pt.id, pr.id;`, filter.UserID, filter.PaymentStatus).Scan(&userPurchase).Error
+				if err != nil {
+					return nil, err
+				}
+			} else {
+				err := s.db.Raw(`
+					SELECT pt.id as payment_id, pr.id as purchase_id,
+							pt.amount as amount, pr.payment_status as payment_status, pt.appointment as appointment, 
+							pr.created_at as created_at, pr.updated_at as updated_at
+					FROM payments pt
+					LEFT JOIN purchases pr ON pt.id = pr.payment_id
+					WHERE pr.user_id = ? and pr.payment_status=? and pt.id = ?
+					GROUP BY pt.id, pr.id;`, filter.UserID, filter.PaymentStatus, filter.PaymentID).Scan(&userPurchase).Error
+				if err != nil {
+					return nil, err
+				}
+			}
+		}
 	}
-
-	var purchases []entity.Purchase
-	return purchases, stmt.Order("created_at DESC").Find(&purchases).Error
+	return userPurchase, nil
 }
 
 func (s *OSBBStorage) GetPurchase(PurchaseID uint64, filter services.PurchaseFilter) (*entity.Purchase, error) {

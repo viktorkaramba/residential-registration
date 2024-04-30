@@ -149,6 +149,16 @@ type EventUserAnswersResponse struct {
 	UpdateAt  time.Time `json:"updated_at"`
 }
 
+type EventUserPurchasesResponse struct {
+	PaymentID     uint64        `json:"payment_id" db:"payment_id"`
+	PurchaseID    uint64        `json:"purchase_id" db:"purchase_id"`
+	Amount        Amount        `json:"amount" db:"amount"`
+	Appointment   Appointment   `json:"appointment" db:"appointment"`
+	PaymentStatus PaymentStatus `json:"payment_status" db:"payment_status"`
+	CreatedAt     time.Time     `json:"created_at" db:"created_at"`
+	UpdateAt      time.Time     `json:"updated_at" db:"updated_at"`
+}
+
 func (i EventUserUpdatePayload) Validate() error {
 	if i.ApartmentNumber == nil && i.ApartmentArea == nil && i.FirstName == nil && i.Surname == nil && i.Patronymic == nil && i.PhoneNumber == nil {
 		return errors.New("update structure has no value")

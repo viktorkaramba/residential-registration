@@ -53,9 +53,9 @@ type OSBBService interface {
 	ListPayments(UserID, OSBBID uint64) ([]entity.Payment, error)
 	UpdatePayment(UserID, OSBBID, PaymentID uint64, inputPayment entity.EventPaymentUpdatePayload) error
 	UserUpdatePurchase(UserID, OSBBID, PaymentID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error
-	ListPurchasesByUser(UserID, OSBBID uint64, filter entity.EventPurchaseFilterPayload) ([]entity.Purchase, error)
-	ListPurchasesByOSBBHead(UserID, OSBBID uint64, filter entity.EventPurchaseOSBBHeadFilterPayload) ([]entity.Purchase, error)
-	UpdatePurchase(UserID, OSBBID, PaymentID, PurchaseID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error
+	ListPurchasesByUser(UserID, OSBBID uint64, filter entity.EventPurchaseFilterPayload) ([]entity.EventUserPurchasesResponse, error)
+	ListPurchasesByOSBBHead(UserID, OSBBID uint64, filter entity.EventPurchaseOSBBHeadFilterPayload) ([]entity.EventUserPurchasesResponse, error)
+	UpdatePurchase(UserID, OSBBID, PaymentID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error
 	GetInhabitant(UserID uint64) (*entity.User, error)
 	ListInhabitants(UserID, OSBBID uint64, filter UserFilter) ([]entity.User, error)
 	UpdateInhabitant(UserID, OSBBID uint64, inhabitant entity.EventUserUpdatePayload) error

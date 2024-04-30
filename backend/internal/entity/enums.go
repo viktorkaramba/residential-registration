@@ -47,4 +47,5 @@ const (
 	Paid         PaymentStatus = "paid"
 	NotPaid      PaymentStatus = "not_paid"
 	InProcessing PaymentStatus = "in_processing"
+	All          PaymentStatus = "all"
 )
