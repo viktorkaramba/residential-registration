@@ -996,7 +996,7 @@ func (s *osbbService) UserUpdatePurchase(UserID, OSBBID, PaymentID uint64, input
 	return nil
 }
 
-func (s *osbbService) ListPurchasesByUser(UserID, OSBBID uint64, filter entity.EventPurchaseFilterPayload) ([]entity.Purchase, error) {
+func (s *osbbService) ListPurchasesByUser(UserID, OSBBID uint64, filter entity.EventPurchaseFilterPayload) ([]entity.EventUserPurchasesResponse, error) {
 	logger := s.logger.Named("ListPurchasesByUser").
 		With("user_id", UserID).With("osbb_id", OSBBID)
 
@@ -1009,8 +1009,7 @@ func (s *osbbService) ListPurchasesByUser(UserID, OSBBID uint64, filter entity.E
 		logger.Error("user do not exist", "error", err)
 		return nil, errs.M("user not found").Code("user do not exist").Kind(errs.Database)
 	}
-
-	payments, err := s.businessStorage.OSBB.ListPurchases(PurchaseFilter{
+	purchases, err := s.businessStorage.OSBB.ListPurchases(PurchaseFilter{
 		OSBBID:        &OSBBID,
 		PaymentID:     filter.PaymentID,
 		UserID:        &UserID,
@@ -1020,10 +1019,10 @@ func (s *osbbService) ListPurchasesByUser(UserID, OSBBID uint64, filter entity.E
 		logger.Error("failed to get list users", "error", err)
 		return nil, errs.Err(err).Code("Failed to get list users").Kind(errs.Database)
 	}
-	return payments, nil
+	return purchases, nil
 }
 
-func (s *osbbService) ListPurchasesByOSBBHead(UserID, OSBBID uint64, filter entity.EventPurchaseOSBBHeadFilterPayload) ([]entity.Purchase, error) {
+func (s *osbbService) ListPurchasesByOSBBHead(UserID, OSBBID uint64, filter entity.EventPurchaseOSBBHeadFilterPayload) ([]entity.EventUserPurchasesResponse, error) {
 	logger := s.logger.Named("ListPurchasesByOSBBHead").
 		With("user_id", UserID).With("osbb_id", OSBBID)
 
@@ -1043,7 +1042,7 @@ func (s *osbbService) ListPurchasesByOSBBHead(UserID, OSBBID uint64, filter enti
 	payments, err := s.businessStorage.OSBB.ListPurchases(PurchaseFilter{
 		OSBBID:        &OSBBID,
 		PaymentID:     filter.PaymentID,
-		UserID:        &UserID,
+		UserID:        filter.UserID,
 		PaymentStatus: filter.PaymentStatus,
 	})
 	if err != nil {
@@ -1053,10 +1052,9 @@ func (s *osbbService) ListPurchasesByOSBBHead(UserID, OSBBID uint64, filter enti
 	return payments, nil
 }
 
-func (s *osbbService) UpdatePurchase(UserID, OSBBID, PaymentID, PurchaseID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error {
+func (s *osbbService) UpdatePurchase(UserID, OSBBID, PaymentID uint64, inputPurchase entity.EventUserPurchaseUpdatePayload) error {
 	logger := s.logger.Named("AddPayment").
-		With("user_id", UserID).With("osbb_id", OSBBID).
-		With("payment_id", PaymentID).With("purchase_id")
+		With("user_id", UserID).With("osbb_id", OSBBID).With("purchase_id")
 
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
@@ -1071,7 +1069,7 @@ func (s *osbbService) UpdatePurchase(UserID, OSBBID, PaymentID, PurchaseID uint6
 		logger.Error("User can not create a poll answer", "error", err)
 		return errs.M("user not osbb head").Code("User can not create a poll answer").Kind(errs.Private)
 	}
-	purchase, err := s.businessStorage.OSBB.GetPurchase(PurchaseID,
+	purchase, err := s.businessStorage.OSBB.GetPurchase(0,
 		PurchaseFilter{OSBBID: &OSBBID, PaymentID: &PaymentID, UserID: &UserID})
 	if err != nil {
 		logger.Error("failed to get purchase", "error", err)

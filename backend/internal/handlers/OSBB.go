@@ -1357,14 +1357,6 @@ func (h *Handler) updatePurchase(c *gin.Context) {
 		return
 	}
 
-	purchaseID, err := strconv.ParseUint(c.Param("purchaseID"), 10, 64)
-	if err != nil {
-		logger.Error("failed to parse purchase id", "error", err)
-		h.sendErrResponse(c, h.Logger,
-			errs.Err(fmt.Errorf("failed to purchase id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
-		return
-	}
-
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		logger.Error("failed to read body request", "error", err)
@@ -1389,7 +1381,7 @@ func (h *Handler) updatePurchase(c *gin.Context) {
 		return
 	}
 
-	err = h.Services.OSBB.UpdatePurchase(userID, osbbID, paymentID, purchaseID, input)
+	err = h.Services.OSBB.UpdatePurchase(userID, osbbID, paymentID, input)
 	if err != nil {
 		logger.Error("failed to add update user purchase", "error", err)
 		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to update user purchase: %w", err))

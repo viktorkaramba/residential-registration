@@ -60,7 +60,7 @@ type OSBBStorage interface {
 	GetPayment(PaymentID uint64, filter PaymentFilter) (*entity.Payment, error)
 	UpdatePayment(paymentID uint64, opts *entity.EventPaymentUpdatePayload) error
 	CreateUserPurchase(userPayment *entity.Purchase) error
-	ListPurchases(filter PurchaseFilter) ([]entity.Purchase, error)
+	ListPurchases(filter PurchaseFilter) ([]entity.EventUserPurchasesResponse, error)
 	GetPurchase(PurchaseID uint64, filter PurchaseFilter) (*entity.Purchase, error)
 	UpdatePurchase(PurchaseID uint64, opts *entity.EventUserPurchaseUpdatePayload) error
 }
