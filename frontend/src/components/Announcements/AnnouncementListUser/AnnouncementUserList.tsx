@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import AnnouncementUserItem from "./AnnouncementUserItem";
 import config from "../../../utils/config";
 import {useAppContext} from "../../../utils/AppContext";
@@ -60,6 +60,7 @@ const AnnouncementUserList = () =>{
         <section className='announcements-list'>
             <div className='container'>
                 <div className='announcements-content grid'>
+                    {announcements.length === 0 && <h1 style={{color:"white"}}>Немає оголошень</h1>}
                     {
                         announcements.map((item, index) => {
                             return (
