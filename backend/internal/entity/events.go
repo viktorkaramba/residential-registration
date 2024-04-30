@@ -30,6 +30,7 @@ type EventOSBBPayload struct {
 	PhoneNumber `json:"phone_number" binding:"required"`
 	Name        `json:"name" binding:"required"`
 	EDRPOU      `json:"edrpou" binding:"required"`
+	IBAN        `json:"iban" binding:"required"`
 	Address     `json:"address" binding:"required"`
 	Rent        `json:"rent" binding:"required"`
 }
@@ -64,7 +65,6 @@ type EventPollAnswerTestPayload struct {
 }
 
 type EventPaymentPayload struct {
-	Deadline    time.Time `json:"deadline" binding:"required"`
 	Amount      `json:"amount" binding:"required"`
 	Appointment `json:"appointment" binding:"required"`
 }
@@ -82,6 +82,7 @@ type EventUserUpdatePayload struct {
 type EventOSBBUpdatePayload struct {
 	*Name    `json:"name"`
 	*EDRPOU  `json:"edrpou"`
+	*IBAN    `json:"iban"`
 	*Rent    `json:"rent"`
 	*Address `json:"address"`
 	*Photo   `json:"photo"`
@@ -112,6 +113,26 @@ type EventUserAnswerUpdatePayload struct {
 	TestAnswerID *uint64 `json:"test_answer_id"`
 }
 
+type EventPaymentUpdatePayload struct {
+	*Amount      `json:"amount"`
+	*Appointment `json:"appointment"`
+}
+
+type EventPurchaseFilterPayload struct {
+	PaymentID      *uint64 `json:"payment_id"`
+	*PaymentStatus `json:"payment_status"`
+}
+
+type EventPurchaseOSBBHeadFilterPayload struct {
+	UserID         *uint64 `json:"user_id"`
+	PaymentID      *uint64 `json:"payment_id"`
+	*PaymentStatus `json:"payment_status"`
+}
+
+type EventUserPurchaseUpdatePayload struct {
+	*PaymentStatus `json:"payment_status" binding:"required"`
+}
+
 type EventTokenPayload struct {
 	TokenValue `json:"token" binding:"required"`
 }
@@ -136,7 +157,7 @@ func (i EventUserUpdatePayload) Validate() error {
 }
 
 func (i EventOSBBUpdatePayload) Validate() error {
-	if i.Name == nil && i.EDRPOU == nil && i.Rent == nil && i.Address == nil && i.Photo == nil {
+	if i.Name == nil && i.EDRPOU == nil && i.IBAN == nil && i.Rent == nil && i.Address == nil && i.Photo == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil
@@ -165,6 +186,20 @@ func (i EventTestAnswerUpdatePayload) Validate() error {
 
 func (i EventUserAnswerUpdatePayload) Validate() error {
 	if i.Content == nil && i.TestAnswerID == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
+}
+
+func (i EventPaymentUpdatePayload) Validate() error {
+	if i.Appointment == nil && i.Amount == nil {
+		return errors.New("update structure has no value")
+	}
+	return nil
+}
+
+func (i EventPurchaseFilterPayload) Validate() error {
+	if i.PaymentID == nil && i.PaymentStatus == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil

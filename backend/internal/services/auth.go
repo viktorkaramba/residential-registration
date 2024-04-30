@@ -25,6 +25,18 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 	logger := s.logger.Named("AddUser").
 		With("osbb_id", OSBBID).With("input_user", inputUser)
 
+	isUserExist, err := s.businessStorage.User.GetUser(0, UserFilter{OSBBID: &OSBBID, PhoneNumber: &inputUser.PhoneNumber})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return nil, errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if isUserExist != nil {
+		if isUserExist.IsApproved == nil {
+			logger.Error("user wait approve", "error", err)
+			return nil, errs.M("user wait approve").Code("user wait approve").Kind(errs.Database)
+		}
+	}
+
 	building, err := s.businessStorage.Building.GetByOSBBID(OSBBID)
 
 	if err != nil {

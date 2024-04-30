@@ -29,6 +29,8 @@ func (s *OSBBStorage) CreateOSBB(OSBB *entity.OSBB) error {
 				return services.ErrPhoneNumberDuplicate
 			} else if strings.Contains(err.Error(), "\"idx_name\"") {
 				return services.ErrEDRPOUDuplicate
+			} else if strings.Contains(err.Error(), "\"idx_osbbs_iban\"") {
+				return services.ErrIBANDuplicate
 			}
 		}
 	}
@@ -90,6 +92,9 @@ func (s *OSBBStorage) UpdateOSBB(OSBBID uint64, opts *entity.EventOSBBUpdatePayl
 	if opts.EDRPOU != nil {
 		osbb.EDRPOU = *opts.EDRPOU
 	}
+	if opts.IBAN != nil {
+		osbb.IBAN = *opts.IBAN
+	}
 	if opts.Rent != nil {
 		osbb.Rent = *opts.Rent
 	}
@@ -102,6 +107,8 @@ func (s *OSBBStorage) UpdateOSBB(OSBBID uint64, opts *entity.EventOSBBUpdatePayl
 		if pgErr.Code == "23505" {
 			if strings.Contains(err.Error(), "\"idx_name\"") {
 				return services.ErrEDRPOUDuplicate
+			} else if strings.Contains(err.Error(), "\"idx_osbbs_iban\"") {
+				return services.ErrIBANDuplicate
 			}
 		}
 	}
@@ -414,6 +421,123 @@ func (s *OSBBStorage) CreatePayment(payment *entity.Payment) error {
 	return s.db.Create(payment).Error
 }
 
-func (s *OSBBStorage) CreateUserPayment(userPayment *entity.Purchase) error {
+func (s *OSBBStorage) ListPayments(filter services.PaymentFilter) ([]entity.Payment, error) {
+	stmt := s.db.
+		Model(&entity.Payment{})
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
+	}
+	if filter.Amount != nil {
+		stmt = stmt.Where("amount = ?", *filter.Amount)
+	}
+	if filter.Appointment != nil {
+		stmt = stmt.Where("appointment = ?", *filter.Appointment)
+	}
+
+	var payments []entity.Payment
+	return payments, stmt.Order("created_at DESC").Find(&payments).Error
+}
+
+func (s *OSBBStorage) GetPayment(PaymentID uint64, filter services.PaymentFilter) (*entity.Payment, error) {
+	payment := &entity.Payment{}
+	stmt := s.db.
+		Model(&entity.Payment{})
+	if PaymentID != 0 {
+		stmt = stmt.Where("id = ?", PaymentID)
+	}
+	if filter.OSBBID != nil {
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
+	}
+	if filter.Amount != nil {
+		stmt = stmt.Where("amount = ?", *filter.Amount)
+	}
+	if filter.Appointment != nil {
+		stmt = stmt.Where("appointment = ?", *filter.Appointment)
+	}
+	err := stmt.First(payment).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return payment, err
+}
+
+func (s *OSBBStorage) UpdatePayment(PaymentID uint64, opts *entity.EventPaymentUpdatePayload) error {
+	stmt := s.db.Model(&entity.Payment{})
+	var payment entity.Payment
+
+	if PaymentID != 0 {
+		stmt = stmt.Where("id = ?", PaymentID)
+	}
+
+	if opts.Appointment != nil {
+		payment.Appointment = *opts.Appointment
+	}
+	if opts.Amount != nil {
+		payment.Amount = *opts.Amount
+	}
+	return stmt.Updates(payment).Error
+}
+
+func (s *OSBBStorage) CreateUserPurchase(userPayment *entity.Purchase) error {
 	return s.db.Create(userPayment).Error
+}
+
+func (s *OSBBStorage) ListPurchases(filter services.PurchaseFilter) ([]entity.Purchase, error) {
+	stmt := s.db.
+		Model(&entity.Purchase{})
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
+	}
+	if filter.UserID != nil {
+		stmt = stmt.Where("user_id = ?", *filter.UserID)
+	}
+	if filter.PaymentID != nil {
+		stmt = stmt.Where("payment_id = ?", *filter.PaymentID)
+	}
+	if filter.PaymentStatus != nil {
+		stmt = stmt.Where("payment_status = ?", *filter.PaymentStatus)
+	}
+
+	var purchases []entity.Purchase
+	return purchases, stmt.Order("created_at DESC").Find(&purchases).Error
+}
+
+func (s *OSBBStorage) GetPurchase(PurchaseID uint64, filter services.PurchaseFilter) (*entity.Purchase, error) {
+	purchase := &entity.Purchase{}
+	stmt := s.db.
+		Model(&entity.Purchase{})
+	if PurchaseID != 0 {
+		stmt = stmt.Where("id = ?", PurchaseID)
+	}
+	if filter.OSBBID != nil {
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
+	}
+	if filter.PaymentID != nil {
+		stmt = stmt.Where("payment_id = ?", *filter.PaymentID)
+	}
+	if filter.UserID != nil {
+		stmt = stmt.Where("user_id = ?", *filter.UserID)
+	}
+	err := stmt.First(purchase).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return purchase, err
+}
+
+func (s *OSBBStorage) UpdatePurchase(PurchaseID uint64, opts *entity.EventUserPurchaseUpdatePayload) error {
+	stmt := s.db.Model(&entity.Purchase{})
+	var purchase entity.Purchase
+
+	if PurchaseID != 0 {
+		stmt = stmt.Where("id = ?", PurchaseID)
+	}
+
+	if opts.PaymentStatus != nil {
+		purchase.PaymentStatus = *opts.PaymentStatus
+	}
+
+	return stmt.Updates(purchase).Error
 }

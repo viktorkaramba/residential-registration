@@ -57,6 +57,7 @@ type OSBB struct {
 	Name     Name   `json:"name"`
 	Photo    *Photo `json:"photo"`
 	EDRPOU   EDRPOU `gorm:"uniqueIndex" json:"edrpou"`
+	IBAN     IBAN   `gorm:"uniqueIndex" json:"iban"`
 	Rent     Rent   `json:"rent"`
 
 	database.PostgreSQLModel
@@ -134,13 +135,13 @@ type Payment struct {
 	Appointment Appointment
 
 	CreatedAt time.Time `gorm:"index"`
-	Deadline  time.Time `gorm:"index"`
 
 	database.PostgreSQLModel
 }
 
 type Purchase struct {
 	ID        uint64 `gorm:"primaryKey;autoIncrement:true"`
+	OSBBID    uint64 `gorm:"index"`
 	PaymentID uint64 `gorm:"index"`
 	UserID    uint64 `gorm:"index"`
 
