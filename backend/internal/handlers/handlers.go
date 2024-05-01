@@ -73,7 +73,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		osbb.POST("/:osbbID/payments/:paymentID/purchase", h.userIdentity, h.makePurchase)
 		osbb.POST("/:osbbID/purchase-user", h.userIdentity, h.getAllPurchasesByUser)
 		osbb.POST("/:osbbID/purchase-osbb-head", h.userIdentity, h.getAllPurchasesByOSBBHead)
-		osbb.PUT("/:osbbID/payments/:paymentID/purchase/:purchaseID", h.userIdentity, h.updatePurchase)
+		osbb.PUT("/:osbbID/payments/:paymentID/purchase", h.userIdentity, h.updatePurchase)
 	}
 	router.POST("refresh-token", h.refreshToken)
 	return router
