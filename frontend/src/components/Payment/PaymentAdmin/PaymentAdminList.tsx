@@ -136,7 +136,7 @@ const PaymentAdminList = () =>{
                         <IoListCircleSharp fontSize={'40px'} style={{color:'var(--blue-color)'}} onClick={()=>setIsAddedChecked(!isAddedChecked)}/>}
 
                 </div>
-                {isAddedChecked &&  <PaymentForm addPayment={addPayment}/>}
+                {isAddedChecked &&  <PaymentForm addPayment={addPayment} setIsAddedChecked={setIsAddedChecked}/>}
                 {!isAddedChecked &&  <div className='announcements-content grid'>
                     {payments.length === 0 && <h1 style={{color:"white"}}>Немає платежів</h1>}
                     {
