@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {format} from "date-fns";
-import { MdAddCircle } from "react-icons/md";
-import { IoListCircleSharp } from "react-icons/io5";
 import Checkbox from '@mui/material/Checkbox';
 import PaymentForm from "../PaymentForm/PaymentForm";
 
-const PaymentAdminItem = ({payment, deletePayment, updatePayment}:any) => {
+const PaymentAdminItem = ({payment, deletePayment, updatePayment, addPayment}:any) => {
     const [newAmount, setNewAmount] = useState(payment.Amount);
     const [newAppointment, setNewAppointment] = useState(payment.Appointment);
     const [isPaymentChecked, setIsPaymentChecked] = useState(false);
@@ -34,14 +32,14 @@ const PaymentAdminItem = ({payment, deletePayment, updatePayment}:any) => {
                         />
                     </>}
             </div>
-            {isAddedChecked &&  <PaymentForm/>}
+            {isAddedChecked &&  <PaymentForm addPayment={addPayment} setIsAddedChecked={setIsAddedChecked}/>}
             {!isAddedChecked &&
                 <div className='announcements-item'>
-                    {!isAddedChecked &&
+                    {!isPaymentChecked &&
                         <div className="inner-wrap">
                             <div className='flex flex-sb flex-wrap'>
                                 <div className='announcements-item-info-item fw-7 fs-26'>
-                                    <span> {newAmount}</span>
+                                    <span> {newAmount}UAH</span>
                                 </div>
                                 <div className='announcements-item-info-item fw-6 fs-15'>
                                     <span> {format(payment.CreatedAt, 'MMMM do yyyy, hh:mm:ss a')}</span>
