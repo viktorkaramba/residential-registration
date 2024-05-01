@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 import Alert from "@mui/material/Alert";
 import {Stack} from "@mui/material";
 
-const PaymentForm = ({addPayment}:any) =>{
+const PaymentForm = ({addPayment, setIsAddedChecked}:any) =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
     const [isSuccess, setIsSuccess]= useState(false);
@@ -26,11 +26,12 @@ const PaymentForm = ({addPayment}:any) =>{
         const requestOptions = {
             method: 'POST',
             headers: config.headers,
-            body: JSON.stringify({ amount: amount, appointment: appointment})
+            body: JSON.stringify({ amount: parseFloat(amount), appointment: appointment})
         }
         fetch(config.apiUrl+'osbb/'+osbbID+'/payments', requestOptions)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 const {error}:any = data;
                 if(error){
                     err.HandleError({errorMsg:error, func:handleAddPayment, navigate:navigate});
@@ -43,8 +44,10 @@ const PaymentForm = ({addPayment}:any) =>{
                         Appointment: appointment,
                         CreatedAt:new Date()
                     };
-                    addPayment(newPayment)
+                    addPayment(newPayment);
+                    setIsAddedChecked(false);
                     setIsSuccess(true);
+
                 }
             });
         // // 👇️ clear all input values in the form
