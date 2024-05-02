@@ -152,6 +152,7 @@ type EventUserAnswersResponse struct {
 type EventUserPurchasesResponse struct {
 	PaymentID     uint64        `json:"payment_id" db:"payment_id"`
 	PurchaseID    uint64        `json:"purchase_id" db:"purchase_id"`
+	UserID        uint64        `json:"user_id" db:"user_id"`
 	Amount        Amount        `json:"amount" db:"amount"`
 	Appointment   Appointment   `json:"appointment" db:"appointment"`
 	PaymentStatus PaymentStatus `json:"payment_status" db:"payment_status"`

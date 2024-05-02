@@ -1165,6 +1165,44 @@ func (h *Handler) updatePayment(c *gin.Context) {
 	})
 }
 
+func (h *Handler) deletePayment(c *gin.Context) {
+	logger := h.Logger.Named("deletePayment").WithContext(c)
+
+	userID, err := h.getUserId(c)
+	if err != nil {
+		logger.Error("failed to get user id", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to get user id: %w", err))
+		return
+	}
+
+	osbbID, err := strconv.ParseUint(c.Param("osbbID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse osbb id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse osbb id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	paymentID, err := strconv.ParseUint(c.Param("paymentID"), 10, 64)
+	if err != nil {
+		logger.Error("failed to parse payment id", "error", err)
+		h.sendErrResponse(c, h.Logger,
+			errs.Err(fmt.Errorf("failed to parse payment id: %w", err)).Code("Failed parse param").Kind(errs.Validation))
+		return
+	}
+
+	err = h.Services.OSBB.DeletePayment(userID, osbbID, paymentID)
+	if err != nil {
+		logger.Error("failed to delete payment", "error", err)
+		h.sendErrResponse(c, h.Logger, fmt.Errorf("failed to delete payment: %w", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
+}
+
 func (h *Handler) makePurchase(c *gin.Context) {
 	logger := h.Logger.Named("makePayment").WithContext(c)
 
