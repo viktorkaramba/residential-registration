@@ -22,6 +22,7 @@ const OSBBDescription = () => {
     const [newPostAddress, setNewPostAddress] = useState(osbb?.building.Address);
     const [newAddress, setNewAddress] = useState(osbb?.building.Address);
     const [newPhoto, setNewPhoto] = useState(osbb?.photo);
+
     const fetchOSBB = useCallback(async() => {
         try{
             const requestOptions = {
@@ -243,7 +244,7 @@ const OSBBDescription = () => {
                         </table>}
                     </div>
                     <div>
-                        {user.role === "osbb_head" &&  <Checkbox
+                        {user?.role === "osbb_head" &&  <Checkbox
                             name="profile_check_box"
                             id='profile_check_box'
                             checked={isChecked}
