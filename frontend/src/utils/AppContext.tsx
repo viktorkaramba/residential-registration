@@ -44,8 +44,9 @@ const AppProvider = ({children}: { children?: React.ReactNode }) => {
                         err.HandleError({errorMsg:error, func:fetchUserProfile, navigate:null});
                     }else {
                         if(data){
-                            const {osbbid, apartment, full_name, phone_number, role, is_approved}:any = data;
+                            const {id, osbbid, apartment, full_name, phone_number, role, is_approved}:any = data;
                             const userInfo = {
+                                id: id,
                                 osbbid: osbbid,
                                 apartment: apartment,
                                 full_name: full_name,
@@ -69,7 +70,7 @@ const AppProvider = ({children}: { children?: React.ReactNode }) => {
         if(user === null && isLogin) {
             fetchUserProfile();
         }
-    }, [fetchUserProfile,user, isLogin]);
+    }, []);
 
     return (
         // @ts-ignore

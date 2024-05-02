@@ -59,7 +59,7 @@ const PaymentAdminList = () =>{
         let amountJSON = null
         let appointmentJSON = null
         if(amount !== "" ){
-            amountJSON = {amount: amount};
+            amountJSON = {amount: parseFloat(amount)};
         }
         if(appointment != null){
             appointmentJSON={appointment:appointment};
@@ -67,13 +67,15 @@ const PaymentAdminList = () =>{
         let body = {...amountJSON, ...appointmentJSON};
         const requestOptions = {
             method: 'PUT',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body: JSON.stringify(body)
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID+'/payments/'+paymentID, requestOptions)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 if(data){
                     const {error}:any = data;
                     if(error){
@@ -96,7 +98,8 @@ const PaymentAdminList = () =>{
     function deletePayment(paymentID:any){
         const requestOptions = {
             method: 'DELETE',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
         }
 
         fetch(config.apiUrl+'osbb/'+osbbID+'/payments/'+paymentID, requestOptions)
