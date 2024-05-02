@@ -52,6 +52,8 @@ type OSBB struct {
 
 	Building     Building       `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"building"`
 	Announcement []Announcement `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"announcements"`
+	Poll         []Poll         `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"polls"`
+	Payment      []Payment      `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"payments"`
 
 	OSBBHead User   `gorm:"foreignKey:OSBBID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"osbb_head"`
 	Name     Name   `json:"name"`

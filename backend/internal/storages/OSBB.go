@@ -479,6 +479,21 @@ func (s *OSBBStorage) UpdatePayment(PaymentID uint64, opts *entity.EventPaymentU
 	return stmt.Updates(payment).Error
 }
 
+func (s *OSBBStorage) DeletePayment(PaymentID uint64, filter services.PaymentFilter) error {
+	stmt := s.db.Model(&entity.Payment{})
+	var payment *entity.Payment
+
+	if PaymentID != 0 {
+		stmt = stmt.Where("id = ?", PaymentID)
+	}
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
+	}
+
+	return stmt.Unscoped().Delete(&payment).Error
+}
+
 func (s *OSBBStorage) CreateUserPurchase(userPayment *entity.Purchase) error {
 	return s.db.Create(userPayment).Error
 }
@@ -492,7 +507,7 @@ func (s *OSBBStorage) ListPurchases(filter services.PurchaseFilter) ([]entity.Ev
 	if filter.PaymentStatus != nil {
 		if *filter.PaymentStatus == entity.All && filter.PaymentID != nil {
 			err := s.db.Raw(`
-					SELECT pt.id as payment_id, pr.id as purchase_id,
+					SELECT pt.id as payment_id, pr.id as purchase_id, pr.user_id as user_id,
 							pt.amount as amount, pr.payment_status as payment_status, pt.appointment as appointment, 
 							pr.created_at as created_at, pr.updated_at as updated_at
 					FROM payments pt
@@ -504,7 +519,7 @@ func (s *OSBBStorage) ListPurchases(filter services.PurchaseFilter) ([]entity.Ev
 			}
 		} else if *filter.PaymentStatus == entity.All && filter.PaymentID == nil {
 			err := s.db.Raw(`
-					SELECT pt.id as payment_id, pr.id as purchase_id,
+					SELECT pt.id as payment_id, pr.id as purchase_id, pr.user_id as user_id,
 							pt.amount as amount, pr.payment_status as payment_status, pt.appointment as appointment, 
 							pr.created_at as created_at, pr.updated_at as updated_at
 					FROM payments pt
@@ -517,7 +532,7 @@ func (s *OSBBStorage) ListPurchases(filter services.PurchaseFilter) ([]entity.Ev
 		} else {
 			if filter.PaymentID == nil {
 				err := s.db.Raw(`
-					SELECT pt.id as payment_id, pr.id as purchase_id,
+					SELECT pt.id as payment_id, pr.id as purchase_id, pr.user_id as user_id,
 							pt.amount as amount, pr.payment_status as payment_status, pt.appointment as appointment, 
 							pr.created_at as created_at, pr.updated_at as updated_at
 					FROM payments pt
@@ -529,7 +544,7 @@ func (s *OSBBStorage) ListPurchases(filter services.PurchaseFilter) ([]entity.Ev
 				}
 			} else {
 				err := s.db.Raw(`
-					SELECT pt.id as payment_id, pr.id as purchase_id,
+					SELECT pt.id as payment_id, pr.id as purchase_id, pr.user_id as user_id,
 							pt.amount as amount, pr.payment_status as payment_status, pt.appointment as appointment, 
 							pr.created_at as created_at, pr.updated_at as updated_at
 					FROM payments pt
@@ -581,4 +596,28 @@ func (s *OSBBStorage) UpdatePurchase(PurchaseID uint64, opts *entity.EventUserPu
 	}
 
 	return stmt.Updates(purchase).Error
+}
+
+func (s *OSBBStorage) DeletePurchase(PurchaseID uint64, filter services.PurchaseFilter) error {
+	stmt := s.db.Model(&entity.Purchase{})
+	var payment *entity.Purchase
+
+	if PurchaseID != 0 {
+		stmt = stmt.Where("id = ?", PurchaseID)
+	}
+
+	if filter.OSBBID != nil {
+		stmt = stmt.Where("osbb_id = ?", *filter.OSBBID)
+	}
+
+	if filter.PaymentID != nil {
+		stmt = stmt.Where("payment_id = ?", *filter.PaymentID)
+	}
+	if filter.UserID != nil {
+		stmt = stmt.Where("user_id = ?", *filter.UserID)
+	}
+	if filter.PaymentStatus != nil {
+		stmt = stmt.Where("payment_status = ?", *filter.PaymentStatus)
+	}
+	return stmt.Unscoped().Delete(&payment).Error
 }

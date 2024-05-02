@@ -69,6 +69,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		osbb.POST("/:osbbID/payments", h.userIdentity, h.addPayment)
 		osbb.GET("/:osbbID/payments", h.userIdentity, h.getAllPayments)
 		osbb.PUT("/:osbbID/payments/:paymentID", h.userIdentity, h.updatePayment)
+		osbb.DELETE("/:osbbID/payments/:paymentID", h.userIdentity, h.deletePayment)
 
 		osbb.POST("/:osbbID/payments/:paymentID/purchase", h.userIdentity, h.makePurchase)
 		osbb.POST("/:osbbID/purchase-user", h.userIdentity, h.getAllPurchasesByUser)

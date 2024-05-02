@@ -936,7 +936,8 @@ func (s *osbbService) ListPayments(UserID, OSBBID uint64) ([]entity.Payment, err
 
 func (s *osbbService) UpdatePayment(UserID, OSBBID, PaymentID uint64, inputPayment entity.EventPaymentUpdatePayload) error {
 	logger := s.logger.Named("UpdatePayment").
-		With("user_id", UserID).With("osbb_id", OSBBID).With("payment_id", PaymentID)
+		With("user_id", UserID).With("osbb_id", OSBBID).With("payment_id", PaymentID).
+		With("input_payment", inputPayment)
 
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
@@ -961,6 +962,42 @@ func (s *osbbService) UpdatePayment(UserID, OSBBID, PaymentID uint64, inputPayme
 	if err != nil {
 		logger.Error("failed to update purchase", "error", err)
 		return errs.Err(err).Code("Failed to update purchase").Kind(errs.Database)
+	}
+	return nil
+}
+
+func (s *osbbService) DeletePayment(UserID, OSBBID, PaymentID uint64) error {
+	logger := s.logger.Named("DeletePayment").
+		With("user_id", UserID).With("osbb_id", OSBBID).With("payment_id", PaymentID)
+
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get user", "error", err)
+		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
+	}
+	if user == nil {
+		logger.Error("user do not exist", "error", err)
+		return errs.M("user not found").Code("user do not exist").Kind(errs.Database)
+	}
+	payment, err := s.businessStorage.OSBB.GetPayment(PaymentID,
+		PaymentFilter{OSBBID: &OSBBID})
+	if err != nil {
+		logger.Error("failed to get payment", "error", err)
+		return errs.Err(err).Code("Failed to get payment").Kind(errs.Database)
+	}
+	if payment == nil {
+		logger.Error("payment do not exist in current osbb", "error", err)
+		return errs.M("payment not found in current osbb").Code("payment do not exist").Kind(errs.Database)
+	}
+	err = s.businessStorage.OSBB.DeletePurchase(0, PurchaseFilter{OSBBID: &OSBBID, PaymentID: &PaymentID})
+	if err != nil {
+		logger.Error("failed to delete purchase", "error", err)
+		return errs.Err(err).Code("Failed to delete purchase").Kind(errs.Database)
+	}
+	err = s.businessStorage.OSBB.DeletePayment(payment.ID, PaymentFilter{})
+	if err != nil {
+		logger.Error("failed to delete payment", "error", err)
+		return errs.Err(err).Code("Failed to delete payment").Kind(errs.Database)
 	}
 	return nil
 }
@@ -1038,6 +1075,10 @@ func (s *osbbService) ListPurchasesByOSBBHead(UserID, OSBBID uint64, filter enti
 	if user.Role != entity.UserRoleOSBBHead {
 		logger.Error("User can not get list of purchase", "error", err)
 		return nil, errs.M("user not osbb head").Code("User can not get list of purchase").Kind(errs.Private)
+	}
+	if filter.UserID == nil {
+		filter.UserID = new(uint64)
+		*filter.UserID = UserID
 	}
 	payments, err := s.businessStorage.OSBB.ListPurchases(PurchaseFilter{
 		OSBBID:        &OSBBID,
