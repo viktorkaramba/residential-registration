@@ -25,7 +25,8 @@ const PaymentForm = ({addPayment, setIsAddedChecked}:any) =>{
         const appointment = event.target.appointment.value;
         const requestOptions = {
             method: 'POST',
-            headers: config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body: JSON.stringify({ amount: parseFloat(amount), appointment: appointment})
         }
         fetch(config.apiUrl+'osbb/'+osbbID+'/payments', requestOptions)
