@@ -130,14 +130,12 @@ const PaymentUserList = () =>{
                                     updated_at: updated_at
                                 }
                             });
-
-                        console.log(isAsc);
-                        if(isAsc){
-                            setPayments(newPayments.sort(compareCreatedAtAsc));
-                            setFilterPayments(payments);
+                        if(!isAsc){
+                            setPayments(newPayments);
+                            setFilterPayments(newPayments.sort(compareCreatedAtAsc));
                         }else {
-                            setPayments(newPayments.sort(compareCreatedAtDesc));
-                            setFilterPayments(payments);
+                            setPayments(newPayments);
+                            setFilterPayments(newPayments.sort(compareCreatedAtDesc));
                         }
                     }else {
                         setPayments([]);
@@ -173,20 +171,12 @@ const PaymentUserList = () =>{
         if((dateFromChoice==null && dateToChoice==null) || (dateFromChoice==='' && (dateToChoice==='' || dateToChoice==null))
         || ((dateFromChoice===''|| dateFromChoice==null) && dateToChoice===null)||
             (dateFromChoice==null && (dateToChoice==='' || dateToChoice==null))){
-            return payments;
+            return filterPayments;
         }
     }
 
     function updatePurchase (newPurchase: any){
         if(purchaseChoice === "all"){
-            setPayments((currentPurchase:any) => {
-                return currentPurchase.map((purchase:any)=>{
-                    if(purchase.purchase_id === newPurchase.purchase_id){
-                        return {...purchase}
-                    }
-                    return purchase
-                })
-            })
             setFilterPayments((currentPurchase:any) => {
                 return currentPurchase.map((purchase:any)=>{
                     if(purchase.purchase_id === newPurchase.purchase_id){
@@ -195,10 +185,8 @@ const PaymentUserList = () =>{
                     return purchase
                 })
             })
+
         }else {
-            setPayments((currentPurchase: any) => {
-                return currentPurchase.filter((purchase:any) => purchase.purchase_id !== newPurchase.purchase_id)
-            })
             setFilterPayments((currentPurchase: any) => {
                 return currentPurchase.filter((purchase:any) => purchase.purchase_id !== newPurchase.purchase_id)
             })
@@ -233,27 +221,25 @@ const PaymentUserList = () =>{
 
     useEffect(() => {
         handleFilter();
-    }, [userChoice, purchaseChoice]);
+    }, [userChoice, purchaseChoice, handleFilter]);
 
     useEffect(() => {
-        if(isAsc){
-            setFilterPayments(handleDateFilter().sort(compareCreatedAtAsc));
-        }else {
-            setFilterPayments(handleDateFilter().sort(compareCreatedAtDesc));
-        }
-    }, [dateFromChoice, dateToChoice, handleFilter]);
+        setFilterPayments(handleDateFilter());
+    }, [dateFromChoice, dateToChoice]);
 
     useEffect(() => {
         fetchAllUsers();
     }, [fetchAllUsers]);
 
-    useEffect(() => {
-        if(!isAsc){
-            setFilterPayments(filterPayments.sort(compareCreatedAtAsc));
-        }else {
-            setFilterPayments(filterPayments.sort(compareCreatedAtDesc));
-        }
 
+    useEffect(() => {
+        if(filterPayments.length !== 0){
+            if(isAsc){
+                setFilterPayments(filterPayments.sort(compareCreatedAtAsc));
+            }else {
+                setFilterPayments(filterPayments.sort(compareCreatedAtDesc));
+            }
+        }
     }, [filterPayments, isAsc]);
 
     return(
@@ -262,8 +248,8 @@ const PaymentUserList = () =>{
                 <div className='poll_content grid'>
                     <div className={'flex'} >
                         <div style={{flexGrow:1}}>
-                            {isAsc && <RiSortAsc size={"30px"} style={{color:"var(--blue-color)"}} onClick={()=>setIsAsc(!isAsc)}/>}
-                            {!isAsc && <RiSortDesc size={"30px"} style={{color:"var(--blue-color)"}} onClick={()=>setIsAsc(!isAsc)}/>}
+                            {!isAsc && <RiSortAsc size={"30px"} style={{color:"var(--blue-color)"}} onClick={()=>setIsAsc(!isAsc)}/>}
+                            {isAsc && <RiSortDesc size={"30px"} style={{color:"var(--blue-color)"}} onClick={()=>setIsAsc(!isAsc)}/>}
                         </div>
                         {user.role === "osbb_head" && <>
                             <div className={'payment-date-item m-5'} style={{flexGrow:1}}>

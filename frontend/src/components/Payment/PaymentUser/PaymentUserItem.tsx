@@ -3,30 +3,33 @@ import config from "../../../utils/config";
 import err from "../../../utils/err";
 import {useAppContext} from "../../../utils/AppContext";
 import {format} from "date-fns";
+import {useNavigate} from "react-router-dom";
 
 const PaymentUserItem = ({payment, updatePurchase}:any) => {
     // @ts-ignore
     const {osbbID, user} = useAppContext()
+    const navigate = useNavigate();
 
     function updatePurchaseRequest(purchaseID:any, payment_status:any){
 
         const requestOptions = {
             method: 'PUT',
-            headers:config.headers,
+            headers:{ 'Content-Type': 'application/json',
+                'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
             body: JSON.stringify({ payment_status: payment_status})
         }
         let isOsbbHead="";
         if(user.role === 'osbb_head'){
             isOsbbHead="-osbb-head";
         }
-        fetch(config.apiUrl+'osbb/'+osbbID+'/payments/'+payment.payment_id+'/purchase'  , requestOptions)
+        fetch(config.apiUrl+'osbb/'+osbbID+'/payments/'+payment.payment_id+'/purchase'+isOsbbHead  , requestOptions)
             .then(response => response.json())
             .then(data => {
                 console.log(data)
                 if(data){
                     const {error}:any = data;
                     if(error){
-                        err.HandleError({errorMsg:error, func:updatePurchase});
+                        err.HandleError({errorMsg:error, func:updatePurchase,navigate:navigate});
                     }else {
                         payment.payment_status = payment_status
                         updatePurchase(payment)

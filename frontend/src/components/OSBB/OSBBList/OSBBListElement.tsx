@@ -33,7 +33,7 @@ const OSBBListElement = ((osbb:any) => {
                     <span>{osbb.building.Address}</span>
                 </div>
             </div>
-            {(!isLogin || !user.is_approved) &&
+            {(!isLogin || !user?.is_approved) &&
                 <button className='button' onClick={() => handleConnectOSBB(osbb.id, 'InhabitantForm')}>
                     <span className="button_content">Приєднатися до ОСББ</span>
             </button>}
