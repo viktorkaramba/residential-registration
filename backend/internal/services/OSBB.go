@@ -115,7 +115,7 @@ func (s *osbbService) UpdateOSBB(UserID uint64, input entity.EventOSBBUpdatePayl
 		logger.Error("failed to validate update osbb profile data", "error", err)
 		return errs.Err(err).Code("failed to validate update osbb profile data").Kind(errs.Validation)
 	}
-	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
+	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{})
 	if err != nil {
 		logger.Error("failed to get user", "error", err)
 		return errs.Err(err).Code("Failed to get user").Kind(errs.Database)
