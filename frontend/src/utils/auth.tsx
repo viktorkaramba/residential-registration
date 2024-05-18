@@ -40,7 +40,7 @@ function Logout(navigate:any):any{
         });
 }
 
-function RequireAuth({ children }:any) {
+    function RequireAuth({ children }:any) {
     // @ts-ignore
     const { isLogin, setPrevPage } = useAppContext();
     const location = useLocation();

@@ -43,7 +43,7 @@ const PaymentUserItem = ({payment, updatePurchase}:any) => {
             <div className="inner-wrap">
                 <div className='flex flex-sb flex-wrap'>
                     <div className='announcements-item-info-item fw-7 fs-26'>
-                        <span> {payment.amount}UAH</span>
+                        <span> {payment.amount} UAH</span>
                     </div>
                     <div className='announcements-item-info-item fw-6 fs-15'>
                         <span> {format(payment.created_at, 'MMMM do yyyy, hh:mm:ss a')}</span>

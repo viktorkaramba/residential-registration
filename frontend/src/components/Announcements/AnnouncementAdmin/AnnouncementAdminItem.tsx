@@ -1,26 +1,58 @@
 import React, {useEffect, useState} from "react";
 import {format} from "date-fns";
-import { MdAddCircle } from "react-icons/md";
-import { IoListCircleSharp } from "react-icons/io5";
 import Checkbox from '@mui/material/Checkbox';
 import AnnouncementForm from "../AnnouncementForm/AnnouncementForm";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import {Button} from "@mui/material";
 
 const AnnouncementAdminItem = ({announcement, deleteAnnouncement, updateAnnouncement}:any) => {
     const [newTitle, setNewTitle] = useState(announcement.Title);
     const [newContent, setNewContent] = useState(announcement.Content);
     const [isAnnouncementChecked, setIsAnnouncementChecked] = useState(false);
     const [isAddedChecked, setIsAddedChecked] = useState(false);
+    const [show, setShow] = useState(false)
+
+    function handleClickDelete(){
+        setShow(true)
+    }
 
     function handleDelete(){
         deleteAnnouncement(announcement.ID);
     }
-
     function handleUpdate(){
         updateAnnouncement(announcement.ID, newTitle, newContent, setIsAnnouncementChecked)
     }
 
+    const handleClose = ()=>{
+        setShow(false)
+    }
     return(
         <div>
+            <Dialog
+                open={show}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    <div className={'text-black fw-7 fs-24 dialog-style'}>{"Попередження"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <div className={'text-black fw-4 fs-20 dialog-style'}>Ви впевнені, що хочете видалити оголошення?</div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}><span className={'fw-4 fs-16 dialog-style'}>Відмінити</span></Button>
+                    <Button onClick={handleDelete} autoFocus>
+                        <span className={'fw-4 fs-16 dialog-style'}>Видалити</span>
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <div className={'flex flex-end m-5'}>
                 {!isAddedChecked &&
                     <>
@@ -79,7 +111,7 @@ const AnnouncementAdminItem = ({announcement, deleteAnnouncement, updateAnnounce
                             <span className="button_content announcement_button_content">Оновити</span>
                         </button>
                     }
-                    <button className='button announcement_button' type="submit" onClick={()=>handleDelete()} name="update_annpuncement">
+                    <button className='button announcement_button' type="submit" onClick={()=>handleClickDelete()} name="update_annpuncement">
                         <span className="button_content announcement_button_content">Видалити</span>
                     </button>
                 </div>

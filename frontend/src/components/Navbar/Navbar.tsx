@@ -39,7 +39,7 @@ const Navbar = () =>{
                             <Link to ={'/profile'} className='nav-link text-uppercase text-white fs-22 fw-6 ls-1'>У кабінет</Link>
                         </li>
                         <li className='nav-item'>
-                            <Link to ={'/profile'} className='nav-link text-uppercase text-white fs-22 fw-6 ls-1'>Контакти</Link>
+                            <Link to ={'/contacts'} className='nav-link text-uppercase text-white fs-22 fw-6 ls-1'>Контакти</Link>
                         </li>
                         {isLogin &&
                             <li className='nav-item'>

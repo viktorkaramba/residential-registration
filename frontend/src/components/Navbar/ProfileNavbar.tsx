@@ -5,7 +5,7 @@ import auth from "../../utils/auth";
 import {Link, useNavigate} from "react-router-dom";
 import {HiOutlineMenuAlt3} from "react-icons/hi";
 
-const Navbar = () =>{
+const ProfileNavbar = () =>{
     // @ts-ignore
     const {isLogin, setIsLogin} = useAppContext();
     const navigate = useNavigate();
@@ -38,7 +38,7 @@ const Navbar = () =>{
                         <Link to ={'/osbbs/profile'} className='nav-link text-uppercase text-white fs-22 fw-6'>Профіль ОСББ</Link>
                     </li>
                         <li className='nav-item'>
-                        <Link to ={'/profile'} className='nav-link text-uppercase text-white fs-22 fw-6 ls-1'>Контакти</Link>
+                        <Link to ={'/contacts'} className='nav-link text-uppercase text-white fs-22 fw-6 ls-1'>Контакти</Link>
                     </li>
                     {isLogin &&
                         <li className='nav-item'>
@@ -54,4 +54,4 @@ const Navbar = () =>{
     )
 }
 
-export default Navbar
+export default ProfileNavbar

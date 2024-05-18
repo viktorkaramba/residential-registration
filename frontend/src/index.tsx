@@ -12,6 +12,8 @@ import {AppProvider} from "./utils/AppContext";
 import OSBBProfile from "./pages/OSBBProfile/OSBBProfile";
 import Profile from "./pages/Profile/Profile";
 import auth from "./utils/auth";
+import ContactsPage from "./pages/Contacts/Contacts";
+import Contacts from "./pages/Contacts/Contacts";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -34,6 +36,7 @@ root.render(
                     <Profile/>
                     </auth.RequireAuth>}
                 />
+                <Route path="/contacts" element={<Contacts/>}/>
             </Routes>
     </BrowserRouter>
     </AppProvider>

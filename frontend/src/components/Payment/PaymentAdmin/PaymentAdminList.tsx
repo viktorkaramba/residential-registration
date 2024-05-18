@@ -105,6 +105,7 @@ const PaymentAdminList = () =>{
         fetch(config.apiUrl+'osbb/'+osbbID+'/payments/'+paymentID, requestOptions)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 const {error}:any = data;
                 if(error){
                     err.HandleError({errorMsg:error, func:deletePayment, navigate:navigate});

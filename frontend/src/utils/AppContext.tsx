@@ -65,7 +65,6 @@ const AppProvider = ({children}: { children?: React.ReactNode }) => {
         }
     }, [token]);
 
-
     useEffect(() => {
         if(user === null && isLogin) {
             fetchUserProfile();

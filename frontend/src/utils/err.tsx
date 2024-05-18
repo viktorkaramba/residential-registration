@@ -10,6 +10,7 @@ const errorsMessages ={
     tokenNotFound: 'token not found',
     incorrectPassword:'incorrect password',
     osbbAlreadyExist:'idx_osbbs_edrpou',
+    ibanAlreadyExist:'osbb with this IBAN already exist',
     phoneNumberAlreadyExist:'user with this number already exist',
     userWaitApprove:'user wait approve',
     userNotApproved:'user not approved',

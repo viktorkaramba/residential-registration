@@ -2,12 +2,26 @@ import React, {useEffect, useState} from "react";
 import {format} from "date-fns";
 import Checkbox from '@mui/material/Checkbox';
 import PaymentForm from "../PaymentForm/PaymentForm";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import {Button} from "@mui/material";
 
 const PaymentAdminItem = ({payment, deletePayment, updatePayment, addPayment}:any) => {
     const [newAmount, setNewAmount] = useState(payment.Amount);
     const [newAppointment, setNewAppointment] = useState(payment.Appointment);
     const [isPaymentChecked, setIsPaymentChecked] = useState(false);
     const [isAddedChecked, setIsAddedChecked] = useState(false);
+    const [show, setShow] = useState(false)
+
+    function handleClickDelete(){
+        setShow(true)
+    }
+    const handleClose = ()=>{
+        setShow(false)
+    }
 
     function handleDelete(){
         deletePayment(payment.ID);
@@ -19,6 +33,27 @@ const PaymentAdminItem = ({payment, deletePayment, updatePayment, addPayment}:an
 
     return(
         <div>
+            <Dialog
+                open={show}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    <div className={'text-black fw-7 fs-24 dialog-style'}>{"Попередження"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <div className={'text-black fw-4 fs-20 dialog-style'}>Ви впевнені, що хочете видалити послугу?</div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}><span className={'fw-4 fs-16 dialog-style'}>Відмінити</span></Button>
+                    <Button onClick={handleDelete} autoFocus>
+                        <span className={'fw-4 fs-16 dialog-style'}>Видалити</span>
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <div className={'flex flex-end m-5'}>
                 {!isAddedChecked &&
                     <>
@@ -39,7 +74,7 @@ const PaymentAdminItem = ({payment, deletePayment, updatePayment, addPayment}:an
                         <div className="inner-wrap">
                             <div className='flex flex-sb flex-wrap'>
                                 <div className='announcements-item-info-item fw-7 fs-26'>
-                                    <span> {newAmount}UAH</span>
+                                    <span> {newAmount} UAH</span>
                                 </div>
                                 <div className='announcements-item-info-item fw-6 fs-15'>
                                     <span> {format(payment.CreatedAt, 'MMMM do yyyy, hh:mm:ss a')}</span>
@@ -75,7 +110,7 @@ const PaymentAdminItem = ({payment, deletePayment, updatePayment, addPayment}:an
                             <span className="button_content announcement_button_content">Оновити</span>
                         </button>
                     }
-                    <button className='button announcement_button' type="submit" onClick={()=>handleDelete()} name="delete_payment">
+                    <button className='button announcement_button' type="submit" onClick={()=>handleClickDelete()} name="delete_payment">
                         <span className="button_content announcement_button_content">Видалити</span>
                     </button>
                 </div>

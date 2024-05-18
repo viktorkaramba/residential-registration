@@ -62,15 +62,6 @@ func (s *userStorage) GetUser(UserID uint64, filter services.UserFilter) (*entit
 	return user, err
 }
 
-func (s *userStorage) GetUserByPhoneNumber(phoneNumber entity.PhoneNumber) (*entity.User, error) {
-	User := &entity.User{}
-	err := s.db.Model(&entity.User{}).Where(entity.User{PhoneNumber: phoneNumber}).First(User).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
-	}
-	return User, err
-}
-
 func (s *userStorage) ListUsers(filter services.UserFilter) ([]entity.User, error) {
 	stmt := s.db.
 		Model(&entity.User{})

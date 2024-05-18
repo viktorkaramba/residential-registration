@@ -14,10 +14,12 @@ const OSBBDescription = () => {
     const {token} = useAppContext();
     const navigate = useNavigate();
     const [errorEDRPOU, setErrorEDRPOU] = useState(false);
+    const [errorIBAN, setErrorIBAN] = useState(false);
     const [osbb, setOSBB] = useState<any>(null);
     const [isChecked, setIsChecked] = useState(false);
     const [newName, setNewName] = useState(osbb?.name);
     const [newEDRPOU, setNewEDRPOU] = useState(osbb?.edrpou);
+    const [newIBAN, setNewIBAN] = useState(osbb?.iban);
     const [newRent, setNewRent] = useState(osbb?.rent);
     const [newPostAddress, setNewPostAddress] = useState(osbb?.building.Address);
     const [newAddress, setNewAddress] = useState(osbb?.building.Address);
@@ -39,12 +41,13 @@ const OSBBDescription = () => {
                         err.HandleError({errorMsg:error, func:fetchOSBB, navigate:navigate});
                     }else {
                         if(data){
-                            const {announcements, building, createdAt, edrpou, id, name, osbb_head, rent, photo, updatedAt}:any = data;
+                            const {announcements, building, createdAt, edrpou, iban, id, name, osbb_head, rent, photo, updatedAt}:any = data;
                             const newOSBB = {
                                 announcements: announcements,
                                 building: building,
                                 createdAt: createdAt,
                                 edrpou: edrpou,
+                                iban: iban,
                                 id : id,
                                 name: name,
                                 osbb_head: osbb_head,
@@ -56,6 +59,7 @@ const OSBBDescription = () => {
                             setOsbbID(newOSBB.id);
                             setNewName(newOSBB.name);
                             setNewEDRPOU(newOSBB.edrpou);
+                            setNewIBAN(newOSBB.iban);
                             setNewRent(newOSBB.rent);
                             setNewAddress(newOSBB.building.Address)
                             setNewPostAddress(newOSBB.building.Address)
@@ -74,8 +78,9 @@ const OSBBDescription = () => {
         fetchOSBB();
     }, []);
 
-    function updateOSBBInfo({name, edrpou, rent,address, photo}:any){
-
+    function updateOSBBInfo({name, edrpou, iban, rent,address, photo}:any){
+        setErrorEDRPOU(false)
+        setErrorIBAN(false)
         let body = null;
         if(name != null){
             body = JSON.stringify({name: name});
@@ -83,8 +88,11 @@ const OSBBDescription = () => {
         if(edrpou != null){
             body = JSON.stringify({edrpou: edrpou});
         }
+        if(iban != null){
+            body = JSON.stringify({iban: iban});
+        }
         if(rent != null){
-            body = JSON.stringify({surname: rent});
+            body = JSON.stringify({rent: rent});
         }
         if(address != null){
             body = JSON.stringify({address: address});
@@ -92,6 +100,7 @@ const OSBBDescription = () => {
         if(photo != null){
             body = JSON.stringify({photo: photo});
         }
+        console.log(body)
         const requestOptions = {
             method: 'PUT',
             headers:{ 'Content-Type': 'application/json',
@@ -99,14 +108,19 @@ const OSBBDescription = () => {
             body: body,
         }
 
-        fetch(config.apiUrl+'osbb/'+osbbID, requestOptions)
+        fetch(config.apiUrl+'osbb/profile', requestOptions)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 const {error}:any = data;
                 if(error){
                     if(error.includes(err.errorsMessages.osbbAlreadyExist)) {
                         setErrorEDRPOU(true);
-                    }else {
+                    }
+                    else if(error.includes(err.errorsMessages.ibanAlreadyExist)) {
+                        setErrorIBAN(true);
+                    }
+                    else {
                         err.HandleError({errorMsg:error, func:updateOSBBInfo, navigate:navigate});
                     }
                 }else {
@@ -141,8 +155,12 @@ const OSBBDescription = () => {
                                 <td>{newEDRPOU}</td>
                             </tr>
                             <tr>
+                                <td>IBAN :</td>
+                                <td>{newIBAN}</td>
+                            </tr>
+                            <tr>
                                 <td>Ціна за м^2 :</td>
-                                <td>{newRent} коп</td>
+                                <td>{newRent} UAH</td>
                             </tr>
                             <tr>
                                 <td>Адреса :</td>
@@ -185,6 +203,30 @@ const OSBBDescription = () => {
                                             </div>
                                         }
                                         <button className='button' onClick={()=>updateOSBBInfo({edrpou:newEDRPOU})}>
+                                            <span className="button_content"> Оновити</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr >
+                                <td>IBAN :</td>
+                                <td className={'form'}>
+                                    <div className="inner-wrap">
+                                        <input
+                                            maxLength={256}
+                                            minLength={2}
+                                            name="iban_update_content"
+                                            placeholder="Новий IBAN"
+                                            type='text'
+                                            onChange={e=>setNewIBAN(e.target.value)}
+                                            value={newIBAN}
+                                            id='iban_update_content'/>
+                                        {errorIBAN &&
+                                            <div className={'error'}>
+                                                ОСББ із таким IBAN уже додане!
+                                            </div>
+                                        }
+                                        <button className='button' onClick={()=>updateOSBBInfo({iban:newIBAN})}>
                                             <span className="button_content"> Оновити</span>
                                         </button>
                                     </div>

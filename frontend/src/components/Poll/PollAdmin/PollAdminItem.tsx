@@ -4,6 +4,12 @@ import Checkbox from "@mui/material/Checkbox";
 import {format} from "date-fns";
 import '../Poll.css';
 import {useAppContext} from "../../../utils/AppContext";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import {Button} from "@mui/material";
 
 
 const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
@@ -14,6 +20,14 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
     const [errorDate, setErrorDate]= useState(false);
     // @ts-ignore
     const {setPoll, setActivePollElement} = useAppContext();
+    const [show, setShow] = useState(false)
+
+    function handleClickDelete(){
+        setShow(true)
+    }
+    const handleClose = ()=>{
+        setShow(false)
+    }
 
     function handleDelete(){
         deletePoll(poll.id);
@@ -38,6 +52,27 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
 
     return(
         <div>
+            <Dialog
+                open={show}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    <div className={'text-black fw-7 fs-24 dialog-style'}>{"Попередження"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <div className={'text-black fw-4 fs-20 dialog-style'}>Ви впевнені, що хочете видалити опитування?</div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}><span className={'fw-4 fs-16 dialog-style'}>Відмінити</span></Button>
+                    <Button onClick={handleDelete} autoFocus>
+                        <span className={'fw-4 fs-16 dialog-style'}>Видалити</span>
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <div className={'flex flex-end m-5'}>
                 <>
                     <Checkbox
@@ -120,7 +155,7 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
                 <button className='button poll_button_form' style={{marginRight:'5px'}} type="submit" onClick={()=>toResult()} name="to_result">
                     <span className="button_content poll_button_content_form">Результати</span>
                 </button>
-                <button className='button announcement_button' type="submit" onClick={()=>handleDelete()} name="update_annpuncement">
+                <button className='button announcement_button' type="submit" onClick={()=>handleClickDelete()} name="update_annpuncement">
                     <span className="button_content announcement_button_content">Видалити</span>
                 </button>
             </div>

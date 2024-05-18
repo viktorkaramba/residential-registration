@@ -34,6 +34,12 @@ func (s *authService) AddUser(OSBBID uint64, inputUser entity.EventUserPayload) 
 		if isUserExist.IsApproved == nil {
 			logger.Error("user wait approve", "error", err)
 			return nil, errs.M("user wait approve").Code("user wait approve").Kind(errs.Database)
+		} else if *isUserExist.IsApproved {
+			logger.Error("user already approved", "error", err)
+			return nil, errs.M("user already approved").Code("user already approve").Kind(errs.Database)
+		} else {
+			logger.Error("user not approved", "error", err)
+			return nil, errs.M("user not approve").Code("user not approve").Kind(errs.Database)
 		}
 	}
 
@@ -93,7 +99,7 @@ func (s *authService) Login(inputLogin entity.EventLoginPayload) (*entity.User, 
 
 	if user.IsApproved == nil {
 		logger.Error("user wait approve", "error", err)
-		return nil, errs.M("user not approve").Code("Failed to login").Kind(errs.Private)
+		return nil, errs.M("user wait approve").Code("Failed to login").Kind(errs.Private)
 	}
 
 	if !*user.IsApproved {

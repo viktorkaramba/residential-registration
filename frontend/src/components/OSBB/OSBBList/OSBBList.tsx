@@ -19,7 +19,7 @@ const OSBBList = () =>{
                         err.HandleError({errorMsg:error, func:fetchOSBBS, navigate:navigate});
                     }else {
                         if(data){
-                            const newOSBBS = data.slice(0, 20).map(
+                            const newOSBBS = data.map(
                                 (osbbSingle: { id: any; building: any; announcements: any; osbb_head: any; name: any; edrpou: any; photo: any}) => {
                                     const {id, building, announcements, osbb_head, name, edrpou, photo} = osbbSingle;
                                     return {

@@ -1,22 +1,59 @@
 import React, {useState} from "react";
 import Checkbox from "@mui/material/Checkbox";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import {Button} from "@mui/material";
 
 const TestAnswerAdminItem = ({content, id, count_test_answers, updateTestAnswer, deleteTestAnswer}:any) =>{
     const [isChecked, setIsChecked] = useState(false);
     const [newContent, setNewContent] = useState(content);
     const [errorDelete, setErrorDelete] = useState(false);
+    const [show, setShow] = useState(false)
+    const [pollID, setPollID] = useState(null)
 
-    function handleDelete(id: any){
+    function handleClickDelete(id:any){
+        setShow(true)
+        setPollID(id)
+    }
+    const handleClose = ()=>{
+        setShow(false)
+    }
+
+    function handleDelete(){
         if(count_test_answers<3){
             setErrorDelete(true)
         }else {
             setErrorDelete(false)
-            deleteTestAnswer(id);
+            deleteTestAnswer(pollID);
         }
     }
 
     return(
         <li className={'flex flex-sb'}>
+            <Dialog
+                open={show}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    <div className={'text-black fw-7 fs-24 dialog-style'}>{"Попередження"}</div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <div className={'text-black fw-4 fs-20 dialog-style'}>Ви впевнені, що хочете видалити тестову відповідь?</div>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}><span className={'fw-4 fs-16 dialog-style'}>Відмінити</span></Button>
+                    <Button onClick={handleDelete} autoFocus>
+                        <span className={'fw-4 fs-16 dialog-style'}>Видалити</span>
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <label  className={'flex'}>
                 <Checkbox
                     name="announcement_check_box"
@@ -50,7 +87,7 @@ const TestAnswerAdminItem = ({content, id, count_test_answers, updateTestAnswer,
                     Кількість відповідей повинна бути більше ніж 2
                 </div>
             }
-            <button className='button' type="submit" name="delete_test_answer"   onClick={()=>handleDelete(id)}>
+            <button className='button' type="submit" name="delete_test_answer"   onClick={()=>handleClickDelete(id)}>
                 <span className="button_content">Видалити</span>
             </button>
         </li>

@@ -8,6 +8,7 @@ import AnnouncementForm from "../AnnouncementForm/AnnouncementForm";
 import {MdAddCircle} from "react-icons/md";
 import {IoListCircleSharp} from "react-icons/io5";
 
+
 const AnnouncementAdminList = () =>{
     // @ts-ignore
     const {osbbID} = useAppContext()
@@ -15,6 +16,8 @@ const AnnouncementAdminList = () =>{
     const [announcements, setAnnouncements] = useState([]);
     const navigate = useNavigate();
     const [isAddedChecked, setIsAddedChecked] = useState(false);
+
+
 
     const fetchAnnouncements = useCallback(async() => {
         try{
@@ -115,20 +118,23 @@ const AnnouncementAdminList = () =>{
         })
     }
 
+
     useEffect(() => {
         fetchAnnouncements();
     }, [fetchAnnouncements]);
 
     return(
         <section className='announcements-list'>
+
             <div className='container'>
+
                 <div className={'flex flex-end m-5'}>
                     {!isAddedChecked && <MdAddCircle fontSize={'40px'} style={{color:'var(--blue-color)'}} onClick={()=>setIsAddedChecked(!isAddedChecked)}/>}
                     {isAddedChecked &&
                         <IoListCircleSharp fontSize={'40px'} style={{color:'var(--blue-color)'}} onClick={()=>setIsAddedChecked(!isAddedChecked)}/>}
 
                 </div>
-                {isAddedChecked &&  <AnnouncementForm addAnnouncement={addAnnouncement}/>}
+                {isAddedChecked &&  <AnnouncementForm addAnnouncement={addAnnouncement} />}
                 {!isAddedChecked &&  <div className='announcements-content grid'>
                     {announcements.length === 0 && <h1 style={{color:"white"}}>Немає оголошень</h1>}
                     {
@@ -137,7 +143,8 @@ const AnnouncementAdminList = () =>{
                                 <AnnouncementAdminItem key={announcement.ID}
                                                        announcement={announcement}
                                                        deleteAnnouncement={deleteAnnouncement}
-                                                       updateAnnouncement={updateAnnouncement}/>
+                                                       updateAnnouncement={updateAnnouncement}
+                                />
                             )
                         })
                     }
