@@ -23,7 +23,7 @@ type (
 		Salt           string `env:"SALT" env-default:""`
 	}
 	Server struct {
-		Port string `env:"PORT" env-default"8080"`
+		Port string `env:"PORT" env-default:"8080"`
 	}
 	Token struct {
 		TokenTLL  time.Duration `env:"TOKEN_TLL" env-default:"12h"`
