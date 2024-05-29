@@ -20,7 +20,7 @@ const ApartmentForm = ({addApartment}:any) =>{
             method: 'POST',
             headers:{ 'Content-Type': 'application/json',
                 'Authorization': 'Bearer '.concat(localStorage.getItem('token') || '{}') },
-            body: JSON.stringify({ number: number, area: area})
+            body: JSON.stringify({ number: parseInt(number), area: parseFloat(area)})
         }
         fetch(config.apiUrl+'osbb/'+osbbID+'/apartments', requestOptions)
             .then(response => response.json())

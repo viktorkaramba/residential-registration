@@ -29,6 +29,7 @@ type BuildingStorage interface {
 
 type ApartmentStorage interface {
 	GetByUserID(UserID uint64) (*entity.Apartment, error)
+	UpdateApartment(ApartmentID uint64, filter ApartmentFilter) error
 }
 
 type OSBBStorage interface {
@@ -117,6 +118,13 @@ type OSBBFilter struct {
 type BuildingFilter struct {
 	OSBBID *uint64
 	*entity.Address
+}
+
+type ApartmentFilter struct {
+	BuildingID *uint64
+	UserID     *uint64
+	*entity.ApartmentNumber
+	*entity.ApartmentArea
 }
 
 type PaymentFilter struct {

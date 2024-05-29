@@ -104,12 +104,6 @@ func (s *userStorage) UpdateUser(UserID, OSBBID uint64, opts *entity.EventUserUp
 	if opts.Patronymic != nil {
 		user.Patronymic = *opts.Patronymic
 	}
-	if opts.ApartmentArea != nil {
-		user.Apartment.Area = *opts.ApartmentArea
-	}
-	if opts.ApartmentNumber != nil {
-		user.Apartment.Number = *opts.ApartmentNumber
-	}
 	if opts.PhoneNumber != nil {
 		user.PhoneNumber = *opts.PhoneNumber
 	}

@@ -164,8 +164,17 @@ func (s *osbbService) AddApartment(UserID, OSBBID uint64, inputApartment entity.
 		logger.Error("User can not create an announcement", "error", err)
 		return nil, errs.M("user not osbb head").Code("User can not create an announcement").Kind(errs.Private)
 	}
+	building, err := s.businessStorage.Building.GetByOSBBID(OSBBID)
+	if err != nil {
+		logger.Error("failed to get building", "error", err)
+		return nil, errs.Err(err).Code("Failed to get building").Kind(errs.Database)
+	}
+	if building == nil {
+		logger.Error("building do not exist", "error", err)
+		return nil, errs.M("building not found").Code("building do not exist").Kind(errs.Database)
+	}
 	apartment := &entity.Apartment{
-		BuildingID: OSBBID,
+		BuildingID: building.ID,
 		UserID:     UserID,
 		Number:     inputApartment.Number,
 		Area:       inputApartment.Area,
@@ -1181,7 +1190,17 @@ func (s *osbbService) UpdateInhabitant(UserID, OSBBID uint64, inhabitant entity.
 		logger.Error("failed to update inhabitant", "error", err)
 		return errs.Err(err).Code("Failed to update inhabitant").Kind(errs.Database)
 	}
-
+	if inhabitant.ApartmentNumber != nil || inhabitant.ApartmentArea != nil {
+		err = s.businessStorage.Apartment.UpdateApartment(0, ApartmentFilter{
+			UserID:          &UserID,
+			ApartmentNumber: inhabitant.ApartmentNumber,
+			ApartmentArea:   inhabitant.ApartmentArea,
+		})
+		if err != nil {
+			logger.Error("failed to update inhabitant", "error", err)
+			return errs.Err(err).Code("Failed to update inhabitant").Kind(errs.Database)
+		}
+	}
 	return nil
 }
 

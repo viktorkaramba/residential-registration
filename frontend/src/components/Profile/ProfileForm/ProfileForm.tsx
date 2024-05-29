@@ -55,10 +55,10 @@ const Profile = ({profile_user}:any) => {
         let phoneNumberJSON = null
         let photoJSON = null
         if(apartment_number != null){
-            apartmentNumberJSON = {apartment_number: apartment_number};
+            apartmentNumberJSON = {apartment_number: parseInt(apartment_number)};
         }
         if(apartment_area != null){
-            apartmentAreaJSON = {apartment_area: apartment_area};
+            apartmentAreaJSON = {apartment_area: parseFloat(apartment_area)};
         }
         if(first_name != null){
             firstNameJSON = {first_name: first_name};
@@ -98,9 +98,9 @@ const Profile = ({profile_user}:any) => {
                 }else {
                     if(data){
                         setIsChecked(false);
-                        profile_user.full_name.first_name = first_name
-                        profile_user.full_name.surname = surname
-                        profile_user.full_name.patronymic = patronymic
+                        profile_user.full_name.first_name = newFirstName
+                        profile_user.full_name.surname = newSurname
+                        profile_user.full_name.patronymic = newPatronymic
                     }
                 }
             });
