@@ -7,10 +7,6 @@ import PollMenu from "./PollMenu";
 import AnnouncementAdminList from "../Announcements/AnnouncementAdmin/AnnouncementAdminList";
 import InhabitantRequestList from "../Inhabitant/InhabitantRequest/InhabitantRequestList";
 import ProfileForm from "../Profile/ProfileForm/ProfileForm";
-import {useNavigate} from "react-router-dom";
-import config from "../../utils/config";
-import err from "../../utils/err";
-import PaymentMenu from "./PaymentMenu";
 import PaymentAdminList from "../Payment/PaymentAdmin/PaymentAdminList";
 
 const ProfileMenu = () => {

@@ -86,13 +86,13 @@ const OSBBDescription = () => {
             body = JSON.stringify({name: name});
         }
         if(edrpou != null){
-            body = JSON.stringify({edrpou: edrpou});
+            body = JSON.stringify({edrpou: parseInt(edrpou)});
         }
         if(iban != null){
             body = JSON.stringify({iban: iban});
         }
         if(rent != null){
-            body = JSON.stringify({rent: rent});
+            body = JSON.stringify({rent: parseFloat(rent)});
         }
         if(address != null){
             body = JSON.stringify({address: address});

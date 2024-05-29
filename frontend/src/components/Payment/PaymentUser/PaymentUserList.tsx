@@ -30,12 +30,14 @@ const PaymentUserList = () =>{
         value: user.id
     }));
     const indexToMove = optionsUser.findIndex(currentUser => {
-        return currentUser.value === user.id; // Припустимо, ваша умова - це співпадіння value з якимось значенням
+        return currentUser.value === user.id;
     });
+
     if (indexToMove !== -1) {
-        const elementToMove = optionsUser.splice(indexToMove, 1)[0]; // Видаляємо елемент із масиву
+        const elementToMove = optionsUser.splice(indexToMove, 1)[0];
         optionsUser.unshift(elementToMove);
     }
+
     const navigate = useNavigate();
 
     const fetchAllUsers = useCallback(async() => {
@@ -146,6 +148,7 @@ const PaymentUserList = () =>{
     }
 
     function handleDateFilter(){
+
         if((dateFromChoice == null || dateFromChoice==='') && dateToChoice!=null && dateToChoice!==''){
             const toDateObj = new Date(dateToChoice);
             return payments.filter((payment: any) => {
@@ -233,12 +236,10 @@ const PaymentUserList = () =>{
 
 
     useEffect(() => {
-        if(filterPayments.length !== 0){
-            if(isAsc){
-                setFilterPayments(filterPayments.sort(compareCreatedAtAsc));
-            }else {
-                setFilterPayments(filterPayments.sort(compareCreatedAtDesc));
-            }
+        if(isAsc){
+            setFilterPayments(filterPayments.sort(compareCreatedAtAsc));
+        }else {
+            setFilterPayments(filterPayments.sort(compareCreatedAtDesc));
         }
     }, [filterPayments, isAsc]);
 
@@ -258,8 +259,8 @@ const PaymentUserList = () =>{
                                 </label>
                             </div>
                             <div className={'payment-date-item m-5'} style={{flexGrow:1}}>
-                                <label form={'finished_at'}>До
-                                    <input className={'m-5'} required={true} onChange={(event:any)=>setDateToChoice(event.target.value)} name="finished_at" placeholder="" type='datetime-local' step="1" id='finished_at'/>
+                                <label form={'date_to'}>До
+                                    <input className={'m-5'} required={true} onChange={(event:any)=>setDateToChoice(event.target.value)} name="date_to" placeholder="" type='datetime-local' step="1" id='date_to'/>
                                 </label>
                             </div>
                             <div className={'m-5'} style={{flexGrow:4, width: '250px'}} >

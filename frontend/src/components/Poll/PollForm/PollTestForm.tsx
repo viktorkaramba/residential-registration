@@ -58,7 +58,7 @@ const PollTestForm = () =>{
             headers:config.headers,
             body: JSON.stringify({ question: question, test_answer:answers, finished_at: finished_at.toISOString() })
         }
-        fetch(config.apiUrl+'osbb/'+osbbID+'/polls-test', requestOptions)
+        fetch(config.apiUrl+'osbb/'+osbbID+'/polls-tests', requestOptions)
             .then(response =>response.json())
             .then(data => {
                 console.log(data)
