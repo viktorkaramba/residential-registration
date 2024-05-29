@@ -35,6 +35,7 @@ function Logout(navigate:any):any{
             }else {
                 if(data){
                     localStorage.removeItem("token");
+                    navigate('/')
                 }
             }
         });

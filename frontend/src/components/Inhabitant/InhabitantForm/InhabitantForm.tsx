@@ -15,8 +15,6 @@ const InhabitantForm = () =>{
     const [errorUserAlreadyExist, setErrorUserAlreadyExist] = useState(false);
     const [errorWaitApprove, setWaitApprove] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    // @ts-ignore
-    const {token, setToken} = useAppContext();
     const [visiblePassword, setPasswordVisible] = useState(false);
     const [visibleConfirmPassword, setConfirmVisible] = useState(false);
     // @ts-ignore
@@ -65,22 +63,13 @@ const InhabitantForm = () =>{
                     }
                }else {
                     if(data){
-                        const {token}:any = data
-                        setToken(token);
+                        setIsLoggedIn(true)
                     }
                 }
             });
         // 👇️ clear all input values in the form
         event.target.reset();
     };
-
-    useEffect(() => {
-        if (token) {
-            localStorage.setItem("token", token);
-            setIsLogin(true);
-            setIsLoggedIn(true);
-        }
-    }, [token]);
 
     return(
         <form method='post' onSubmit={addInhabitant}>
@@ -123,7 +112,7 @@ const InhabitantForm = () =>{
                     </div>
                     <div className={'flex flex-c'}>
                         <button className='button add_osbb' type="submit" name="submit_osbb">
-                            <span className="button_content add_osbb_content">Додати ОСББ</span>
+                            <span className="button_content add_osbb_content">Приєднатися</span>
                         </button>
 
                     </div>
@@ -137,8 +126,8 @@ const InhabitantForm = () =>{
                             Ви вже приєднанні до ОСББ
                         </div>
                     }
-                    {isLoggedIn &&  <Stack sx={{margin: '10px'}} spacing={2}>
-                        <Alert variant={'filled'} severity="success" style={{fontSize:'15px'}}>Запита успішно надісланий, очікуйте підтвердження</Alert>
+                    {isLoggedIn &&    <Stack sx={{margin: '10px'}} spacing={2}>
+                        <Alert variant={'filled'} severity="success" style={{fontSize:'15px'}}>Дані успішно надіслані. Очікуйте відповідь голови ОСББ!</Alert>
                     </Stack>}
                 </div>
                 <div className="form">

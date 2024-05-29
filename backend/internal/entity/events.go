@@ -161,7 +161,7 @@ type EventUserPurchasesResponse struct {
 }
 
 func (i EventUserUpdatePayload) Validate() error {
-	if i.ApartmentNumber == nil && i.ApartmentArea == nil && i.FirstName == nil && i.Surname == nil && i.Patronymic == nil && i.PhoneNumber == nil {
+	if i.ApartmentNumber == nil && i.ApartmentArea == nil && i.FirstName == nil && i.Surname == nil && i.Patronymic == nil && i.PhoneNumber == nil && i.Photo == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil

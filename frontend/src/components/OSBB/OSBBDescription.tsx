@@ -137,7 +137,7 @@ const OSBBDescription = () => {
             </div>
             <div className="card flex align-items-stretch flex-wrap">
                 <div className="left-container flex flex-column align-items-center  align-self-center">
-                    <img src={newPhoto !== null ? newPhoto: logo}
+                    <img src={newPhoto !== "" ? newPhoto: logo}
                          alt="OSBB Profile Image"/>
                     <h2>{newName}</h2>
                     <p>{newPostAddress}</p>

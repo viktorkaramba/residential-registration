@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import OSBBListElement from "./OSBBListElement";
 import config from "../../../utils/config";
 import err from "../../../utils/err";
@@ -59,8 +59,9 @@ const OSBBList = () =>{
         <section className='osbblist' ref={focusRef}>
             <div className='container' >
                 <div className='osbblist-content grid' >
+                    {osbbs?.length === 0 && <h1 style={{color:"white"}}>Немає ОСББ</h1>}
                     {
-                        osbbs.map((item, index) => {
+                        osbbs?.map((item, index) => {
                             return (
                                 // @ts-ignore
                                 <OSBBListElement key = {index}{...item} />

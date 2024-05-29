@@ -85,7 +85,7 @@ const InhabitantRequestList = () =>{
         <section className='announcements-list'>
             <div className='container'>
                 <div className='announcements-content grid'>
-                    {inhabitantsWaitApprove.length===0 && "Немає запитів"}
+                    {inhabitantsWaitApprove.length===0 && <h1 style={{color:"white"}}>Немає запитів</h1>}
                     {
                         inhabitantsWaitApprove.map((inhabitantWaitApprove:{id:any, osbbid:any, apartment:any, full_name:any,
                             phone_number:any, role:any, is_approved:any}) => {

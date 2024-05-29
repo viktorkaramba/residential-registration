@@ -81,6 +81,7 @@ const PaymentUserList = () =>{
         }
     }, []);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     function handleFilter(){
         let userJSON = null
         let purchaseJSON = null
@@ -174,7 +175,7 @@ const PaymentUserList = () =>{
         if((dateFromChoice==null && dateToChoice==null) || (dateFromChoice==='' && (dateToChoice==='' || dateToChoice==null))
         || ((dateFromChoice===''|| dateFromChoice==null) && dateToChoice===null)||
             (dateFromChoice==null && (dateToChoice==='' || dateToChoice==null))){
-            return filterPayments;
+            return payments;
         }
     }
 
@@ -224,10 +225,11 @@ const PaymentUserList = () =>{
 
     useEffect(() => {
         handleFilter();
-    }, [userChoice, purchaseChoice, handleFilter]);
+    }, [userChoice, purchaseChoice]);
 
     useEffect(() => {
         setFilterPayments(handleDateFilter());
+
     }, [dateFromChoice, dateToChoice]);
 
     useEffect(() => {
@@ -236,10 +238,13 @@ const PaymentUserList = () =>{
 
 
     useEffect(() => {
-        if(isAsc){
-            setFilterPayments(filterPayments.sort(compareCreatedAtAsc));
-        }else {
-            setFilterPayments(filterPayments.sort(compareCreatedAtDesc));
+        if(filterPayments.length !== 0){
+            if(isAsc){
+
+                setFilterPayments(handleDateFilter().sort(compareCreatedAtAsc));
+            }else {
+                setFilterPayments(handleDateFilter().sort(compareCreatedAtDesc));
+            }
         }
     }, [filterPayments, isAsc]);
 
@@ -276,14 +281,14 @@ const PaymentUserList = () =>{
                             </div>
                         </>}
                         {user.role !== "osbb_head" && <>
-                            <div className={'m-5'} style={{flexGrow:5}}>
-                                <label form={'payment-date-item finished_at'}>Дата завершення
-                                    <input required={true} name="finished_at" onChange={(event:any)=>setDataFromChoice(event.target.value)} placeholder="" type='datetime-local' step="1" id='finished_at'/>
+                            <div className={'payment-date-item m-5'} style={{flexGrow:5}}>
+                                <label form={'date_from'}>Від
+                                    <input required={true} name="date_from" onChange={(event:any)=>setDataFromChoice(event.target.value)} placeholder="" type='datetime-local' step="1" id='date_from'/>
                                 </label>
                             </div>
                             <div className={'payment-date-item m-5'} style={{flexGrow:5}}>
-                                <label form={'finished_at'}>Дата завершення
-                                    <input required={true} name="finished_at" onChange={(event:any)=>setDateToChoice(event.target.value)} placeholder="" type='datetime-local' step="1" id='finished_at'/>
+                                <label form={'date_to'}>До
+                                    <input required={true} name="date_to" onChange={(event:any)=>setDateToChoice(event.target.value)} placeholder="" type='datetime-local' step="1" id='date_to'/>
                                 </label>
                             </div>
                             <div className={'m-5'} style={{flexGrow:2, width: '100px'}} >

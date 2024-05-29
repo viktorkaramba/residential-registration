@@ -10,6 +10,7 @@ import "../OSBB.css"
 const OSBBForm = () =>{
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
     const [errorEDRPOU, setErrorEDRPOU] = useState(false);
+    const [errorIBAN, setErrorIBAN] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [visiblePassword, setPasswordVisible] = useState(false);
@@ -24,6 +25,7 @@ const OSBBForm = () =>{
 
         event.preventDefault();
         setErrorEDRPOU(false);
+        setErrorIBAN(false);
         setErrorPhoneNumber(false);
         // 👇️ access input values using name prop
         const firstName = event.target.first_name.value;
@@ -40,6 +42,7 @@ const OSBBForm = () =>{
         const phone_number = event.target.phone_number.value;
         const name = event.target.name.value;
         const edrpou = parseInt(event.target.edrpou.value);
+        const iban = event.target.iban.value;
         const address = event.target.address.value;
         const rent = parseFloat(event.target.rent.value);
         const photo =  event.target.photo.value;
@@ -48,7 +51,7 @@ const OSBBForm = () =>{
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ first_name: firstName, surname: surname, patronymic:patronymic,
                 password: password, phone_number:phone_number, name:name,
-                edrpou:edrpou, address:address, rent:rent, photo:photo,
+                edrpou:edrpou, iban:iban, address:address, rent:rent, photo:photo,
             })
         }
         fetch(config.apiUrl+'osbb/', requestOptions)
@@ -57,6 +60,8 @@ const OSBBForm = () =>{
                 const {error}:any = data;
                 if(error){
                     if(error.includes(err.errorsMessages.osbbAlreadyExist)){
+                        setErrorEDRPOU(true);
+                    } if(error.includes(err.errorsMessages.ibanAlreadyExist)){
                         setErrorEDRPOU(true);
                     }else if(error.includes(err.errorsMessages.phoneNumberAlreadyExist)) {
                         setErrorPhoneNumber(true);
@@ -127,11 +132,14 @@ const OSBBForm = () =>{
                         <label form={'edrpou'}>ЕДРПОУ
                             <input name="edrpou" required={true} placeholder="" type='number' id='edrpou'/>
                         </label>
+                        <label form={'iban'}>IBAN
+                            <input name="iban" required={true} placeholder="" type='text' id='iban'/>
+                        </label>
                         <label form={'address'}>Адреса
                             <input maxLength={256} minLength={2} required={true} name="address" placeholder="" type='text' id='address'/>
                         </label>
                         <label form={'rent'}>Плата за м^2
-                            <input name="rent" required={true} placeholder="" type='number' id='rent'/>
+                                <input name="rent" required={true} placeholder="" type='number' step="0.01" id='rent'/>
                         </label>
                         <label form={'photo'}>Фото
                             <input name="photo" placeholder="" type='url' id='photo'/>
@@ -139,6 +147,11 @@ const OSBBForm = () =>{
                         {errorEDRPOU &&
                             <div className={'error'}>
                                 ОСББ із таким ЕДРПОУ уже додане!
+                            </div>
+                        }
+                        {errorIBAN &&
+                            <div className={'error'}>
+                                ОСББ із таким IBAN уже додане!
                             </div>
                         }
                     </div>
