@@ -182,7 +182,7 @@ func (i EventAnnouncementUpdatePayload) Validate() error {
 }
 
 func (i EventPollUpdatePayload) Validate() error {
-	if i.Question == nil && i.FinishedAt == nil {
+	if i.Question == nil && i.FinishedAt == nil && i.IsClosed == nil {
 		return errors.New("update structure has no value")
 	}
 	return nil

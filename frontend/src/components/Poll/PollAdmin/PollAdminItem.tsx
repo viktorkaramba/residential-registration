@@ -31,18 +31,25 @@ const PollAdminItem = ({poll, updatePoll, deletePoll}:any) => {
 
     function handleDelete(){
         deletePoll(poll.id);
+        setShow(false)
     }
 
     function handleUpdate(){
-        if(newFinished!==""){
+        console.log(newFinished, poll.finished_at)
+        if(newFinished!==poll.finished_at){
+            console.log("in1")
             if (new Date(newFinished) < new Date()){
                 setErrorDate(true);
                 return
             }
-        }else {
-            setNewFinished(null);
+            updatePoll(poll.id, newQuestion, newFinished, newIsClosed, setIsPollChecked)
         }
-        updatePoll(poll.id, newQuestion, newFinished, newIsClosed, setIsPollChecked)
+        else {
+            console.log("in2")
+            updatePoll(poll.id, newQuestion, null, newIsClosed, setIsPollChecked)
+        }
+        // console.log(newFinished)
+
     }
 
     function toResult(){

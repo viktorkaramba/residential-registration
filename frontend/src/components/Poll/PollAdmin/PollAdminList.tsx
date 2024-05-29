@@ -59,14 +59,16 @@ const PollAdminList = () =>{
     }, []);
 
     function updatePoll(id:any, question:any, finished_at:any, isClosed:any, setIsPollChecked:any){
-        finished_at = new Date(finished_at);
+        console.log(finished_at)
         let questionJSON = null
         let finishedAtJSON = null
         let isClosedJSON = null
         if(question !== "" ){
             questionJSON = {question: question};
         }
-        if(finished_at != null){
+        if(finished_at !== null){
+            console.log(finished_at)
+            finished_at = new Date(finished_at);
             finishedAtJSON={finished_at:finished_at};
         }
         if(isClosed != null) {

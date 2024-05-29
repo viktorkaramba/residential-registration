@@ -25,6 +25,7 @@ const TestAnswerAdminItem = ({content, id, count_test_answers, updateTestAnswer,
     function handleDelete(){
         if(count_test_answers<3){
             setErrorDelete(true)
+            setShow(false)
         }else {
             setErrorDelete(false)
             deleteTestAnswer(pollID);

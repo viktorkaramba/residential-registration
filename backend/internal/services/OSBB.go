@@ -449,9 +449,11 @@ func (s *osbbService) UpdatePoll(UserID, OSBBID, PollID uint64, input entity.Eve
 		logger.Error("failed to validate update poll data", "error", err)
 		return errs.Err(err).Code("failed to validate update poll data").Kind(errs.Validation)
 	}
-	if input.FinishedAt.Compare(time.Now()) == -1 {
-		logger.Error("failed to update poll", "error", errors.New("finished at must be after current time"))
-		return errs.M("finished at must be after current time").Code("Failed to update poll ").Kind(errs.Database)
+	if input.FinishedAt != nil {
+		if input.FinishedAt.Compare(time.Now()) == -1 {
+			logger.Error("failed to update poll", "error", errors.New("finished at must be after current time"))
+			return errs.M("finished at must be after current time").Code("Failed to update poll ").Kind(errs.Database)
+		}
 	}
 	user, err := s.businessStorage.User.GetUser(UserID, UserFilter{OSBBID: &OSBBID})
 	if err != nil {
